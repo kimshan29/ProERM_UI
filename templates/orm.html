@@ -1,0 +1,729 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">{{ isInitMode ? "Pembuatan" : "Update" }} Laporan Monitoring Mitigasi</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 text-right">
+        <div class="" style="margin-bottom:10px">
+            <button type="button" class="btn btn-primary" 
+                    data-toggle="modal" data-target="#modalInisiasi"  
+                    ng-show="isInitMode" 
+                    ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm) && approvalStatus.kodeApproval == 0">
+                Send
+            </button>
+            <button type="button" class="btn btn-primary" 
+                    data-toggle="modal" data-target="#modalSubmit" 
+                    ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
+                Submit
+            </button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise"
+                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3)  && hasCompleteStep">
+                Revise
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition"
+                    ng-show="(approvalStatus.kodeApproval == 3) ">
+                Disposition
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval"
+                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && hasCompleteStep ">
+                Approve
+            </button>
+        </div>
+    </div>
+</div>
+<form class="form-horizontal" role="form">
+    <h4 class="color-blue">Detail Sasaran</h4>
+    <div class="panel panel-default bg-white">
+        <div class="panel-body bg-white">
+            <div class="form-group">
+                <label class="control-label col-md-2" for="ddNoOrm">No ORM</label>
+                <div class="col-md-10" ng-show="isInitMode">
+                     <select class="form-control"
+                        ng-model="idOrm" 
+                        ng-change="noOrmChange()" 
+                        ng-options="item.id as item.noORM + ' - ' + item.name for item in master.orm">
+                    </select>
+                </div>
+                <div class="col-md-10" ng-show="!isInitMode">
+                    <p class="form-control-static">
+                        {{ data.noORM + ' - ' + data.name }}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Jenis Kajian</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailSasaran.jenisKajian.name }}</p>
+                </div>
+                <label class="control-label col-md-2">Entitas</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailSasaran.entitas.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Sasaran Strategis</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailSasaran.sasaranStrategis.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Sasaran KPI/KM</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailSasaran.sasaranKPIKM.name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h4 class="color-blue">Detail Risiko Sebelum Mitigasi</h4>
+    <div class="panel panel-default bg-white">
+        <div class="panel-body bg-white">
+            <div class="form-group">
+                <label class="control-label col-md-2">Risk Owner</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRisikoSM.riskOwner.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Kategori Risiko</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailRisikoSM.kategoriRisiko.name }}</p>
+                </div>
+                <label class="control-label col-md-2">Sub Kategori Risiko</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailRisikoSM.subKategori.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Risiko</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRisikoSM.risiko.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Kejadian</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRisikoSM.kejadian.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">Tingkat Controlled Risk sebelum mitigasi</label>
+                <div class="col-md-8">
+                    <p class="form-control-static" style="color:{{ Helper.ifNullOrEmpty(data.detailRisikoSM.tingkatCRSebelumMitigasi.warna, '#333') }}">
+                        <span style="background-color:{{ Helper.ifNullOrEmpty(data.detailRisikoSM.tingkatCRSebelumMitigasi.warna, '#fff') }}">&emsp;</span>
+                        {{ data.detailRisikoSM.tingkatCRSebelumMitigasi.name }}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Tipe Sumber Risiko</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailRisikoSM.tipeSumberRisiko.name }}</p>
+                </div>
+                <label class="control-label col-md-2">Sumber Risiko</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailRisikoSM.sumberRisiko.name }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Penyebab</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRisikoSM.penyebab }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Area Dampak</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRisikoSM.kejadian.areaDampak.name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h4 class="color-blue">Detail Rencana Mitigasi</h4>
+    <div class="panel panel-default bg-white">
+        <div class="panel-body bg-white">
+            <div class="form-group">
+                <label class="control-label col-md-2">Rencana Mitigasi</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ data.detailRencanaMitigasi.rencanaMitigasi }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">PIC Koordinator</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{data.detailRencanaMitigasi.picKoordinator.jabatan}} - <span class="text-uppercase">{{ data.detailRencanaMitigasi.picKoordinator.name }}</span></p>
+                </div>
+            </div>
+            <div class="form-group" ng-repeat="item in data.detailRencanaMitigasi.langkahKerja">
+                <label class="control-label col-md-2">Langkah Kerja {{$index + 1}}</label>
+                <div class="col-md-10">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" onclick="fadeToggleCollapsible(this)">
+                                <h4 class="panel-title">
+                                    <a style="cursor:pointer">{{ item.name }}</a>
+                                </h4>
+                            </div>
+                            <div class="" style="margin-top:10px; margin-right:5px">
+                            <div class="form-group">
+                                <div class="col-md-6 col-md-offset-6 text-right">
+                                    <button type="button" class="btn btn-info" 
+                                        ng-show="lk.isEditMode[$index]" 
+                                        ng-click="lk.saveChangesClick($index)">Save Changes</button>
+                                    <button type="button" class="btn btn-warning" 
+                                        ng-show="lk.isEditMode[$index]" 
+                                        ng-click="lk.discardChangesClick($index)">Discard Changes</button>
+                                    <!--<button type="button" class="btn btn-info" ng-show="!isEditMode && isDataEditable && isPicCoordinator && hasCompleteStep" ng-click="editClick()">
+                                        <span class="fa fa-pencil"></span> Edit
+                                    </button>-->
+                                    <button type="button" class="btn btn-info" ng-show="!lk.isEditMode[$index] && isPicCoordinator" ng-click="lk.editClick($index)">
+                                        <span class="fa fa-pencil"></span> Edit
+                                    </button>
+                                </div>
+                            </div>
+                            </div>
+                            <div id="langkah-kerja-1">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">PIC Langkah Kerja</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static">{{ item.picLangkah.jabatan }} - <span class="text-uppercase">{{ item.picLangkah.name }}</span></p>
+                                        </div>
+                                    </div>                                          
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Target Mulai</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.tglMulai.defaultDateFormat() }}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Target Selesai</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.tglSelesai.defaultDateFormat() }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Estimasi Biaya</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static">{{item.currency}} {{item.biaya.formatMoney(0)}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Progres Persentase</label>
+                                        <div class="col-md-4" ng-show="lk.isEditMode[$index]">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-right" maxlength="3" 
+                                                ng-model="item.progresPersentase.value" />
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" ng-show="!lk.isEditMode[$index]">
+                                            <p class="form-control-static">{{item.progresPersentase.value}}% ( {{item.progresPersentase.value.toLabelProgress()}} )</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Tanggal Update</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.tanggalUpdate.defaultDateFormat()}}</p>
+                                        </div>
+                                    </div>  
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Evidence Attachment</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static" ng-repeat="item in item.evidences">
+                                                <a href="javascript:void" onclick="alert('to do: download file')">{{item.name}}</a>
+                                            </p>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
+    <h4 ng-show="data.detailMitigasi.totalProgress==100">Detail Mitigasi</h4>
+    <div class="panel panel-default" ng-show="data.detailMitigasi.totalProgress==100">
+    -->
+    <h4 class="color-blue" ng-show="!isInitMode">Detail Mitigasi</h4>
+    <div class="panel panel-default bg-white" ng-show="!isInitMode">
+        <div class="panel-body bg-white">
+            <div class="form-group">
+                <div class="col-md-6 col-md-offset-6 text-right">
+                    <button type="button" class="btn btn-info" ng-show="isEditMode" ng-click="saveChangesClick()">Save Changes</button>
+                    <button type="button" class="btn btn-warning" ng-show="isEditMode" ng-click="discardChangesClick()">Discard Changes</button>
+                    <!--<button type="button" class="btn btn-info" ng-show="!isEditMode && isDataEditable && isPicCoordinator && hasCompleteStep" ng-click="editClick()">
+                        <span class="fa fa-pencil"></span> Edit
+                    </button>-->
+                    <button type="button" class="btn btn-info" ng-show="!isEditMode && hasCompleteStep && isPicCoordinator" ng-click="editClick()">
+                        <span class="fa fa-pencil"></span> Edit
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">Prakiraan Tingkat Residual Risk</label>
+                <div class="col-md-8">
+                    <p class="form-control-static" style="color:{{ data.detailMitigasi.prakiraanTingkatRR.warna }}">
+                        <span style="background-color:{{ data.detailMitigasi.prakiraanTingkatRR.warna }}">&emsp;</span>
+                        {{ data.detailMitigasi.prakiraanTingkatRR.name }}
+                    </p>
+                </div>
+            </div>
+            <fieldset class="bordered-fieldset">
+                <legend class="bordered-fieldset help-block"><h5><strong>Fungsi Mitigasi</strong></h5></legend>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Mengurangi</label>
+                    <div class="col-md-6" ng-show="isEditMode">
+                        <label class="radio-inline">
+                            <input type="radio" name="optradio" ng-model="data.detailMitigasi.fungsiMitigasi" value="1">Dampak
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optradio" ng-model="data.detailMitigasi.fungsiMitigasi" value="2">Kemungkinan
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optradio" ng-model="data.detailMitigasi.fungsiMitigasi" value="3">Keduanya
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="form-control-static" ng-show="!isEditMode && data.detailMitigasi.fungsiMitigasi == 1">Dampak</p>
+                        <p class="form-control-static" ng-show="!isEditMode && data.detailMitigasi.fungsiMitigasi == 2">Kemungkinan</p>
+                        <p class="form-control-static" ng-show="!isEditMode && data.detailMitigasi.fungsiMitigasi == 3">Keduanya (Dampak dan Kemungkinan)</p>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="bordered-fieldset">
+                <legend class="bordered-fieldset help-block"><h5><strong>Efektifitas</strong></h5></legend>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Approach</label>
+                            <div class="col-md-8" ng-show="isEditMode">
+                                <select class="form-control"
+                                        ng-model="data.detailMitigasi.approach"
+                                        ng-change="adliChange()"
+                                        ng-options="item.id as item.name for item in master.efektivitasA"></select>
+                            </div>
+                            <div class="col-md-8" ng-show="!isEditMode">
+                                <p class="form-control-static">{{ data.detailMitigasi.approach }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Deployment</label>
+                            <div class="col-md-8" ng-show="isEditMode">
+                                <select class="form-control"
+                                        ng-model="data.detailMitigasi.deployment"
+                                        ng-change="adliChange()"
+                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                            </div>
+                            <div class="col-md-8" ng-show="!isEditMode">
+                                <p class="form-control-static">{{ data.detailMitigasi.deployment }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Learning</label>
+                            <div class="col-md-8" ng-show="isEditMode">
+                                <select class="form-control"
+                                        ng-model="data.detailMitigasi.learning"
+                                        ng-change="adliChange()"
+                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                            </div>
+                            <div class="col-md-8" ng-show="!isEditMode">
+                                <p class="form-control-static">{{ data.detailMitigasi.learning }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Integration</label>
+                            <div class="col-md-8" ng-show="isEditMode">
+                                <select class="form-control"
+                                        ng-model="data.detailMitigasi.integration"
+                                        ng-change="adliChange()"
+                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                            </div>
+                            <div class="col-md-8" ng-show="!isEditMode">
+                                <p class="form-control-static">{{ data.detailMitigasi.integration }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Nilai Efektivitas</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static text-success">
+                                    {{ data.detailMitigasi.nilai }}
+                                    <span class="{{ Helper.getClassEfektivitas(data.detailMitigasi.nilai) }}">&emsp;</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <span class="text-primary"><strong>Legenda Nilai Efektivitas</strong></span>
+                                <p class="text-danger">
+                                    <span class="label-danger">&emsp;</span>
+                                    0 s.d &lt; 1.5 Tidak Efektif
+                                </p>
+                                <p class="text-warning">
+                                    <span class="label-warning">&emsp;</span>
+                                    1.5 s.d &lt; 3 Kurang Efektif
+                                </p>
+                                <p class="text-primary">
+                                    <span class="label-primary">&emsp;</span>
+                                    3 s.d &lt; 4 Efektif
+                                </p>
+                                <p class="text-success">
+                                    <span class="label-success">&emsp;</span>
+                                    &gt;= 4 Sangat Efektif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="bordered-fieldset">
+                <legend class="bordered-fieldset help-block"><h5><strong>Realisasi Tingkat Residual Risk</strong></h5></legend>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Peringkat Dampak</label>
+                    <div class="col-md-7" ng-show="isEditMode">
+                        <select class="form-control"
+                                ng-model="data.detailMitigasi.peringkatDampak.id"
+                                ng-change="peringkatDampakChange()"
+                                ng-disabled="data.detailMitigasi.fungsiMitigasi == 2"
+                                ng-options="item.id as item.name for item in master.peringkatDampak"></select>
+                    </div>
+                    <div class="col-md-3" ng-show="isEditMode">{{ data.detailMitigasi.peringkatDampak.keterangan }}</div>
+                    <div class="col-md-10" ng-show="!isEditMode">
+                        <p class="form-control-static">
+                            {{ data.detailMitigasi.peringkatDampak.name }} [ {{ data.detailMitigasi.peringkatDampak.keterangan }} ]
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Peringkat Kemungkinan</label>
+                    <div class="col-md-7" ng-show="isEditMode">
+                        <select class="form-control"
+                                ng-model="data.detailMitigasi.peringkatKemungkinan.id"
+                                ng-change="peringkatKemungkinanChange()"
+                                ng-disabled="data.detailMitigasi.fungsiMitigasi == 1"
+                                ng-options="item.id as item.name for item in master.peringkatKemungkinan"></select>
+                    </div>
+                    <div class="col-md-3" ng-show="isEditMode">{{ data.detailMitigasi.peringkatKemungkinan.keterangan }}</div>
+                    <div class="col-md-10" ng-show="!isEditMode">
+                        <p class="form-control-static">
+                            {{ data.detailMitigasi.peringkatKemungkinan.name }} [ {{ data.detailMitigasi.peringkatKemungkinan.keterangan }} ]
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Tingkat Risiko</label>
+                    <div class="col-md-10">
+                        <p class="form-control-static" style="color:{{ data.detailMitigasi.realisasiTingkatRR.warna }}">
+                            <span style="background-color:{{ data.detailMitigasi.realisasiTingkatRR.warna }}">&emsp;</span>
+                            {{ data.detailMitigasi.realisasiTingkatRR.name }}
+                        </p>
+                    </div>
+                    <!--
+                    <label class="control-label col-md-2">Keberterimaan Risiko</label>
+                    <div class="col-md-10">
+                        <p class="form-control-static">{{ data.detailMitigasi.realisasiTingkatRR.keberterimaanRisiko }}</p>
+                    </div>
+                    -->
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <label class="col-md-2 control-label">Rekomendasi Tindak Lanjut</label>
+                <div class="col-md-10" ng-show="isEditMode">
+                    <textarea type="text" class="form-control"
+                              rows="5" ng-model="data.detailMitigasi.rekomendasiTL">
+                        {{ data.detailMitigasi.rekomendasiTL }}
+                    </textarea>
+                </div>
+                <div class="col-md-10" ng-show="!isEditMode">
+                    <p class="form-control-static">{{ data.detailMitigasi.rekomendasiTL }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">Keterangan</label>
+                <div class="col-md-10" ng-show="isEditMode">
+                    <textarea type="text" class="form-control"
+                              rows="5" ng-model="data.detailMitigasi.keterangan">
+                        {{ data.detailMitigasi.keterangan }}
+                    </textarea>
+                </div>
+                <div class="col-md-10" ng-show="!isEditMode">
+                    <p class="form-control-static">{{ data.detailMitigasi.keterangan }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Risiko Baru</label>
+                <div class="col-md-4" ng-show="isEditMode">
+                    <select class="form-control"
+                            ng-model="data.detailMitigasi.risikoBaru.value"
+                            ng-change="risikoBaruChange()"
+                            ng-options="item.value as item.name for item in master.risikoBaru"></select>
+                </div>
+                <div class="col-md-4" ng-show="!isEditMode">
+                    <p class="form-control-static">{{ data.detailMitigasi.risikoBaru.value.toYaTidak() }}</p>
+                </div>
+                <label class="control-label col-md-2">Status Mitigasi</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">{{ data.detailMitigasi.statusMitigasi }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-md-12 text-right">
+        <div class="">
+            <button type="button" class="btn btn-primary"
+                    data-toggle="modal" data-target="#modalInisiasi"
+                    ng-show="isInitMode"
+                    ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm)">
+                Send
+            </button>
+            <button type="button" class="btn btn-primary" 
+            data-toggle="modal" data-target="#modalSubmit" 
+            ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
+            Submit
+            </button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise"
+                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
+                Revise
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition"
+                    ng-show="(approvalStatus.kodeApproval == 3) && isPicCoordinator">
+                Disposition
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval"
+                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
+                Approve
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
+<!-- Start of Inisiasi Modal -->
+<div class="modal fade" id="modalInisiasi" tabindex="-1" role="dialog" aria-labelledby="modalInisiasiLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalInisiasiLabel">Inisiasi Laporan Monitoring Mitigasi</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" rows="5" placeholder="Isi keterangan" ng-model="initiator.keterangan"></textarea>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <label class="col-md-4 control-label">Approval Selanjutnya</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    ng-model="submitter.nextApproval"
+                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                        </div>
+                    </div>-->
+                    <!--<div class="form-group">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline text-red">
+                                <input type="checkbox" ng-model="submitter.isAgreed"> <strong>Dengan ini saya menyatakan telah memahami dan menyetujui dokumen Kajian Risiko ini</strong>
+                            </label>
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="sendClick()"
+                                    ng-disabled="Helper.isNullOrEmpty(initiator.keterangan) || 
+                                                 (!Helper.isNullOrEmptyOrEmptyGuid(idOrm) && approvalStatus.kodeApproval != 0)">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Inisiasi Modal-->
+
+<!-- Start of Submit Modal -->
+<div class="modal fade" id="modalSubmit" tabindex="-1" role="dialog" aria-labelledby="modalSubmitLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalSubmitLabel">Submit Laporan Monitoring Mitigasi</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" rows="5" placeholder="Isi keterangan" ng-model="submitter.keterangan"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listNextApprover.hasNextApprover">
+                        <label class="col-md-4 control-label">Approval Selanjutnya</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    ng-model="submitter.nextApproval"
+                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline text-red">
+                                <input type="checkbox" ng-model="submitter.isAgreed"> <strong>Dengan ini saya menyatakan telah memahami dan menyetujui dokumen Kajian Risiko ini</strong>
+                            </label>
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="submitClick()"
+                                    ng-disabled="(Helper.isNullOrEmpty(submitter.nextApproval) && listNextApprover.hasNextApprover) || Helper.isNullOrEmpty(submitter.keterangan)">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Submit Modal-->
+
+<!-- Start of Approval Modal -->
+<div class="modal fade" id="modalApproval" tabindex="-1" role="dialog" aria-labelledby="modalApprovalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalApprovalLabel">Approval Laporan Monitoring Mitigasi</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" rows="5" placeholder="Isi keterangan terkait approval" ng-model="approver.keterangan"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listNextApprover.hasNextApprover">
+                        <label class="col-md-4 control-label">Approval Selanjutnya</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    ng-model="approver.nextApproval"
+                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline text-red">
+                                <input type="checkbox" ng-model="approver.isAgreed"> <strong>Dengan ini saya menyatakan telah memahami dan menyetujui dokumen Laporan Monitoring Mitigasi ini</strong>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="approveClick()"
+                                    ng-disabled="((!approver.isAgreed || Helper.isNullOrEmpty(approver.nextApproval)) && listNextApprover.hasNextApprover) ||
+                                                 (!approver.isAgreed && !listNextApprover.hasNextApprover) || Helper.isNullOrEmpty(approver.keterangan)">
+                                Approve
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Approval Modal-->
+
+<!-- Start of Disposition Modal -->
+<div class="modal fade" id="modalDisposition" tabindex="-1" role="dialog" aria-labelledby="modalDispositionLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalDispositionLabel">Disposisi Laporan Monitoring Mitigasi</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" ng-model="dispositioner.keterangan" rows="5" placeholder="Isi keterangan terkait disposisi"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listTujuanDisposisi.hasNextApprover">
+                        <label class="col-md-4 control-label">Disposisi Tim MR Unit</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    ng-model="dispositioner.tujuan"
+                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listTujuanDisposisi.data"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary"
+                                    ng-disabled="((Helper.isNullOrEmpty(dispositioner.tujuan) || Helper.isNullOrEmpty(dispositioner.keterangan)) && listTujuanDisposisi.hasNextApprover) ||
+                                                (Helper.isNullOrEmpty(dispositioner.keterangan) && !listTujuanDisposisi.hasNextApprover)"
+                                    ng-click="submitDispositionClick()">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Disposition Modal-->
+
+<!-- Start of Revise Modal -->
+<div class="modal fade" id="modalRevise" tabindex="-1" role="dialog" aria-labelledby="modalReviseLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalReviseLabel">Revisi Laporan Monitoring Mitigasi</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" ng-model="reviser.keterangan" rows="5" placeholder="Isi keterangan terkait revisi"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary"
+                                    ng-disabled="Helper.isNullOrEmpty(reviser.keterangan)"
+                                    ng-click="reviseClick()">
+                                Revise
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Revise Modal-->
+
+<script type="text/javascript">
+    function fadeToggleCollapsible(e) {
+        $(e).next().slideToggle();
+    }
+</script>

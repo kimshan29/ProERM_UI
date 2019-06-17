@@ -1,0 +1,136 @@
+﻿<!--JUDUL-->
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">Distribusi DMR</h1>
+    </div>
+</div>
+<!--END OF JUDUL-->
+
+<!--MAIN CONTENT-->
+<div class="row">
+    <div class="col-md-12 bg-isi bg-isi-bordered padding-10">
+        <form class="form-horizontal ng-pristine ng-valid">
+            <div class="form-group">
+                <label class="control-label col-md-2">Nomor DMR</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           required
+                           name="dmr"
+                           ng-model="dataDMR"
+                           placeholder=""
+                           uib-typeahead="item as item.noDMR + ' - <i>' + item.namaKegiatan + '</i>' for item in renderDmr($viewValue)" 
+                           typeahead-loading="loadingEC"
+                           typeahead-no-results="noResultsDmr"
+                           class="form-control"
+                           typeahead-min-length="3" 
+                           typeahead-editable="true"
+                           typeahead-show-hint="true" 
+                           typeahead-wait-ms="600"
+                           typeahead-input-formatter="$model.noDMR" />
+                    <i ng-show="loadingEC" class="glyphicon glyphicon-refresh"></i>
+                    <div ng-show="noResultsDmr">
+                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                    </div>
+                    <!--<input type="text" required ng-model="data.noDMR" class="form-control" />-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Kepada</label>
+                <div class="col-md-6 ng-binding">
+                    <input type="text"
+                           required
+                           name="kepada"
+                           ng-model="kepada"
+                           placeholder=""
+                           uib-typeahead="item as item.name + ' - <i>' + item.jabatan + '</i>' for item in renderPic($viewValue)" 
+                           typeahead-loading="loadingECPIC"
+                           typeahead-no-results="noResultsPic"
+                           class="form-control"
+                           typeahead-min-length="3" typeahead-editable="true"
+                           typeahead-show-hint="true" typeahead-wait-ms="0"
+                           typeahead-input-formatter="$model.displayCol"/>
+                    <i ng-show="loadingECPIC" class="glyphicon glyphicon-refresh"></i>
+                    <div ng-show="noResultsPic">
+                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" ng-disabled="kepada.name == null || kepada.name == ''" class="btn btn-primary btn-sm" ng-click="eventClickAddPenerima()">
+                        <i class="fa fa-plus-square"></i>
+                        Tambah Penerima
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-8">
+                    <table class="table table-responsive table-bordered">
+                        <thead>
+                            <th class="bg-blue color-white text-center">No.</th>
+                            <th class="bg-blue color-white text-center">Nama</th>
+                            <th class="bg-blue color-white text-center"></th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in data.kepadaList">
+                                <td class="text-center">{{ $index+1 }}.</td>
+                                <td><b>{{ item.name }}</b> - <i>{{ item.jabatan }}</i></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="eventClickHapusPenerima($index)">
+                                        <span class="fa fa-times-circle"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary" ng-click="eventClickSend()">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--END OF MAIN CONTENT-->
+
+<br />
+
+<!--LOG TRAIL DISTRIBUSI DMR-->
+<div class="row">
+    <div class="col-md-12 no-padding">
+        <div class="panel panel-default" style="margin-top:20px">
+            <div class="panel-heading cursor-hand panel-title" onclick="fadeToggleCollapsible(this)">
+                <b><i class="fa fa-reorder"></i> Log Trail Distribusi DMR</b>
+            </div>
+            <div class="panel-body collapse">
+                <table class="table table-striped table-hover font-12">
+                    <thead>
+                        <tr>
+                            <th>No. DMR</th>
+                            <th>Penerima</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in log.data">
+                            <td>{{ item.noDMR }}</td>
+                            <td>
+                                <span ng-repeat="kepada in item.kepadaList">- <b>{{ kepada.name }}</b> - <i>{{ kepada.jabatan }}</i><br /></span>
+                            </td>
+                            <td>{{ item.tanggal.defaultDateTimeFormat() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--END OF LOG TRAIL DISTRIBUSI DMR-->
+
+<script type="text/javascript">
+    function fadeToggleCollapsible(e) {
+        $(e).next().slideToggle();
+    }
+</script>

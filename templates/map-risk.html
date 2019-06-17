@@ -1,0 +1,477 @@
+<style>
+    table.dataTable tbody td, table.dataTable tbody th {
+        padding: 5px 5px !important;
+    }
+
+    .map-risk {
+        width:100%;
+    }
+
+    .risk-box { 
+        text-align:center; 
+        vertical-align:middle;
+        border-collapse:collapse;
+    }
+    .risk-box-default { 
+        padding:30px 0px 30px 0px;
+        background-color:aquamarine;
+        border:1px solid #FFF;
+        width:14%;
+        min-width:14%;
+        max-width:14%;
+        color:#000;
+    }
+
+    .risk-box-default  a { 
+        color:#000;
+    }
+
+    .y-label { 
+        padding:30px 5px 30px 5px;
+    }
+    .y-value {
+        padding:30px 15px 30px 5px;
+    }
+    .y-remark {
+        padding:30px 0px 30px 0px;
+        width:5%;
+        min-width:5%;
+        max-width:5%;
+        color:#337ab7;
+    }
+    .x-label { 
+        padding:15px 0px 15px 0px;
+    }
+    .x-value {
+        padding:15px 0px 15px 0px;
+    }
+    .x-remark {
+        padding:15px 0px 15px 0px;
+        color:#337ab7;
+    }
+
+    .rotate-90 {
+        /* Safari */
+        -webkit-transform: rotate(-90deg);
+
+        /* Firefox */
+        -moz-transform: rotate(-90deg);
+
+        /* IE */
+        -ms-transform: rotate(-90deg);
+
+        /* Opera */
+        -o-transform: rotate(-90deg);
+
+        /* Internet Explorer */
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">{{ title }}</h1>
+    </div>
+</div>
+<form class="form-horizontal" role="form">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="control-label col-md-2">Tahun</label>
+                <div class="col-md-2">
+                     <select class="form-control"
+                        ng-model="tahun" 
+                        ng-options="item.id as item.name for item in master.tahun">
+                    </select>
+                </div>
+                <div class="col-md-8 text-right">
+                    <button type="button" class="btn btn-success" ng-click="downloadClick()" ng-show="isDownloadable">
+                        <span class="fa fa-download"> Download Peta Risiko</span>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Bulan</label>
+                <div class="col-md-2">
+                    <select class="form-control"
+                            ng-model="bulan"
+                            ng-options="item.id as item.name for item in master.bulan"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Jenis</label>
+                <div class="col-md-4">
+                    <select class="form-control"
+                        ng-model="jenis" 
+                        ng-options="item.id as item.name for item in master.jenis">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Kategori</label>
+                <div class="col-md-4">
+                    <select class="form-control"
+                        ng-model="kategori" 
+                        ng-options="item.id as item.name for item in master.kategori"
+                        ng-change="kategoriChange()">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Sub Kategori</label>
+                <div class="col-md-4">
+                    <select class="form-control"
+                            ng-model="subKategori"
+                            ng-options="item.id as item.name for item in master.subKategori"
+                            ng-change="subKategoriChange()">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Kelompok Risiko</label>
+                <div class="col-md-4">
+                    <select class="form-control"
+                            ng-model="kelompokRisiko"
+                            ng-options="item.id as item.name for item in master.kelompokRisiko">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Unit</label>
+                <div class="col-md-4">
+                    <select class="form-control"
+                            ng-model="unit"
+                            ng-options="item.id as item.name for item in master.unit"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-primary" ng-click="refreshClick()">Refresh</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1 text-center">
+                <div class="table-responsive">
+                    <table class="map-risk">
+                        <tr>
+                            <td rowspan="5" class="y-remark">
+                                <div class="rotate-90"><strong>Kemungkinan</strong></div>
+                            </td>
+                            <td align="center" class="risk-box y-label">
+                                Sangat Besar (e)
+                            </td>
+                            <td align="center" class="risk-box y-value">
+                                5
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[0].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[0].id)">
+                                    {{ data[0].jumlahKelompokRisiko == undefined ? data[0].tingkatRisiko : data[0].tingkatRisiko + ": " + data[0].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[1].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[1].id)">
+                                    {{ data[1].jumlahKelompokRisiko == undefined ? data[1].tingkatRisiko : data[1].tingkatRisiko + ": " + data[1].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[2].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[2].id)">
+                                    {{ data[2].jumlahKelompokRisiko == undefined ? data[2].tingkatRisiko : data[2].tingkatRisiko + ": " + data[2].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[3].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[3].id)">
+                                    {{ data[3].jumlahKelompokRisiko == undefined ? data[3].tingkatRisiko : data[3].tingkatRisiko + ": " + data[3].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[4].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[4].id)">
+                                    {{ data[4].jumlahKelompokRisiko == undefined ? data[4].tingkatRisiko : data[4].tingkatRisiko + ": " + data[4].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="risk-box y-label">
+                                Besar (d)
+                            </td>
+                            <td align="center" class="risk-box y-value">
+                                4
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[5].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[5].id)">
+                                    {{ data[5].jumlahKelompokRisiko == undefined ? data[5].tingkatRisiko : data[5].tingkatRisiko + ": " + data[5].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[6].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[6].id)">
+                                    {{ data[6].jumlahKelompokRisiko == undefined ? data[6].tingkatRisiko : data[6].tingkatRisiko + ": " + data[6].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[7].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[7].id)">
+                                    {{ data[7].jumlahKelompokRisiko == undefined ? data[7].tingkatRisiko : data[7].tingkatRisiko + ": " + data[7].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[8].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[8].id)">
+                                    {{ data[8].jumlahKelompokRisiko == undefined ? data[8].tingkatRisiko : data[8].tingkatRisiko + ": " + data[8].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[9].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[9].id)">
+                                    {{ data[9].jumlahKelompokRisiko == undefined ? data[9].tingkatRisiko : data[9].tingkatRisiko + ": " + data[9].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="risk-box y-label">
+                                Sedang (c)
+                            </td>
+                            <td align="center" class="risk-box y-value">
+                                3
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[10].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[10].id)">
+                                    {{ data[10].jumlahKelompokRisiko == undefined ? data[10].tingkatRisiko : data[10].tingkatRisiko + ": " + data[10].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[11].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[11].id)">
+                                    {{ data[11].jumlahKelompokRisiko == undefined ? data[11].tingkatRisiko : data[11].tingkatRisiko + ": " + data[11].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[12].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[12].id)">
+                                    {{ data[12].jumlahKelompokRisiko == undefined ? data[12].tingkatRisiko : data[12].tingkatRisiko + ": " + data[12].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[13].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[13].id)">
+                                    {{ data[13].jumlahKelompokRisiko == undefined ? data[13].tingkatRisiko : data[13].tingkatRisiko + ": " + data[13].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[14].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[14].id)">
+                                    {{ data[14].jumlahKelompokRisiko == undefined ? data[14].tingkatRisiko : data[14].tingkatRisiko + ": " + data[14].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="risk-box y-label">
+                                Kecil (b)
+                            </td>
+                            <td align="center" class="risk-box y-value">
+                                2
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[15].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[15].id)">
+                                    {{ data[15].jumlahKelompokRisiko == undefined ? data[15].tingkatRisiko : data[15].tingkatRisiko + ": " + data[15].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[16].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[16].id)">
+                                    {{ data[16].jumlahKelompokRisiko == undefined ? data[16].tingkatRisiko : data[16].tingkatRisiko + ": " + data[16].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[17].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[17].id)">
+                                    {{ data[17].jumlahKelompokRisiko == undefined ? data[17].tingkatRisiko : data[17].tingkatRisiko + ": " + data[17].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[18].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[18].id)">
+                                    {{ data[18].jumlahKelompokRisiko == undefined ? data[18].tingkatRisiko : data[18].tingkatRisiko + ": " + data[18].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[19].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[19].id)">
+                                    {{ data[19].jumlahKelompokRisiko == undefined ? data[19].tingkatRisiko : data[19].tingkatRisiko + ": " + data[19].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="risk-box y-label">
+                                Sangat Kecil (a)
+                            </td>
+                            <td align="center" class="risk-box y-value">
+                                1
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[20].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[20].id)">
+                                    {{ data[20].jumlahKelompokRisiko == undefined ? data[20].tingkatRisiko : data[20].tingkatRisiko + ": " + data[20].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[21].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[21].id)">
+                                    {{ data[21].jumlahKelompokRisiko == undefined ? data[21].tingkatRisiko : data[21].tingkatRisiko + ": " + data[21].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[22].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[22].id)">
+                                    {{ data[22].jumlahKelompokRisiko == undefined ? data[22].tingkatRisiko : data[22].tingkatRisiko + ": " + data[22].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[23].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[23].id)">
+                                    {{ data[23].jumlahKelompokRisiko == undefined ? data[23].tingkatRisiko : data[23].tingkatRisiko + ": " + data[23].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                            <td align="center" class="risk-box risk-box-default" style="background-color:{{ data[24].warna }}">
+                                <span class="cursor-hand underline-hover" ng-click="cellMapClick(data[24].id)">
+                                    {{ data[24].jumlahKelompokRisiko == undefined ? data[24].tingkatRisiko : data[24].tingkatRisiko + ": " + data[24].jumlahKelompokRisiko }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                            <td align="center" class="risk-box x-value">1</td>
+                            <td align="center" class="risk-box x-value">2</td>
+                            <td align="center" class="risk-box x-value">3</td>
+                            <td align="center" class="risk-box x-value">4</td>
+                            <td align="center" class="risk-box x-value">5</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                            <td align="center" class="risk-box x-label">Tidak Signifikan (1)</td>
+                            <td align="center" class="risk-box x-label">Minor (2)</td>
+                            <td align="center" class="risk-box x-label">Medium (3)</td>
+                            <td align="center" class="risk-box x-label">Signifikan (4)</td>
+                            <td align="center" class="risk-box x-label">Malapetaka (5)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                            <td colspan="5" align="center" class="x-remark"><strong>Dampak</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
+
+<!-- Start of Map Detail Modal -->
+<div class="modal fade no-padding" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel">
+    <div class="modal-dialog" role="document" style="width:100%;">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalDetailLabel"><b>Detail Peta Risiko</b></h4>
+            </div>
+            <div class="modal-body" style="padding:5px;">
+                <form class="form-horizontal">
+                    <div class="panel panel-default bg-white margin-5" ng-repeat="item in dataDetail">
+                        <!--Profil Risiko-->
+                        <div class="panel-heading bg-blue" onclick="fadeToggleCollapsible(this)">
+                            <h5 class="panel-title">
+                                <a style="cursor:pointer;">
+                                    <i class="fa fa-reorder"></i>
+                                    <b>Profil Risiko : {{ item.name }}</b>
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="panel-body collapse" style="padding:5px;">
+                            <div class="col-md-12" style="padding:0px;">
+                                <!--Unit-->
+                                <div class="alert alert-info text-center" ng-if="!(item.unit != null && item.unit.length > 0)">
+                                    No data available.
+                                </div>
+                                <div class="panel panel-default bg-white margin-5" ng-repeat="item2 in item.unit">
+                                    <div class="panel-heading bg-info" onclick="fadeToggleCollapsible(this)">
+                                        <h5 class="panel-title">
+                                            <a style="cursor:pointer;">
+                                                <i class="fa fa-reorder"></i>
+                                                <b>Unit : {{ item2.name }}</b>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div class="panel-body collapse" style="padding:5px;">
+                                        <!--Divisi-->
+                                        <div class="alert alert-info text-center" ng-if="!(item2.divisi != null && item2.divisi.length > 0)">
+                                            No data available.
+                                        </div>
+                                        <div class="panel panel-default bg-white margin-5" ng-repeat="item3 in item2.divisi">
+                                            <div class="panel-heading bg-green" onclick="fadeToggleCollapsible(this)">
+                                                <h5 class="panel-title">
+                                                    <a style="cursor:pointer;">
+                                                        <i class="fa fa-reorder"></i>
+                                                        <b>Divisi : {{ item3.name }}</b>
+                                                    </a>
+                                                </h5>
+                                            </div>
+                                            <div class="panel-body collapse" style="padding:5px;">
+                                                <!--Mitigasi-->
+                                                <div class="alert alert-info text-center" ng-if="!(item3.mitigasi != null && item3.mitigasi.length > 0)">
+                                                    No data available.
+                                                </div>
+                                                <div class="panel panel-default" ng-repeat="item4 in item3.mitigasi">
+                                                    <div class="panel-heading bg-orange" onclick="fadeToggleCollapsible(this)">
+                                                        <h5 class="panel-title">
+                                                            <a style="cursor:pointer;">
+                                                                <i class="fa fa-reorder"></i>
+                                                                <b>Mitigasi : {{ item4.name }}</b>
+                                                            </a>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="panel-body collapse table-responsive" style="font-size:11px;padding:5px;">
+                                                        <table class="table table-responsive" style="overflow-x:scroll">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="min-width:120px">NO KR</th>
+                                                                    <th style="min-width:150px">ID UNIT</th>
+                                                                    <th style="min-width:200px">DIVISI</th>
+                                                                    <th style="min-width:200px">STRATEGIC OBJECTIVE</th>
+                                                                    <th style="min-width:200px">PIC KOORDINATOR</th>
+                                                                    <th style="min-width:200px">RENCANA KERJA MITIGASI</th>
+                                                                    <th style="min-width:200px">PENYEBAB</th>
+                                                                    <th style="min-width:200px">KEJADIAN</th>
+                                                                    <th style="min-width:250px">LANGKAH KERJA</th>
+                                                                    <th style="min-width:200px">PIC LANGKAH KERJA</th>
+                                                                    <th style="min-width:80px">MULAI</th>
+                                                                    <th style="min-width:80px">SELESAI</th>
+                                                                    <th class="text-right" style="min-width:150px">BIAYA</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="item5 in item4.data">
+                                                                    <td>{{ item5.noKR }}</td>
+                                                                    <td>{{ item5.unit }}</td>
+                                                                    <td>{{ item5.divisi }}</td>
+                                                                    <td>{{ item5.strategicObjective }}</td>
+                                                                    <td>{{ item5.picKoordinator }}</td>
+                                                                    <td>{{ item5.rencanaKerjaMitigasi }}</td>
+                                                                    <td>{{ item5.penyebab }}</td>
+                                                                    <td>{{ item5.kejadian }}</td>
+                                                                    <td>{{ item5.langkahKerja }}</td>
+                                                                    <td>{{ item5.picLangkahKerja }}</td>
+                                                                    <td>{{ item5.waktuMulai.defaultDateFormat() }}</td>
+                                                                    <td>{{ item5.waktuSelesai.defaultDateFormat() }}</td>
+                                                                    <td class="text-right">{{ item5.currency }} {{ item5.biaya.formatMoney() }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-primary" style="width:100% !important;color:white;position:absolute;top:0px;left:0px;right:0px;{{ hasFinish }}">
+                <h1 style="margin:auto;color:white;"><center style="color:white;">Loading . . .</center></h1>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Map Detail Modal -->
+
+<script type="text/javascript">
+    function fadeToggleCollapsible(e) {
+        $(e).next().slideToggle();
+    }
+</script>

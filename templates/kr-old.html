@@ -1,0 +1,1375 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Pembuatan Kajian Risiko</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 text-right">
+        <div class="" style="margin-bottom:10px">
+            <!--<button type="button" class="btn btn-primary" 
+                    ng-click="submitClick()" 
+                    ng-disabled="krHeader.isEditMode || pk.isEditMode || id.totalOpenedForEditing > 0 || ae.totalOpenedForEditing || rm.totalOpenedForEditing || !isFormComplete"
+                    ng-show="approvalStatus.kodeApproval == 1 && isCurrentApprover">
+                Submit
+            </button>-->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSubmit" ng-click="" ng-disabled="krHeader.isEditMode || pk.isEditMode || id.totalOpenedForEditing > 0 || ae.totalOpenedForEditing || rm.totalOpenedForEditing || !isFormComplete"
+                ng-show="approvalStatus.kodeApproval == 1 && isCurrentApprover">
+                Submit
+            </button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Revise
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition" ng-show="(approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Disposition
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Approve
+            </button>
+        </div>
+    </div>
+</div>
+<!--<form class="form-horizontal" role="form">-->
+<div class="panel panel-default">
+    <div class="row">
+        <div class="col-lg-12">
+            <form class="form-horizontal">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">No. KR</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static">{{ krHeader.data.noKR }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Judul KR</label>
+                        <div class="col-md-10" ng-show="krHeader.isEditMode">
+                            <input type="text" class="form-control" value="{{ krHeader.data.judulKR }}" ng-model="krHeader.data.judulKR" ng-blur="krHeader.judulChange()"
+                            />
+                        </div>
+                        <div class="col-md-10" ng-show="!krHeader.isEditMode">
+                            <p class="form-control-static">
+                                {{ krHeader.data.judulKR }}
+                                <button class="btn btn-xs btn-info" title="Edit Judul KR" ng-show="isDataEditable" ng-click="krHeader.editClick()">
+                                    <i class="fa fa-pencil cursor-hand"></i>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Nama</label>
+                        <div class="col-md-4">
+                            <p class="form-control-static">{{ krHeader.data.nama }}</p>
+                        </div>
+                        <label class="control-label col-md-2">Entitas</label>
+                        <div class="col-md-4">
+                            <p class="form-control-static">{{ krHeader.data.entitas.name }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Jabatan</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static">{{ krHeader.data.jabatan }}</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs nav-blue" style="padding-left:1%;">
+                <li role="presentation" class="active">
+                    <a href="#tab1" data-toggle="tab" ng-click="tabClick(0)">Penetapan Konteks</a>
+                </li>
+                <li role="presentation">
+                    <a href="#tab2" data-toggle="tab" ng-click="tabClick(1)">Identifikasi</a>
+                </li>
+                <li role="presentation">
+                    <a href="#tab3" data-toggle="tab" ng-click="tabClick(2)">Analisa &amp; Evaluasi</a>
+                </li>
+                <li role="presentation">
+                    <a href="#tab4" data-toggle="tab" ng-click="tabClick(3)">Rencana Mitigasi</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!-- Start of tab1 -->
+                <div class="tab-pane active" id="tab1">
+                    <form class="form-horizontal" name="formPK">
+                        <div class="cust-panel-content bg-isi">
+                            <div class="alert alert-danger" ng-show="!Helper.isNullOrEmpty(editingTab)">
+                                <center>Data di tab lain (
+                                    <span ng-bind="editingTab"></span> ) harus disimpan (save) atau batalkan perubahan (discard) terlebih dahulu sebelum
+                                    dapat mengubah data di tab ini</center>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-md-offset-6 text-right">
+                                    <button type="button" class="btn btn-info" ng-show="pk.isEditMode && isDataEditable" ng-click="pk.saveChangesClick()" ng-disabled="pk.data.detailSasaran.length == 0"
+                                        validation-submit="formPK">Save Changes</button>
+                                    <button type="button" class="btn btn-warning" ng-show="pk.isEditMode && isDataEditable" ng-click="pk.discardChangesClick()">Discard Changes</button>
+                                    <button type="button" class="btn btn-info" ng-show="!pk.isEditMode && isDataEditable && Helper.isNullOrEmpty(editingTab)"
+                                        ng-disabled="Helper.isNullOrEmpty(krHeader.data.judulKR)" ng-click="pk.editClick(formPK)">
+                                        <span class="fa fa-pencil"></span> Edit
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="help-block">Jenis Kajian</h4>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Jenis Kajian</label>
+                                <div class="col-md-6" ng-show="pk.isEditMode">
+                                    <div class="col-md-6">
+                                        <select class="form-control" name="ddKrJenisKajian" ng-model="pk.data.jenisKajian.id" ng-disabled="Helper.isNullOrEmpty(krHeader.data.judulKR)"
+                                            validator="required, emptyGuid">
+                                            <option ng-repeat="item in pk.master.jenisKajian" value="{{ item.id }}" ng-selected="{{ item.id == pk.data.jenisKajian.id }}">
+                                                {{ item.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-control" name="ddKrSubJenisKajian" ng-model="pk.data.subJenisKajian.id" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(pk.data.jenisKajian.id)"
+                                            validator="required, emptyGuid">
+                                            <option ng-repeat="item in pk.master.subJenisKajian" value="{{ item.id }}" ng-selected="{{ item.id == pk.data.subJenisKajian.id }}">
+                                                {{ item.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ng-show="!pk.isEditMode">
+                                    <p class="form-control-static">{{pk.data.jenisKajian.name}} ( {{pk.data.subJenisKajian.name}} )</p>
+                                </div>
+                                <label class="control-label col-md-2">Tahun</label>
+                                <div class="col-md-2">
+                                    <p class="form-control-static">{{pk.data.tahun}}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Risk Owner</label>
+                                <div class="col-md-10" ng-show="pk.isEditMode">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="ddKrRiskOwner" ng-model="pk.data.riskOwner.id" ng-change="pk.riskOwnerChange()" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(pk.data.subJenisKajian.id) || !pk.isEditMode"
+                                            validator="required, emptyGuid">
+                                            <option ng-repeat="item in pk.master.riskOwner" value="{{ item.id }}" ng-selected="{{ item.id == pk.data.riskOwner.id }}">
+                                                {{ item.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-10" ng-show="!pk.isEditMode">
+                                    <p class="form-control-static">{{pk.data.riskOwner.name}}</p>
+                                </div>
+                            </div>
+                            <h4 class="help-block">Detail Sasaran</h4>
+                            <div class="panel panel-default bg-green-1" ng-repeat="item in pk.data.detailSasaran">
+                                <div class="text-right" style="margin-top:5px; margin-right:5px;">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="pk.hapusSasaranClick($index)" ng-show="pk.isEditMode">
+                                        <span class="fa fa-times-circle"></span> Hapus
+                                    </button>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Sasaran Strategis</label>
+                                        <div class="col-md-10" ng-show="pk.isEditMode">
+                                            <select class="form-control" id="angular-$index" name="ddKrSasaranStrategis{{$index}}" ng-disabled="!Helper.isNullOrEmptyOrEmptyGuid(pk.data.detailSasaran[$index].sasaranKPIKM[0].kpikmId) || !pk.isEditMode"
+                                                ng-model="pk.data.detailSasaran[$index].sasaranStrategis.id" ng-change="pk.sasaranStrategisChange($index, pk.data.detailSasaran[$index].sasaranStrategis.id)"
+                                                ng-options="item.id as item.name for item in pk.master.sasaranStrategis[$index]"
+                                                validator="required, emptyGuid"></select>
+                                        </div>
+                                        <div class="col-md-10" ng-show="!pk.isEditMode">
+                                            <p class="form-control-static">{{pk.data.detailSasaran[$index].sasaranStrategis.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-repeat="item in pk.master.sasaranKPIKM[$index]">
+                                        <label class="control-label col-md-2">{{ $index == 0 ? "Sasaran KPI/KM" : "" }}</label>
+                                        <div class="col-md-10" ng-show="pk.isEditMode">
+                                            <div class="input-group">
+                                                <select class="form-control" name="ddKrSasaranKpiKm{{$index}}" message-id="ddKrSasaranKpiKm{{$index}}" ng-model="pk.data.detailSasaran[$parent.$index].sasaranKPIKM[$index].kpikmId"
+                                                    ng-change="pk.sasaranKPIKMChange($parent.$index, $index)" ng-options="subItem.kpikmId as subItem.name for subItem in item"
+                                                    ng-disabled="!pk.isEditMode" validator="required, emptyGuid"></select>
+                                                <div class="input-group-btn" ng-show="pk.isEditMode">
+                                                    <button type="button" class="btn btn-danger" ng-click="pk.sasaranKPIKMDelete($parent.$index, $index)">
+                                                        <i class="fa fa-times-circle"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <span id="ddKrSasaranKpiKm{{$index}}"></span>
+                                            <p class="form-static-control help-block">
+                                                <small class="help-block">
+                                                    <i>{{ pk.data.detailSasaran[$parent.$index].sasaranKPIKM[$index].keterangan
+                                                        }}</i>
+                                                </small>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-10" ng-show="!pk.isEditMode">
+                                            <p class="form-control-static">
+                                                {{pk.data.detailSasaran[$parent.$index].sasaranKPIKM[$index].name}}
+                                                <br />
+                                                <small class="help-block">
+                                                    <i>({{ pk.data.detailSasaran[$parent.$index].sasaranKPIKM[$index].keterangan
+                                                        }})</i>
+                                                </small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-show="pk.isEditMode">
+                                        <div class="col-md-10 col-md-offset-2">
+                                            <button type="button" class="btn btn-primary btn-sm" ng-click="pk.sasaranKPIKMAdd($index)">
+                                                <i class="fa fa-plus-circle"></i> Tambah Sasaran KPI/KM
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="pk.isEditMode">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary btn-sm" ng-click="pk.tambahSasaranClick()" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(pk.data.riskOwner.id)">
+                                        <span class="fa fa-plus-circle"></span> Tambah Sasaran
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of tab1 -->
+
+                <!-- Start of tab2 -->
+                <div class="tab-pane" id="tab2">
+                    <form name="formID">
+                        <div class="cust-panel-content bg-isi">
+                            <div class="alert alert-danger" ng-show="!Helper.isNullOrEmpty(editingTab)">
+                                <center>Data di tab lain (
+                                    <span ng-bind="editingTab"></span> ) harus disimpan (save) atau batalkan perubahan (discard) terlebih dahulu sebelum
+                                    dapat mengubah data di tab ini</center>
+                            </div>
+                            <div class="row" ng-show="id.totalOpenedForEditing > 0">
+                                <div class="col-md-3 col-md-offset-3">
+                                    <button type="button" class="btn btn-info btn-block" ng-click="id.saveAllChangesClick()">
+                                        Save All Changes
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-warning btn-block" ng-click="id.discardAllChangesClick()">Discard All Changes</button>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="id.totalOpenedForEditing > 0">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="panel panel-default" ng-repeat="item in id.data">
+                                <div class="panel-heading cursor-hand panel-title" onclick="fadeToggleCollapsible(this)">
+                                    {{ item.sasaranStrategis.name }}
+                                    <i class="fa fa-angle-double-right"></i> {{ item.name }}
+                                </div>
+                                <div class="panel-body {{ id.collapse[$index] }}">
+                                    <ng-form class="form-horizontal" name="formID[{{$index}}]">
+                                        <div class="form-group">
+                                            <div class="col-md-6 col-md-offset-6 text-right">
+                                                <button type="button" class="btn btn-info" ng-show="id.isEditMode[$index] && isDataEditable" ng-click="id.saveChangesClick($index, formID[$index])"
+                                                    ng-disabled="item.detailRisiko.length == 0 || id.isPenyebabComplete($parent.$index, $index)">Save Changes</button>
+                                                <button type="button" class="btn btn-warning" ng-show="id.isEditMode[$index] && isDataEditable" ng-click="id.discardChangesClick($index)">Discard Changes</button>
+                                                <button type="button" class="btn btn-info" ng-show="!id.isEditMode[$index]  && isDataEditable && Helper.isNullOrEmpty(editingTab)"
+                                                    ng-click="id.editClick($index, formID[$index])">
+                                                    <span class="fa fa-pencil"></span> Edit
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-2">Sasaran Strategis</label>
+                                            <div class="col-md-10">
+                                                <p class="form-control-static">{{ item.sasaranStrategis.name }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-2">Sasaran KPI/KM</label>
+                                            <div class="col-md-10">
+                                                <p class="form-control-static">{{ item.name }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default bg-green-1" ng-repeat="item in item.detailRisiko">
+                                            <div class="text-right" style="margin-top:5px; margin-right:5px;" ng-show="id.isEditMode[$parent.$index]">
+                                                <button type="button" class="btn btn-danger btn-sm" ng-click="id.detailKategoriRisikoDelete($parent.$index, $index)">
+                                                    <span class="fa fa-times-circle"></span> Hapus
+                                                </button>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Kategori Risiko</label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdKatRisk{{$parent.$index}}{{$index}}" ng-disabled="!Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].kategoriRisiko.id"
+                                                            ng-change="id.kategoriRisikoChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.kategoriRisiko[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].kategoriRisiko.name}}</p>
+                                                    </div>
+                                                    <label class="control-label col-md-2">Sub Kategori</label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdSubKatRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].kategoriRisiko.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].subKategori.id"
+                                                            ng-change="id.subKategoriRisikoChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.subKategoriRisiko[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].subKategori.name}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Kelompok Risiko</label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdKelompokRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].subKategori.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].risiko.id"
+                                                            ng-change="id.risikoChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.risiko[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].risiko.name}}</p>
+                                                    </div>
+                                                    <label class="control-label col-md-2">Area Dampak</label>
+                                                    <div class="col-md-4">
+                                                        <p class="form-control-static">
+                                                            {{ id.data[$parent.$index].detailRisiko[$index].kejadian.areaDampak.name }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Kejadian Risiko</label>
+                                                    <div class="col-md-10" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdKejadianRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].risiko.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].kejadian.id"
+                                                            ng-change="id.kejadianChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.kejadian[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-10" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].kejadian.name}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Tipe Sumber Risiko</label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdTipeSumberRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].kejadian.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].tipeSumberRisiko.id"
+                                                            ng-change="id.tipeSumberRisikoChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.tipeSumberRisiko[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].tipeSumberRisiko.name}}</p>
+                                                    </div>
+                                                    <label class="control-label col-md-2">Sumber Risiko</label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdSumberRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].tipeSumberRisiko.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)"
+                                                            ng-model="id.data[$parent.$index].detailRisiko[$index].sumberRisiko.id"
+                                                            ng-change="id.sumberRisikoChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.sumberRisiko[$parent.$index][$index]"
+                                                            validator="required, emptyGuid"></select>
+                                                    </div>
+                                                    <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].sumberRisiko.name}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-repeat="item in id.data[$parent.$index].detailRisiko[$index].penyebab">
+                                                    <label class="control-label col-md-2">{{ $index==0 ? "Penyebab" : ""}}</label>
+                                                    <div class="col-md-10" ng-show="id.isEditMode[$parent.$parent.$index]">
+                                                        <div class="input-group">
+                                                            <input type="text" name="tPenyebab{{$parent.$parent.$index}}{{$parent.$index}}{{$index}}" message-id="tPenyebab{{$parent.$parent.$index}}{{$parent.$index}}{{$index}}"
+                                                                ng-model="item.name" placeholder="" uib-typeahead="item.name for item in id.listPenyebab($viewValue)"
+                                                                typeahead-loading="loadingEC" class="form-control" typeahead-min-length="3"
+                                                                typeahead-editable="true" typeahead-show-hint="true" typeahead-wait-ms="1200"
+                                                                validator="required" />
+                                                            <i ng-show="loadingEC" class="glyphicon glyphicon-refresh"></i>
+                                                            <div class="input-group-btn">
+                                                                <button type="button" class="btn btn-danger" ng-click="id.penyebabDelete($parent.$parent.$index, $parent.$index, $index)">
+                                                                    <i class="fa fa-times-circle"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <span id="tPenyebab{{$parent.$parent.$index}}{{$parent.$index}}{{$index}}"></span>
+                                                    </div>
+                                                    <div class="col-md-10" ng-show="!id.isEditMode[$parent.$parent.$index]">
+                                                        <p class="form-control-static">{{id.data[$parent.$parent.$index].detailRisiko[$parent.$index].penyebab[$index].name}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-show="id.isEditMode[$parent.$index]">
+                                                    <div class="col-md-10 col-md-offset-2">
+                                                        <button type="button" class="btn btn-primary btn-sm" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].sumberRisiko.id)"
+                                                            ng-click="id.penyebabAdd($parent.$index, $index)">
+                                                            <i class="fa fa-plus-circle"></i> Tambah Penyebab
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="id.isEditMode[$index]">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary btn-sm" ng-click="id.kategoriRisikoAdd($index)">
+                                                    <span class="fa fa-plus-circle"></span> Tambah Kategori Risiko
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </ng-form>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of tab2 -->
+
+                <!-- Start of tab3 -->
+                <div class="tab-pane" id="tab3">
+                    <form name="formAE">
+                        <div class="cust-panel-content bg-isi">
+                            <div class="alert alert-danger" ng-show="!Helper.isNullOrEmpty(editingTab)">
+                                <center>Data di tab lain (
+                                    <span ng-bind="editingTab"></span> ) harus disimpan (save) atau batalkan perubahan (discard) terlebih dahulu sebelum
+                                    dapat mengubah data di tab ini</center>
+                            </div>
+                            <div class="row" ng-show="ae.totalOpenedForEditing > 0">
+                                <div class="col-md-3 col-md-offset-3">
+                                    <button type="button" class="btn btn-info btn-block" ng-click="ae.saveAllChangesClick()">
+                                        Save All Changes
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-warning btn-block" ng-click="ae.discardAllChangesClick()">Discard All Changes</button>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="ae.totalOpenedForEditing > 0">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="panel panel-default" ng-repeat="item in ae.data">
+                                <div class="panel-heading cursor-hand panel-title" onclick="fadeToggleCollapsible(this)">{{ item.sasaranStrategis.name }}
+                                    <i class="fa fa-angle-double-right"></i> {{ item.sasaranKPIKM.name }}
+                                    <i class="fa fa-angle-double-right"></i> {{ item.risiko.name }}</div>
+                                <div class="panel-body {{ ae.collapse1[$index] }}">
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Kategori Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.kategoriRisiko.name }}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Sub Kategori</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.subKategori.name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.risiko.name }}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Area Dampak</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.kejadian.areaDampak.name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Kejadian</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static">{{ item.kejadian.name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Tipe Sumber Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.tipeSumberRisiko.name }}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Sumber Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.sumberRisiko.name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default" ng-repeat="item in item.listPenyebab" style="margin-left:30px">
+                                        <div class="panel-heading cursor-hand" onclick="fadeToggleCollapsible(this)">Penyebab : {{item.penyebab}}</div>
+                                        <div class="panel-body {{ ae.collapse2[$parent.$index][$index]}}">
+                                            <ng-form class="form-horizontal" name="formAE[{{$parent.$index}}].penyebab[{{$index}}]">
+                                                <div class="form-group">
+                                                    <div class="col-md-6 col-md-offset-6 text-right">
+                                                        <button type="button" class="btn btn-info" ng-show="ae.isEditMode[$parent.$index][$index] && isDataEditable" ng-click="ae.saveChangesClick($parent.$index, $index, formAE[$parent.$index].penyebab[$index])">Save Changes</button>
+                                                        <button type="button" class="btn btn-warning" ng-show="ae.isEditMode[$parent.$index][$index] && isDataEditable" ng-click="ae.discardChangesClick($parent.$index, $index)">Discard Changes</button>
+                                                        <button type="button" class="btn btn-info" ng-show="!ae.isEditMode[$parent.$index][$index] && isDataEditable && Helper.isNullOrEmpty(editingTab)"
+                                                            ng-click="ae.editClick($parent.$index, $index, formAE[$parent.$index].penyebab[$index])">
+                                                            <span class="fa fa-pencil"></span> Edit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <fieldset class="bordered-fieldset">
+                                                    <legend class="bordered-fieldset help-block">
+                                                        <strong style="font-size:smaller">Inherent Risk</strong>
+                                                    </legend>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Peringkat Dampak</label>
+                                                        <div class="col-md-6" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAePeringkatDampak{{$parent.$index}}{{$index}}" ng-model="item.peringkatDampakIR.id"
+                                                                ng-change="ae.peringkatDampakIRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.peringkatDampakIR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="control-label col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">{{item.peringkatDampakIR.keterangan}}</div>
+                                                        <div class="col-md-10" ng-show="!ae.isEditMode[$parent.$index][$index]">
+                                                            <p class="form-control-static">
+                                                                {{ item.peringkatDampakIR.name }} [ {{ item.peringkatDampakIR.keterangan }} ]
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Peringkat Kemungkinan</label>
+                                                        <div class="col-md-2" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAeTipePeringkatKemungkinan{{$parent.$index}}{{$index}}" ng-model="item.tipePeringkatKemungkinanIR.id"
+                                                                ng-change="ae.tipePeringkatKemungkinanIRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.tipePeringkatKemungkinanIR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAePeringkatKemungkinan{{$parent.$index}}{{$index}}" ng-model="item.peringkatKemungkinanIR.id"
+                                                                ng-change="ae.peringkatKemungkinanIRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.peringkatKemungkinanIR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="control-label col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            {{ae.data[$parent.$index].listPenyebab[$index].peringkatKemungkinanIR.keterangan}}
+                                                        </div>
+                                                        <div class="col-md-10" ng-show="!ae.isEditMode[$parent.$index][$index]">
+                                                            <p class="form-control-static">
+                                                                {{ ae.data[$parent.$index].listPenyebab[$index].tipePeringkatKemungkinanIR.name }} - {{ ae.data[$parent.$index].listPenyebab[$index].peringkatKemungkinanIR.name
+                                                                }} [ {{ ae.data[$parent.$index].listPenyebab[$index].peringkatKemungkinanIR.keterangan
+                                                                }} ]
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Tingkat Risiko</label>
+                                                        <div class="col-md-4">
+                                                            <p class="form-control-static" style="color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoIR.warna, '#333') }}">
+                                                                <span style="background-color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoIR.warna, '#fff') }}">&emsp;</span>
+                                                                {{item.tingkatRisikoIR.name}}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                                <div class="form-group" ng-show="item.tingkatRisikoIR.name.toLowerCase().includes('rendah') ||
+                                                        item.tingkatRisikoIR.name.toLowerCase().includes('moderat')">
+                                                    <div class="col-md-12">
+                                                        <p class="alert alert-info">
+                                                            Existing Control dan Controlled Risk tidak diperlukan karena Tingkat Risiko Inherent Risk {{item.tingkatRisikoIR.name}} (Risiko
+                                                            Diterima)
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <h4 class="help-block" ng-show="!(item.tingkatRisikoIR.name.toLowerCase().includes('rendah') ||
+                                                    item.tingkatRisikoIR.name.toLowerCase().includes('moderat') )">
+                                                    Existing Control
+                                                </h4>
+
+                                                <div class="panel panel-default bg-white" ng-repeat="item in item.existingControl" ng-show="!(item.tingkatRisikoIR.name.toLowerCase().includes('rendah') ||
+                                                    item.tingkatRisikoIR.name.toLowerCase().includes('moderat') )">
+                                                    <div class="text-right" style="margin-top:5px; margin-right:5px;">
+                                                        <button type="button" class="btn btn-danger btn-sm" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]" ng-click="ae.existingControlDelete($parent.$parent.$index, $parent.$index, $index)">
+                                                            <span class="fa fa-times-circle"></span> Hapus
+                                                        </button>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-2">Existing Control</label>
+                                                            <div class="col-md-10" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                <input type="text" name="ddAePeringkatKemungkinan{{$parent.$parent.$index}}{{$parent.$index}}{{$index}}" ng-model="item.name"
+                                                                    placeholder="" uib-typeahead="item.name for item in ae.listExistingControl($viewValue)"
+                                                                    typeahead-loading="loadingEC" class="form-control" typeahead-min-length="3"
+                                                                    typeahead-editable="true" typeahead-show-hint="true" typeahead-wait-ms="1200"
+                                                                    validator="required" />
+                                                                <i ng-show="loadingEC" class="glyphicon glyphicon-refresh"></i>
+                                                            </div>
+                                                            <div class="col-md-10" ng-show="!ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                <p class="form-control-static">
+                                                                    {{ item.name }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <fieldset class="bordered-fieldset">
+                                                                    <legend class="bordered-fieldset help-block">
+                                                                        <strong style="font-size:smaller">Efektivitas</strong>
+                                                                    </legend>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="control-label col-md-4">Approach</label>
+                                                                                <div class="col-md-8" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <select class="form-control" ng-model="item.approach" ng-change="ae.adliChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                        ng-options="item.id as item.name for item in ae.master.efektivitasA"></select>
+                                                                                </div>
+                                                                                <div class="col-md-8" ng-show="!ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <p class="form-control-static">
+                                                                                        {{ item.approach }}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="control-label col-md-4">Deployment</label>
+                                                                                <div class="col-md-8" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <select class="form-control" ng-model="item.deployment" ng-change="ae.adliChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                        ng-options="item.id as item.name for item in ae.master.efektivitasDLI[$parent.$parent.$index][ $parent.$index][$index]"></select>
+                                                                                </div>
+                                                                                <div class="col-md-8" ng-show="!ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <p class="form-control-static">
+                                                                                        {{ item.deployment }}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="control-label col-md-4">Learning</label>
+                                                                                <div class="col-md-8" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <select class="form-control" ng-model="item.learning" ng-change="ae.adliChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                        ng-options="item.id as item.name for item in ae.master.efektivitasDLI[$parent.$parent.$index][ $parent.$index][$index]"></select>
+                                                                                </div>
+                                                                                <div class="col-md-8" ng-show="!ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <p class="form-control-static">
+                                                                                        {{ item.learning }}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="control-label col-md-4">Integration</label>
+                                                                                <div class="col-md-8" ng-show="ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <select class="form-control" ng-model="item.integration" ng-change="ae.adliChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                        ng-options="item.id as item.name for item in ae.master.efektivitasDLI[$parent.$parent.$index][ $parent.$index][$index]"></select>
+                                                                                </div>
+                                                                                <div class="col-md-8" ng-show="!ae.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                                    <p class="form-control-static">
+                                                                                        {{ item.integration }}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="control-label col-md-4">Nilai Efektivitas</label>
+                                                                                <div class="col-md-8">
+                                                                                    <p class="form-control-static text-success">
+                                                                                        {{ item.nilai }}
+                                                                                        <span class="{{ Helper.getClassEfektivitas(item.nilai) }}">&emsp;</span>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-12">
+                                                                                    <span class="text-primary">
+                                                                                        <strong>Legenda Nilai Efektivitas</strong>
+                                                                                    </span>
+                                                                                    <p class="text-danger">
+                                                                                        <span class="label-danger">&emsp;</span>
+                                                                                        0 s.d &lt; 1.5 Tidak Efektif
+                                                                                    </p>
+                                                                                    <p class="text-warning">
+                                                                                        <span class="label-warning">&emsp;</span>
+                                                                                        1.5 s.d &lt; 3 Kurang Efektif
+                                                                                    </p>
+                                                                                    <p class="text-primary">
+                                                                                        <span class="label-primary">&emsp;</span>
+                                                                                        3 s.d &lt; 4 Efektif
+                                                                                    </p>
+                                                                                    <p class="text-success">
+                                                                                        <span class="label-success">&emsp;</span>
+                                                                                        &gt;= 4 Sangat Efektif
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" ng-show="!(item.tingkatRisikoIR.name.toLowerCase().includes('rendah') ||
+                                                            item.tingkatRisikoIR.name.toLowerCase().includes('moderat') )
+                                                            && ae.isEditMode[$parent.$index][$index]">
+                                                    <div class="col-md-12">
+                                                        <button type="button" class="btn btn-primary btn-sm" ng-click="ae.existingControlAdd($parent.$index, $index)">
+                                                            <span class="fa fa-plus-circle"></span> Tambah Existing Control
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="row" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                    <div class="col-md-12">&nbsp;</div>
+                                                </div>
+                                                <fieldset class="bordered-fieldset" ng-show="!(item.tingkatRisikoIR.name.toLowerCase().includes('rendah') ||
+                                                            item.tingkatRisikoIR.name.toLowerCase().includes('moderat') )">
+                                                    <legend class="bordered-fieldset help-block">
+                                                        <strong style="font-size:smaller">Controlled Risk</strong>
+                                                    </legend>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Peringkat Dampak</label>
+                                                        <div class="col-md-6" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAePeringkatDampakCr{{$parent.$index}}{{$index}}" ng-model="item.peringkatDampakCR.id"
+                                                                ng-change="ae.peringkatDampakCRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.peringkatDampakCR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="control-label col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            {{item.peringkatDampakCR.keterangan}}
+                                                        </div>
+                                                        <div class="col-md-10" ng-show="!ae.isEditMode[$parent.$index][$index]">
+                                                            <p class="form-control-static">
+                                                                {{ item.peringkatDampakCR.name }} [ {{ ae.data[$parent.$index].listPenyebab[$index].peringkatDampakCR.keterangan }} ]
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Peringkat Kemungkinan</label>
+                                                        <div class="col-md-2" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAeTipePeringkatKemungkinanCr{{$parent.$index}}{{$index}}" ng-model="item.tipePeringkatKemungkinanCR.id"
+                                                                ng-change="ae.tipePeringkatKemungkinanCRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.tipePeringkatKemungkinanCR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            <select class="form-control" name="ddAePeringkatKemungkinanCr{{$parent.$index}}{{$index}}" ng-model="item.peringkatKemungkinanCR.id"
+                                                                ng-change="ae.peringkatKemungkinanCRChange($parent.$index, $index)"
+                                                                ng-options="item.id as item.name for item in ae.master.peringkatKemungkinanCR[$parent.$index][$index]"
+                                                                validator="required, emptyGuid"></select>
+                                                        </div>
+                                                        <div class="control-label col-md-4" ng-show="ae.isEditMode[$parent.$index][$index]">
+                                                            {{item.peringkatKemungkinanCR.keterangan}}
+                                                        </div>
+                                                        <div class="col-md-10" ng-show="!ae.isEditMode[$parent.$index][$index]">
+                                                            <p class="form-control-static">
+                                                                {{ item.tipePeringkatKemungkinanCR.name }} - {{ item.peringkatKemungkinanCR.name }} [ {{ ae.data[$parent.$index].listPenyebab[$index].peringkatKemungkinanCR.keterangan
+                                                                }} ]
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-2">Tingkat Risiko</label>
+                                                        <div class="col-md-4">
+                                                            <p class="form-control-static" style="color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoCR.warna, '#333') }}">
+                                                                <span style="background-color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoCR.warna, '#fff') }}">&emsp;</span>
+                                                                {{item.tingkatRisikoCR.name}}
+                                                            </p>
+                                                        </div>
+                                                        <label class="control-label col-md-3">Keberterimaan Risiko</label>
+                                                        <div class="col-md-3">
+                                                            <p class="form-control-static">{{item.tingkatRisikoCR.keberterimaanRisiko}}</p>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </ng-form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of tab3 -->
+
+                <!-- Start of tab4 -->
+                <div class="tab-pane" id="tab4">
+                    <form name="formRM">
+                        <div class="cust-panel-content bg-isi">
+                            <div class="alert alert-danger" ng-show="!Helper.isNullOrEmpty(editingTab)">
+                                <center>Data di tab lain (
+                                    <span ng-bind="editingTab"></span> ) harus disimpan (save) atau batalkan perubahan (discard) terlebih dahulu sebelum
+                                    dapat mengubah data di tab ini</center>
+                            </div>
+                            <div class="row" ng-show="rm.totalOpenedForEditing > 0">
+                                <div class="col-md-3 col-md-offset-3">
+                                    <button type="button" class="btn btn-info btn-block" ng-click="rm.saveAllChangesClick()">
+                                        Save All Changes
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-warning btn-block" ng-click="rm.discardAllChangesClick()">Discard All Changes</button>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="rm.totalOpenedForEditing > 0">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="panel {{ rm.panelClass1[$index] }}" ng-repeat="item in rm.data">
+                                <div class="panel-heading cursor-hand panel-title" onclick="fadeToggleCollapsible(this)">{{ item.sasaranStrategis.name }}
+                                    <i class="fa fa-angle-double-right"></i> {{ item.sasaranKPIKM.name }}
+                                    <i class="fa fa-angle-double-right"></i> {{ item.risiko.name }}</div>
+                                <div class="panel-body {{ rm.collapse1[$index] }}">
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Kategori Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.kategoriRisiko.name}}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Sub Kategori</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.subKategori.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.risiko.name}}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Area Dampak</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.kejadian.areaDampak.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Kejadian</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static">{{item.kejadian.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="control-label col-md-2">Tipe Sumber Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.tipeSumberRisiko.name}}</p>
+                                        </div>
+                                        <label class="control-label col-md-2">Sumber Risiko</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{item.sumberRisiko.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="panel {{ rm.panelClass2[$parent.$index][$index] }}" ng-repeat="item in item.listPenyebab" style="margin-left:30px">
+                                        <div class="panel-heading cursor-hand" onclick="fadeToggleCollapsible(this)">Penyebab : {{item.penyebab}}</div>
+                                        <div class="panel-body {{ rm.collapse2[$parent.$index][$index]}}">
+                                            <ng-form class="form-horizontal" name="formRM[{{$parent.$index}}].penyebab[{{$index}}]">
+                                                <div class="form-group" ng-show="!(item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima')">
+                                                    <div class="col-md-12">
+                                                        <p class="alert alert-info">
+                                                            Tingkat Risiko : {{ item.controlledRisk.name }}.
+                                                            <br /> Keberterimaan risiko {{ item.controlledRisk.keberterimaanRisiko
+                                                            }}.
+                                                            <br /> Tidak memerlukan Rencana Mitigasi.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">
+                                                    <div class="col-md-6 col-md-offset-6 text-right">
+                                                        <button type="button" class="btn btn-info" ng-show="rm.isEditMode[$parent.$index][$index] && isDataEditable" ng-click="rm.saveChangesClick($parent.$index, $index, formRM[$parent.$index].penyebab[$index])">Save Changes</button>
+                                                        <button type="button" class="btn btn-warning" ng-show="rm.isEditMode[$parent.$index][$index] && isDataEditable" ng-click="rm.discardChangesClick($parent.$index, $index)">Discard Changes</button>
+                                                        <button type="button" class="btn btn-info" ng-show="!rm.isEditMode[$parent.$index][$index] && isDataEditable && Helper.isNullOrEmpty(editingTab)"
+                                                            ng-click="rm.editClick($parent.$index, $index, formRM[$parent.$index].penyebab[$index])">
+                                                            <span class="fa fa-pencil"></span> Edit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">
+                                                    <label class="control-label col-md-2">Controlled Risk</label>
+                                                    <div class="col-md-10">
+                                                        <p class="form-control-static" style="color:{{ Helper.ifNullOrEmpty(item.controlledRisk.warna, '#333') }}">
+                                                            <span style="background-color:{{ Helper.ifNullOrEmpty(item.controlledRisk.warna, '#fff') }}">&emsp;</span>
+                                                            {{item.controlledRisk.name}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <h4 class="help-block" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">Rencana Mitigasi</h4>
+                                                <div class="form-group" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">
+                                                    <div class="col-md-12">
+                                                        <div class="panel panel-default" ng-repeat="item in item.rencanaMitigasi">
+                                                            <div class="panel-heading cursor-hand" onclick="fadeToggleCollapsible(this)">Rencana Mitigasi : {{item.name}}</div>
+                                                            <div class="panel-body">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12 text-right">
+                                                                        <button type="button" class="btn btn-danger btn-sm" ng-click="rm.rencanaMitigasiDelete($parent.$parent.$index, $parent.$index, $index)"
+                                                                            ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <span class="fa fa-times-circle"></span> Hapus
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-2">Rencana Mitigasi</label>
+                                                                    <div class="col-md-10" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                        <textarea class="form-control" name="tRencanaMitigasi{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}" ng-model="rm.data[$parent.$parent.$index].listPenyebab[$parent.$index].rencanaMitigasi[$index].name"
+                                                                            validator="required">
+                                                                            {{item.name}}
+                                                                        </textarea>
+                                                                    </div>
+                                                                    <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                        <p class="form-control-static">{{item.name}}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-2">PIC Koordinator</label>
+                                                                    <div class="col-md-10" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                        <input type="text" name="tPicKoordinator{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}" ng-model="item.picKoordinator"
+                                                                            placeholder="Ketik nama PIC atau jabatan PIC" uib-typeahead="item as item.name + ' - <i>' + item.jabatan + '</i>' for item in rm.listPIC($viewValue)"
+                                                                            typeahead-loading="loadingPic" typeahead-no-results="noResultsPic"
+                                                                            class="form-control" typeahead-min-length="3" typeahead-show-hint="true"
+                                                                            typeahead-wait-ms="1200" typeahead-editable="false"
+                                                                            typeahead-input-formatter="$model.displayCol" validator="required"
+                                                                        />
+                                                                        <i ng-show="loadingPic" class="glyphicon glyphicon-refresh"></i>
+                                                                        <div ng-show="noResultsPic">
+                                                                            <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                        <p class="form-control-static">{{item.picKoordinator.name}} - {{item.picKoordinator.jabatan}}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <h4 class="help-block" style="margin-top:30px; margin-left:30px">Langkah Kerja</h4>
+                                                                <div class="panel panel-default bg-gray" ng-repeat="item in item.langkahKerja" style="margin-left:30px">
+                                                                    <div class="text-right" style="margin-top:5px; margin-right:5px;">
+                                                                        <button type="button" class="btn btn-danger btn-sm" ng-click="rm.langkahKerjaDelete($parent.$parent.$parent.$index, $parent.$parent.$index, $parent.$index, $index)"
+                                                                            ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                            <span class="fa fa-times-circle"></span> Hapus
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-2">Langkah Kerja</label>
+                                                                            <div class="col-md-10" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <textarea class="form-control" name="tLangkahKerja{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}"
+                                                                                    ng-model="rm.data[$parent.$parent.$parent.$index].listPenyebab[$parent.$parent.$index].rencanaMitigasi[$parent.$index].langkahKerja[$index].name"
+                                                                                    validator="required">
+                                                                                    {{item.name}}
+                                                                                </textarea>
+                                                                            </div>
+                                                                            <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="form-control-static">
+                                                                                    {{ rm.data[$parent.$parent.$parent.$index].listPenyebab[$parent.$parent.$index].rencanaMitigasi[$parent.$index].langkahKerja[$index].name}}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-2">PIC Langkah</label>
+                                                                            <div class="col-md-10" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <input type="text" name="tPicLangkah{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}"
+                                                                                    ng-model="item.picLangkah" placeholder="Ketik nama PIC atau jabatan PIC"
+                                                                                    uib-typeahead="item as item.name + ' - <i>' + item.jabatan + '</i>' for item in rm.listPIC($viewValue)"
+                                                                                    typeahead-loading="loadingPic" typeahead-no-results="noResultsPic"
+                                                                                    class="form-control" typeahead-min-length="3"
+                                                                                    typeahead-show-hint="true" typeahead-wait-ms="1200"
+                                                                                    typeahead-editable="false" typeahead-input-formatter="$model.displayCol"
+                                                                                    validator="required" />
+                                                                                <i ng-show="loadingPic" class="glyphicon glyphicon-refresh"></i>
+                                                                                <div ng-show="noResultsPic">
+                                                                                    <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="form-control-static">{{item.picLangkah.name}} - {{item.picLangkah.jabatan}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-2">Biaya</label>
+                                                                            <div class="col-md-3 col-lg-2" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <select class="form-control" name="ddCurrency{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}"
+                                                                                    ng-model="item.currency" ng-options="item.id as item.name for item in rm.master.currency"
+                                                                                    validator="required"></select>
+                                                                            </div>
+                                                                            <div class="col-md-4 col-lg-3" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <input type="text" maxlength="22" ng-model="item.biaya" class="form-control text-right" sg-number-input fraction-size="2"
+                                                                                    name="tBiaya{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}"
+                                                                                    validator="requiredNumber" />
+                                                                            </div>
+                                                                            <div class="col-md-6" ng-show="!rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="form-control-static">{{item.currency}} {{item.biaya.formatMoney()}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--<pre>Target Mulai : {{item.targetMulai | json}}</pre>-->
+                                                                        <!--<pre>Target Selesai : {{item.targetSelesai | json}}</pre>-->
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-2">Target Mulai</label>
+                                                                            <div class="col-md-4" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="input-group col-md-9">
+                                                                                    <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="item.targetMulai" is-open="item.$$targetMulaiOpened"
+                                                                                        ng-required="true" close-text="Close"
+                                                                                        ng-init="item.targetMulai = item.targetMulai.toDate()"
+                                                                                        datepicker-localdate name="tTargetMulai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"
+                                                                                        validator="required, dateLowerOrEquals"
+                                                                                        date-compare="{{item.targetSelesai | date:'dd/MM/yyyy'}}"
+                                                                                        message-id="spanTargetMulai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"
+                                                                                    />
+                                                                                    <span class="input-group-btn">
+                                                                                        <button type="button" class="btn btn-default" ng-click="item.$$targetMulaiOpened = true">
+                                                                                            <i class="glyphicon glyphicon-calendar"></i>
+                                                                                        </button>
+                                                                                    </span>
+                                                                                </p>
+                                                                                <span id="spanTargetMulai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"></span>
+                                                                            </div>
+                                                                            <div class="col-md-4" ng-show="!rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="form-control-static">{{item.targetMulai.defaultDateFormat()}}</p>
+                                                                            </div>
+                                                                            <label class="control-label col-md-2">Target Selesai</label>
+                                                                            <div class="col-md-4" ng-show="rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="input-group col-md-9">
+                                                                                    <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="item.targetSelesai" is-open="item.$$targetSelesaiOpened"
+                                                                                        ng-required="true" close-text="Close"
+                                                                                        ng-init="item.targetSelesai = item.targetSelesai.toDate()"
+                                                                                        datepicker-localdate validator="required, dateGreaterOrEquals"
+                                                                                        date-compare="{{item.targetMulai | date:'dd/MM/yyyy'}}"
+                                                                                        message-id="spanTargetSelesai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"
+                                                                                        name="tTargetSelesai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"
+                                                                                    />
+                                                                                    <span class="input-group-btn">
+                                                                                        <button type="button" class="btn btn-default" ng-click="item.$$targetSelesaiOpened = true">
+                                                                                            <i class="glyphicon glyphicon-calendar"></i>
+                                                                                        </button>
+                                                                                    </span>
+                                                                                </p>
+                                                                                <span id="spanTargetSelesai{{$parent.$parent.$parent.$index}}{{$parent.$parent.$index}}{{$parent.$parent.$index}}{{$index}}"></span>
+                                                                            </div>
+                                                                            <div class="col-md-4" ng-show="!rm.isEditMode[$parent.$parent.$parent.$index][$parent.$parent.$index]">
+                                                                                <p class="form-control-static">{{item.targetSelesai.defaultDateFormat()}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12">
+                                                                        <button type="button" class="btn btn-primary btn-sm" ng-click="rm.langkahKerjaAdd($parent.$parent.$index, $parent.$index, $index)"
+                                                                            ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]"
+                                                                            style="margin-left:30px">
+                                                                            <span class="fa fa-plus-circle"></span> Tambah Langkah Kerja
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <h4 class="help-block" style="margin-top:30px">Setelah Mitigasi</h4>
+                                                                <fieldset class="bordered-fieldset">
+                                                                    <legend class="bordered-fieldset help-block">
+                                                                        <h5>Fungsi Mitigasi</h5>
+                                                                    </legend>
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-2">Mengurangi</label>
+                                                                        <div class="col-md-10" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <label class="radio-inline">
+                                                                                <input type="radio" value="1" ng-model="item.fungsiMitigasi">Dampak
+                                                                            </label>
+                                                                            <label class="radio-inline">
+                                                                                <input type="radio" value="2" ng-model="item.fungsiMitigasi">Kemungkinan
+                                                                            </label>
+                                                                            <label class="radio-inline">
+                                                                                <input type="radio" value="3" ng-model="item.fungsiMitigasi">Keduanya
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <p class="form-control-static" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index] && item.fungsiMitigasi == 1">Dampak</p>
+                                                                            <p class="form-control-static" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index] && item.fungsiMitigasi == 2">Kemungkinan</p>
+                                                                            <p class="form-control-static" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index] && item.fungsiMitigasi == 3">Keduanya (Dampak dan Kemungkinan)</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                                <fieldset class="bordered-fieldset">
+                                                                    <legend class="bordered-fieldset help-block">
+                                                                        <h5>Residual Risk</h5>
+                                                                    </legend>
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-2">Peringkat Dampak</label>
+                                                                        <div class="col-md-6" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <select class="form-control" name="ddPeringkatDampak{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}" validator="required, emptyGuid"
+                                                                                ng-disabled="item.fungsiMitigasi == 2" ng-model="item.peringkatDampakRR.id"
+                                                                                ng-change="rm.peringkatDampakChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                ng-options="item.id as item.name for item in rm.master.peringkatDampak[$parent.$parent.$index][$parent.$index][$index]"></select>
+                                                                        </div>
+                                                                        <div class="control-label col-md-4" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            {{item.peringkatDampakRR.keterangan}}
+                                                                        </div>
+                                                                        <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <p class="form-control-static">
+                                                                                {{ item.peringkatDampakRR.name }} [ {{ item.peringkatDampakRR.keterangan }} ]
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-2">Peringkat Kemungkinan</label>
+                                                                        <div class="col-md-6" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <select class="form-control" name="ddPeringkatKemungkinan{{$parent.$parent.$index}}{{$parent.$parent}}{{$index}}" validator="required, emptyGuid"
+                                                                                ng-disabled="item.fungsiMitigasi == 1" ng-model="item.peringkatKemungkinanRR.id"
+                                                                                ng-change="rm.peringkatKemungkinanChange($parent.$parent.$index, $parent.$index, $index)"
+                                                                                ng-options="item.id as item.name for item in rm.master.peringkatKemungkinan[$parent.$parent.$index][$parent.$index][$index]"></select>
+                                                                        </div>
+                                                                        <div class="control-label col-md-4" ng-show="rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            {{item.peringkatKemungkinanRR.keterangan}}
+                                                                        </div>
+                                                                        <div class="col-md-10" ng-show="!rm.isEditMode[$parent.$parent.$index][$parent.$index]">
+                                                                            <p class="form-control-static">
+                                                                                {{ item.peringkatKemungkinanRR.name }} [ {{ item.peringkatKemungkinanRR.keterangan }} ]
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-2">Tingkat Risiko</label>
+                                                                        <div class="col-md-4">
+                                                                            <p class="form-control-static" style="color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoRR.warna, '#333') }}">
+                                                                                <span style="background-color:{{ Helper.ifNullOrEmpty(item.tingkatRisikoRR.warna, '#fff') }}">&emsp;</span>
+                                                                                {{item.tingkatRisikoRR.name}}
+                                                                            </p>
+                                                                        </div>
+                                                                        <label class="control-label col-md-3">Keberterimaan Risiko</label>
+                                                                        <div class="col-md-3">
+                                                                            <p class="form-control-static">{{item.tingkatRisikoRR.keberterimaanRisiko}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">
+                                                    <div class="col-md-12">
+                                                        <button type="button" class="btn btn-primary btn-sm" ng-click="rm.rencanaMitigasiAdd($parent.$index, $index)" ng-show="rm.isEditMode[$parent.$index][$index]">
+                                                            <span class="fa fa-plus-circle"></span> Tambah Rencana Mitigasi
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" ng-show="item.controlledRisk.keberterimaanRisiko == 'Tidak Diterima'">
+                                                    <div class="col-md-12">&nbsp;</div>
+                                                </div>
+                                            </ng-form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of tab4 -->
+            </div>
+        </div>
+    </div>
+</div>
+<!--</form>-->
+<div class="row">
+    <div class="col-lg-12 text-right">
+        <div class="">
+            <!--<button type="button" class="btn btn-primary"
+                    ng-click="submitClick()" 
+                    ng-disabled="krHeader.isEditMode || pk.isEditMode || id.totalOpenedForEditing > 0 || ae.totalOpenedForEditing || rm.totalOpenedForEditing || !isFormComplete" 
+                    ng-show="approvalStatus.kodeApproval == 1 && isCurrentApprover">
+                Submit
+            </button>-->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSubmit" ng-click="" ng-disabled="krHeader.isEditMode || pk.isEditMode || id.totalOpenedForEditing > 0 || ae.totalOpenedForEditing || rm.totalOpenedForEditing || !isFormComplete"
+                ng-show="approvalStatus.kodeApproval == 1 && isCurrentApprover">
+                Submit
+            </button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Revise
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition" ng-show="(approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Disposition
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isCurrentApprover">
+                Approve
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default" style="margin-top:20px">
+            <div class="panel-heading cursor-hand panel-title" onclick="fadeToggleCollapsible(this)">
+                <b>
+                    <i class="fa fa-reorder"></i> Log Trail</b>
+            </div>
+            <div class="panel-body collapse">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Comment History</th>
+                            <th>User Approver</th>
+                            <th>Jabatan</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in logApprovals">
+                            <td>{{ item.bab }}</td>
+                            <td>{{ item.comment }}</td>
+                            <td>{{ item.approver }}</td>
+                            <td class="center">{{ item.jabatan }}</td>
+                            <td class="center">{{ item.status }}</td>
+                            <td class="center">{{ item.tanggal.defaultDateTimeFormat() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+
+<!-- Start of Submit Modal -->
+<div class="modal fade" id="modalSubmit" tabindex="-1" role="dialog" aria-labelledby="modalSubmitLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalSubmitLabel">Submit Kajian Risiko</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" rows="5" placeholder="Isi keterangan terkait approval" ng-model="approver.keterangan"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listNextApprover.hasNextApprover">
+                        <label class="col-md-4 control-label">Approval Selanjutnya</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="approver.nextApproval" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline text-red">
+                                <input type="checkbox" ng-model="approver.isAgreed">
+                                <strong>Dengan ini saya menyatakan telah melengkapi dokumen Kajian Risiko ini</strong>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" ng-click="submitClick()" ng-disabled="((!approver.isAgreed || Helper.isNullOrEmpty(approver.nextApproval)) && listNextApprover.hasNextApprover) ||
+                                                (!approver.isAgreed && !listNextApprover.hasNextApprover)">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Approval Modal-->
+<!-- Start of Approval Modal -->
+<div class="modal fade" id="modalApproval" tabindex="-1" role="dialog" aria-labelledby="modalApprovalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalApprovalLabel">Approval Kajian Risiko</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" rows="5" placeholder="Isi keterangan terkait approval" ng-model="approver.keterangan"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listNextApprover.hasNextApprover">
+                        <label class="col-md-4 control-label">Approval Selanjutnya</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="approver.nextApproval" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline text-red">
+                                <input type="checkbox" ng-model="approver.isAgreed">
+                                <strong>Dengan ini saya menyatakan telah memahami dan menyetujui dokumen Kajian Risiko ini</strong>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" ng-click="approveClick()" ng-disabled="((!approver.isAgreed || Helper.isNullOrEmpty(approver.nextApproval)) && listNextApprover.hasNextApprover) ||
+                                                (!approver.isAgreed && !listNextApprover.hasNextApprover)">
+                                Approve
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Approval Modal-->
+
+<!-- Start of Disposition Modal -->
+<div class="modal fade" id="modalDisposition" tabindex="-1" role="dialog" aria-labelledby="modalDispositionLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalDispositionLabel">Disposisi Kajian Risiko</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" ng-model="dispositioner.keterangan" rows="5" placeholder="Isi keterangan terkait disposisi"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="listTujuanDisposisi.hasNextApprover">
+                        <label class="col-md-4 control-label">Disposisi Tim MR Unit</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="dispositioner.tujuan" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listTujuanDisposisi.data"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" ng-disabled="((Helper.isNullOrEmpty(dispositioner.tujuan) || Helper.isNullOrEmpty(dispositioner.keterangan)) && listTujuanDisposisi.hasNextApprover) ||
+                                            (Helper.isNullOrEmpty(dispositioner.keterangan) && !listTujuanDisposisi.hasNextApprover)"
+                                ng-click="submitDispositionClick()">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Disposition Modal-->
+<!-- Start of Revise Modal -->
+<div class="modal fade" id="modalRevise" tabindex="-1" role="dialog" aria-labelledby="modalReviseLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalReviseLabel">Revisi Kajian Risiko</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Keterangan</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" ng-model="reviser.keterangan" rows="5" placeholder="Isi keterangan terkait revisi"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" ng-disabled="Helper.isNullOrEmpty(reviser.keterangan)" ng-click="reviseClick()">
+                                Revise
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Revise Modal-->
+
+<script type="text/javascript">
+    $('.nav-tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+
+    function fadeToggleCollapsible(e) {
+        $(e).next().slideToggle();
+    }
+</script>

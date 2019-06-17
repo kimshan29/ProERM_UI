@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">MASTER RISIKO</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row" ng-show="!risiko.isEditMode">
+    <div class="col-lg-12">
+        <div class="panel">
+            <div class="panel-body bg-white border-gray">
+                <!--<table datatable=""
+                       dt-options="dtOptions"
+                       dt-columns="dtColumns"
+                       class="table table-striped table-bordered table-hover"></table>-->
+                <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">RISIKO</th>
+                            <th class="text-center">KEJADIAN</th>
+                            <th class="text-center judul-action">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in risiko.data">
+                            <td>{{ item.risiko }}</td>
+                            <td>{{ item.kejadian }}</td>
+                            <td class="text-center">
+                                <button type='button' class='btn btn-info btn-sm' ng-click="eventClickEdit(item.id)" ng-show='!entitas.isEditMode'>
+                                    <span class='fa fa-pencil'></span> Edit
+                                </button>
+                                <button type='button' class='btn btn-danger btn-sm' ng-click="eventClickHapus(item.id,item.risiko)" ng-show='!entitas.isEditMode'>
+                                    <span class='fa fa-times-circle'></span> Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="eventClickAdd()">
+                        <i class="fa fa-plus-square"></i>
+                        Tambah Master Risiko
+                    </button>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row" ng-show="risiko.isEditMode">
+    <div class="col-lg-12">
+        <div class="panel">
+            <div class="panel-body bg-white border-gray color-blue">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h3 class="color-blue">
+                        TAMBAH MASTER RISIKO
+                    </h3>
+                    <hr />
+                </div>
+                <form class="form-horizontal">
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-lg-2 col-md-3 col-sm-3">Risiko</label>
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <input type="text" class="form-control" style="display:none;" ng-model="risiko.input.id" />
+                                <input type="text" class="form-control" ng-model="risiko.input.risiko" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-2 col-md-3 col-sm-3">Kejadian</label>
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <input type="text" class="form-control" ng-model="risiko.input.kejadian" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-3 col-md-3 col-sm-3">
+                                <button type="button" class="btn btn-primary" ng-click="eventClickSave()">
+                                    Save
+                                </button>
+                                <button type="button" class="btn btn-danger" ng-click="eventClickCancel()">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>

@@ -1,0 +1,66 @@
+<style>
+.ng-isolate-scope {
+	max-height: 150px;
+	overflow-y: scroll;
+}
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">Daftar Departemen</h1>
+    </div>
+    <div class="col-md-12">
+	    <h4>Asynchronous results</h4>
+	    <pre>Model: {{asyncSelected | json}}</pre>
+	    <input type="text" ng-model="asyncSelected" placeholder="Locations loaded via $http" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control"
+	    typeahead-input-formatter="$model + ': '">
+	    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+	    <div ng-show="noResults">
+	      <i class="glyphicon glyphicon-remove"></i> No Results Found
+	    </div>
+
+	    <h4>Asynchronous results PIC</h4>
+	    <pre>Model: {{selectedPic | json}}</pre>
+	    <input type="text" ng-model="selectedPic" placeholder="PIC loaded via $http"
+	    	uib-typeahead="item as item.name + ' - <i>' + item.jabatan + '</i>' for item in listPIC($viewValue)" typeahead-loading="loadingPic" 
+	    	typeahead-no-results="noResultsPic" class="form-control" typeahead-min-length="3" 
+	    	typeahead-show-hint="true" typeahead-wait-ms="1200" typeahead-editable="false"
+	    	typeahead-input-formatter="$model.name + ' - ' + $model.jabatan" />
+	    <i ng-show="loadingPic" class="glyphicon glyphicon-refresh"></i>
+	    <div ng-show="noResultsPic">
+	      <i class="glyphicon glyphicon-remove"></i> No Results Found
+	    </div>
+	    <input type="button" value="Set value" ng-click="setValuePic()" />
+
+	    <h4>Datepicker</h4>
+	    <div class="row">
+	    	<div class="col-md-6">
+	    		<pre>date1.value: {{date1.value | json}}</pre>
+	    	</div>
+	    </div>
+	    <div class="row">
+	    	<div class="col-md-6">
+			    <p class="input-group col-md-3">
+				    <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="date1.value" is-open="date1.opened" ng-required="true" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
+			        <span class="input-group-btn">
+			            <button type="button" class="btn btn-default" ng-click="openDate1()"><i class="glyphicon glyphicon-calendar"></i></button>
+			        </span>
+		    	</p>
+	    	</div>
+	    </div>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="customTemplate.html">
+  <a>
+      <img ng-src="http://upload.wikimedia.org/wikipedia/commons/thumb/{{match.model.flag}}" width="16">
+      <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+  </a>
+</script>
+
+<script type="text/ng-template" id="listPICTemplate.html">
+	<a>
+		{{match.model.name}} - <i>{{match.model.jabatan}}</i>
+	</a>
+</script>

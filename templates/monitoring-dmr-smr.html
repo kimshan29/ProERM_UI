@@ -1,0 +1,304 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">Monitoring DMR</h1>
+    </div>
+</div>
+
+<div class="row" ng-show="!isDetailMode">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-body bg-white border-gray">
+                <form class="form-horizontal">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                        <label class="control-label col-lg-1 col-md-1 col-sm-1">Tahun</label>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <select class="form-control" ng-model="filter.tahun" ng-options="item as item for item in master.tahun"></select>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                        <label class="control-label col-lg-1 col-md-1 col-sm-1">Unit</label>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <select class="form-control" ng-model="filter.unit" ng-options="item.id as item.entitas for item in master.unit"></select>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                        <div class="col-lg-10 col-md-10 col-sm-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1">
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="renderData()">
+                                Search
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" ng-click="clear()">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width:12%">No. DMR</th>
+                            <th class="text-center" style="width:15%">Judul DMR</th>
+                            <th class="text-center">Tahun</th>
+                            <th class="text-center">Entitas</th>
+                            <th class="text-center">Pemilik Risiko</th>
+                            <th class="text-center">Periode Proyek</th>
+                            <th class="text-center">Anggaran</th>
+                            <th class="text-center">Progress Pekerjaan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in data">
+                            <td class="text-center">
+                                <span class="cursor-hand color-blue" title="Lihat detail data" ng-click="gotoDetailClick(item.id)">
+                                    {{ item.noDMR }}
+                                </span>
+                            </td>
+                            <td>{{ item.judulDMR }}</td>
+                            <td class="text-center">{{ item.tahun }}</td>
+                            <td>{{ item.entitas }}</td>
+                            <td>{{ item.riskOwner }}</td>
+                            <td class="text-center">
+                                <span>{{ item.targetMulai.defaultDateFormat() }} - {{ item.targetSelesai.defaultDateFormat() }}</span>
+                            </td>
+                            <td class="text-right">
+                                <span>{{ item.anggaran.currency }} {{ item.anggaran.value.formatMoney() }}</span>
+                            </td>
+                            <td class="text-center">{{ item.statusPekerjaan }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row" ng-show="isDetailMode">
+    <div class="col-md-12" style="margin-bottom:20px;">
+        <button type="button" class="btn btn-warning" ng-click="backToListClick()" ng-show="!isEditMode">
+            <i class="fa fa-arrow-left"></i>
+            Back to List
+        </button>
+    </div>
+</div>
+
+<div class="row" ng-show="isDetailMode">
+    <div class="col-md-12">
+        <div class="tab-pane active">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="color-blue">Detail Dokumen Manajemen Risiko</h4>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body bg-white">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Tahun</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{ detailData.detailDMR.tahun }}</p>
+                            </div>
+                            <label class="control-label col-md-2">Entitas</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{ detailData.detailDMR.entitas.name }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Judul DMR</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailDMR.judul }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Nomor DMR</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailDMR.nomor }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Pemilik Risiko</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailDMR.riskOwner }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Periode Proyek</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">
+                                    {{ detailData.detailDMR.targetMulai.defaultDateFormat() }} - {{ detailData.detailDMR.targetSelesai.defaultDateFormat() }}
+                                </p>
+                            </div>
+                            <label class="control-label col-md-2">Anggaran</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">
+                                    {{ detailData.detailDMR.anggaran.currency }} {{ detailData.detailDMR.anggaran.value.formatMoney() }}
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h4 class="color-blue">Detail Sasaran</h4>
+            <div class="panel panel-default">
+                <div class="panel-body bg-white">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Sasaran Strategis</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailSasaran.sasaranStrategis }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Sasaran Operasional</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailSasaran.sasaranOperasional }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Sasaran Finansial</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailSasaran.sasaranFinansial }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Progress Pekerjaan</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{ detailData.detailSasaran.progressPekerjaan }}</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h4 class="color-blue">Jadwal Pelaksanaan Kegiatan</h4>
+            <div class="panel panel-default">
+                <div class="panel-body bg-white">
+                    <div class="row" ng-show="isDetailMode && detailData.jadwalPK.length > 0 && totalPersentase < 100">
+                        <div class="col-md-12 text-right">
+                            <div class="">
+                                <button type="button" class="btn btn-info" ng-click="editClick()" ng-show="!isEditMode && canEdit">Edit</button>
+                                <button type="button" class="btn btn-info" ng-click="saveChangesClick()" ng-show="isEditMode">Save Changes</button>
+                                <button type="button" class="btn btn-warning" ng-click="discardChangesClick()" ng-show="isEditMode">Discard Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="form-horizontal" ng-if="detailData.jadwalPK.length > 0">
+                        <!--PENILAIAN ALTERNATIF-->
+                        <div class="row" ng-repeat="item in detailData.jadwalPK">
+                            <div class="panel panel-default margin-20">
+                                <div class="panel-heading bg-blue" onclick="fadeToggleCollapsible(this)">
+                                    <h5 class="panel-title">
+                                        <a style="cursor:pointer;">
+                                            <i class="fa fa-reorder"></i>
+                                            {{ item.name }}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Periode</label>
+                                        <p class="form-control-static col-md-10">
+                                            {{ item.tanggalMulai.defaultDateFormat() }} - {{ item.tanggalSelesai.defaultDateFormat() }}
+                                        </p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Persentase</label>
+                                        <div class="col-md-4" ng-show="isEditMode">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-right" maxlength="3" ng-model="item.persentase" />
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" ng-show="!isEditMode">
+                                            <p class="form-control-static" ng-show="!isEditMode">{{ item.persentase }}%</p>
+                                        </div>
+
+                                        <label class="control-label col-md-2">Status</label>
+                                        <div class="col-md-4">
+                                            <p class="form-control-static">{{ item.status }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">Catatan</label>
+                                        <div class="col-md-10" ng-show="isEditMode">
+                                            <textarea class="form-control" rows="5" ng-model="item.catatan"></textarea>
+                                        </div>
+                                        <div class="col-md-10" ng-show="!isEditMode">
+                                            <p class="form-control-static">{{ item.catatan }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-repeat="item2 in item.attachment">
+                                        <label class="control-label col-md-2">{{ $index == 0 ? "Lampiran" : "" }}</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static" ng-show="!Helper.isNullOrEmpty(item2.file.filename) && !Helper.isNullOrEmptyOrEmptyGuid(item2.id)">
+                                                <span class="cursor-hand color-blue" ng-click="downloadLampiranClick(item2.id)">
+                                                    {{ item2.file.filename }}
+                                                </span>
+                                                <button class="btn btn-xs btn-danger" title="Hapus lampiran" ng-show="isEditMode" ng-click="hapusLampiran($parent.$index, $index, true)">
+                                                    <i class="fa fa-times cursor-hand"></i>
+                                                </button>
+                                            </p>
+                                            <p class="form-control-static" ng-show="!Helper.isNullOrEmpty(item2.file.filename) && Helper.isNullOrEmptyOrEmptyGuid(item2.id)">
+                                                <span>
+                                                    {{ item2.file.filename }}
+                                                </span>
+                                                <button class="btn btn-xs btn-danger" title="Hapus lampiran" ng-show="isEditMode" ng-click="hapusLampiran($parent.$index, $index, true)">
+                                                    <i class="fa fa-times cursor-hand"></i>
+                                                </button>
+                                            </p>
+                                            <div class="input-group" ng-show="Helper.isNullOrEmpty(item2.file.filename) && isEditMode">
+                                                <input type="file" class="form-control" ng-model="item2.file" base-sixty-four-input maxsize="2048" />
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-danger" ng-click="hapusLampiran($parent.$index, $index, false)">
+                                                        <i class="fa fa-times-circle"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-show="item.attachment.length == 0">
+                                        <label class="control-label col-md-2">Lampiran</label>
+                                        <div class="col-md-10">
+                                            <p class="form-control-static">Tidak ada lampiran.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-show="isEditMode">
+                                        <div class="col-md-10 col-md-offset-2">
+                                            <button type="button" class="btn btn-primary btn-sm" ng-click="tambahLampiranClick($index)">
+                                                <i class="fa fa-plus-circle"></i> Tambah Lampiran
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="alert alert-info" ng-if="detailData.jadwalPK.length == 0">Tidak ada yang tersedia.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-show="isDetailMode">
+    <div class="col-md-12">
+        <button type="button" class="btn btn-warning" ng-click="backToListClick()" ng-show="!isEditMode">
+            <i class="fa fa-arrow-left"></i>
+            Back to List
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
+
+<script type="text/javascript">
+    function fadeToggleCollapsible(e) {
+        $(e).next().slideToggle();
+    }
+</script>
