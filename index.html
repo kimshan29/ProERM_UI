@@ -40,6 +40,10 @@
 
     <!-- Sweet Alert -->
     <link href="plugins/sweet-alert/sweetalert.css" rel="stylesheet" type="text/css">
+
+    <!-- Css Custome Batam -->
+
+    <link href="./css/customCssBatam.css" rel="stylesheet" type="text/css">
     <!-- Angular Loading Bar -->
     <script src="plugins/loader/nprogress.js"></script>
     <link href="plugins/loader/nprogress.css" rel='stylesheet' />
@@ -57,7 +61,7 @@
 <body ng-app="mainApp">
     <div id="wrapper">
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;background:#0066a8;">
+        <nav class="navbar navbar-default navbar-static-top pln-batam-bg" role="navigation" style="margin-bottom: 0;">
             <div class="navbar-header" style="width:100%;">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -68,9 +72,9 @@
 
                 <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Integrated Risk Management</b></a>
                 <ul class="nav navbar-nav navbar-right" style="position: relative;float: right;" ng-controller="logoutCtrl">
-                    <li class="dropdown no-border" style="border:none !important">
-                        <a class="dropdown-toggle color-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
-                        <ul class="dropdown-menu padding-10 bg-white" style="width:300px;">
+                    <li class="dropdown no-border" style="border:none !important; ">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b style="color:#FB991E"><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
+                        <ul class="dropdown-menu padding-10 bg-orange" style="width:300px;">
                             <li>
                                 <img id="profile-img" class="profile-img-card" src="../css/asset/avatar_2x.png" />
                             </li>
@@ -94,7 +98,7 @@
 
             <div class="navbar-default sidebar" role="navigation" ng-controller="mainNavigationCtrl">
                 <div class="sidebar-nav navbar-collapse" ng-repeat="item in navigationHtml" on-finish-render="reconfigureSidebar()">
-                    <ul class="nav" id="side-menu" ng-bind-html="trustAsHtml(item)"></ul>
+                    <ul class="nav" id="side-menu" ng-bind-html="trustAsHtml(item)" style="background:white !important;"></ul>
                 </div>
                 <!-- /.sidebar-collapse -->
             </div>

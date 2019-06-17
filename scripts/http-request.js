@@ -1,7 +1,7 @@
 //Http Request
 
 // var webServiceBaseUrl = "http://localhost:10081";
-var webServiceBaseUrl = "http://172.18.18.65:20081";
+var webServiceBaseUrl = "http://10.28.0.35:1080";
 
 mainApp.factory("HttpRequest", function ($http, $q) {
     var get = function (query) {
