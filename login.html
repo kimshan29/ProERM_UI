@@ -188,7 +188,7 @@
     <div class="container" ng-app="loginApp" ng-controller="loginCtrl">
         <div class="card card-container">
             <img id="profile-img" class="profile-img-card" src="css/asset/avatar_2x.png" />
-            <p id="profile-name" class="profile-name-card">IRMA TEstgit </p>
+            <p id="profile-name" class="profile-name-card">IRMA </p>
             <p id="profile-name2" class="profile-name-card2">Integrated Risk Management</p>
             <form class="form-signin">
                 <span id="reauth-email" class="reauth-email"></span>
@@ -225,7 +225,7 @@
             $scope.loginClick = function () {
                 NProgress.start();
 
-                var apiUrl = "http://192.168.100.185:9020/api/login";
+                var apiUrl = "http://172.18.18.65:20081/api/login";
                 //var apiUrl = "http://localhost:83/api/login";
                 //var apiUrl = "http://erm.indonesiapower.co.id:9010/api/login";
                 var data = {
