@@ -11,11 +11,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>ProRBA</title>
-    <link rel="icon" href="css/asset/logo.ico" />
+    <title>ERM Enterprise Risk Management</title>
+    <link rel="icon" href="./images/icoBatam.png" />
     <!-- Bootstrap Core CSS -->
     <link href="plugins/bootstrap/css/bootstrap-semi-compact.min.css" rel="stylesheet">
-    
+
     <!-- MetisMenu CSS -->
     <link href="plugins/metisMenu/metisMenu.min.css" rel="stylesheet">
 
@@ -40,9 +40,17 @@
     <!--angular CKEditor-->
     <link href="plugins/angular-ckeditor/ng-ckeditor.css" rel="stylesheet" type="text/css">
 
+    <!-- Sweet Alert -->
+    <link href="plugins/sweet-alert/sweetalert.css" rel="stylesheet" type="text/css">
+
+    <!-- Css Custome Batam -->
+
+    <link href="./css/customCssBatam.css" rel="stylesheet" type="text/css">
     <!-- Angular Loading Bar -->
     <script src="plugins/loader/nprogress.js"></script>
     <link href="plugins/loader/nprogress.css" rel='stylesheet' />
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,7 +63,7 @@
 <body ng-app="mainApp">
     <div id="wrapper">
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;background:#0066a8;">
+        <nav class="navbar navbar-default navbar-static-top pln-batam-bg" role="navigation" style="margin-bottom: 0;">
             <div class="navbar-header" style="width:100%;">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -63,36 +71,43 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                
+
                 <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Integrated Risk Management</b></a>
                 <ul class="nav navbar-nav navbar-right" style="position: relative;float: right;" ng-controller="logoutCtrl">
-                  <li class="dropdown no-border" style="border:none !important">
-                    <a class="dropdown-toggle color-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
-                    <ul class="dropdown-menu padding-10 bg-white" style="width:300px;">
-                        <li>
-                            <img id="profile-img" class="profile-img-card" src="../css/asset/avatar_2x.png" />
-                        </li>
-                        <li class="text-left">
-                            <p class="padding-5 margin-5" ng-bind="currentUser.name"></p>
-                        </li>
-                        <li class="text-left">
-                            <p class="padding-5 margin-5" ng-bind="currentUser.jobTitle"></p>
-                        </li>
-                        <li class="text-center"><a class="color-blue" href="" ng-click="logout()"><b class="color-blue"><i class="fa fa-sign-out fa-fw"></i> Sign Out</b></a></li>
-                    </ul>
-                  </li>
-                  <li style="border:none !important">
-                    <a href="" style="color:#FFF" title="Download Panduan Penggunaan Aplikasi" onclick="return downloadManualGuide();">
-                        <i class="fa fa-question-circle" style="font-size:15px"></i>
-                    </a>
-                  </li>
+                    <li class="dropdown no-border" style="border:none !important; ">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
+                        <ul class="dropdown-menu padding-10 bg-orange" style="width:300px;border-bottom: 1px solid #fff !important;">
+                            <li style="border-bottom: 1px solid #fff !important;">
+                                <img id="profile-img" class="profile-img-card" src="../css/asset/avatar_2x.png" />
+                            </li>
+                            <li class="text-left" style="border-bottom: 1px solid #fff !important;">
+                                <p class="padding-5 margin-5 main-font-2" ng-bind="currentUser.name"></p>
+                            </li>
+                            <li class="text-left" style="border-bottom: 1px solid #fff !important;">
+                                <p class="padding-5 margin-5 main-font-2" ng-bind="currentUser.jobTitle"></p>
+                            </li>
+                            <!-- <li class="text-center" style="border-bottom: 1px solid #fff !important;">
+                                <a class="color-blue" href="" ng-click="logout()"><b class="main-font-2"><i class="fa fa-sign-out fa-fw"></i> Sign Out</b></a>
+                                
+                            </li> -->
+                            <div class="text-center" style="margin-top:10px;">
+                                <button class="btn btn-primary" ng-click="logout()"><i class="fa fa-sign-out fa-fw"></i> Sign Out</button>
+                            </div>
+
+                        </ul>
+                    </li>
+                    <li style="border:none !important">
+                        <a href="" style="color:#FFF" title="Download Panduan Penggunaan Aplikasi" onclick="return downloadManualGuide();">
+                            <i class="fa fa-question-circle" style="font-size:15px"></i>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-header -->
 
             <div class="navbar-default sidebar" role="navigation" ng-controller="mainNavigationCtrl">
                 <div class="sidebar-nav navbar-collapse" ng-repeat="item in navigationHtml" on-finish-render="reconfigureSidebar()">
-                    <ul class="nav" id="side-menu" ng-bind-html="trustAsHtml(item)"></ul>
+                    <ul class="nav" id="side-menu" ng-bind-html="trustAsHtml(item)" style="background:white !important;"></ul>
                 </div>
                 <!-- /.sidebar-collapse -->
             </div>
@@ -101,7 +116,7 @@
 
         <!-- Start of Sidebar Toggle -->
         <div class="sidebar-toggle">
-            <button class="btn btn-danger btn-xs btn-sidebar-toggle" onclick="sidebarToggle(this)">
+            <button class="btn btn-primary-2 btn-xs btn-sidebar-toggle" onclick="sidebarToggle(this)">
                 <i id="iconSidebarToggle" class="fa arrow"></i>
             </button>
         </div>
@@ -124,9 +139,7 @@
                             <div class="form-group">
                                 <label class="col-md-6 control-label">Pilih Tahun</label>
                                 <div class="col-md-6">
-                                    <select class="form-control"
-                                        ng-model="data.tahun"
-                                        ng-options="item.id as item.name for item in listTahun">
+                                    <select class="form-control" ng-model="data.tahun" ng-options="item.id as item.name for item in listTahun">
                                     </select>
                                 </div>
                             </div>
@@ -134,38 +147,6 @@
                                 <div class="col-md-12 text-right">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                     <button type="button" class="btn btn-primary" ng-click="lanjutKRClick()">Lanjut</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End of New KR Modal-->
-
-        <!-- Start of New RiskEvent Modal -->
-        <div class="modal fade" id="modalNewRiskEvent" tabindex="-1" role="dialog" aria-labelledby="modalNewRiskEventLabel" ng-controller="newRiskEventCtrl">
-            <div class="modal-dialog modal-sm" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="modalNewRiskEventLabel">Pembuatan Risk Event</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-md-6 control-label">Pilih Tahun</label>
-                                <div class="col-md-6">
-                                    <select class="form-control"
-                                        ng-model="data.tahun"
-                                        ng-options="item.id as item.name for item in listTahun">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12 text-right">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                    <button type="button" class="btn btn-primary" ng-click="lanjutRiskEventClick()">Lanjut</button>
                                 </div>
                             </div>
                         </form>
@@ -230,6 +211,9 @@
     <!-- jQuery -->
     <script src="plugins/jquery/jquery.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+
+
     <!-- Bootstrap Core JavaScript -->
     <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
 
@@ -238,9 +222,9 @@
 
     <!-- DataTables JavaScript -->
     <script src="plugins/datatables/js/jquery.dataTables.min.js"></script>
-    <%--<script src="plugins/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>--%>
+    <!-- <%--<script src="plugins/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>--%> -->
     <script src="plugins/datatables/js/dataTables.columnFilter.js"></script>
-    
+
     <!-- Angular JS -->
     <script src="plugins/angular-js/angular.min.js"></script>
     <script src="plugins/angular-js/angular-route.min.js"></script>
@@ -248,7 +232,7 @@
     <script src="plugins/angular-js/angular-sanitize.min.js"></script>
     <script src="plugins/angular-js/angular-cookies.min.js"></script>
     <script src="plugins/angular-js/angular-locale_custom.js"></script>
-    
+
     <!-- Angular Validation-->
     <script src="plugins/angular-validation/angular-validation.min.js"></script>
     <script src="plugins/angular-validation/angular-validation-rule.js?version=<%= CodeVersion %>"></script>
@@ -276,7 +260,7 @@
     <!-- Custom Theme JavaScript -->
     <script src="scripts/sb-admin-2.js"></script>
 
-    <%--Angular HighCharts--%>
+    <!-- <%--Angular HighCharts--%> -->
     <script src="plugins/highcharts/highchart.js"></script>
     <script src="plugins/angular-highcharts/src/highcharts-3d.js"></script>
     <script src="plugins/angular-highcharts/src/highcharts-ng.js"></script>
@@ -288,7 +272,7 @@
 
     <!-- Hotfix -->
     <script src="scripts/hotfix.js?version=<%= CodeVersion %>"></script>
-    
+
     <!-- Hotfix -->
     <script src="scripts/functions.js?version=<%= CodeVersion %>"></script>
 
@@ -297,8 +281,20 @@
     <script src="scripts/directives.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/http-request.js?version=<%= CodeVersion %>"></script>
 
-    <!-- Angular Factories -->    
+    <!-- Angular Factories -->
     <script src="scripts/factories.js?version=<%= CodeVersion %>"></script>
+
+    <!-- Sweet Alert -->
+    <script src="plugins/sweet-alert/sweetalert.js"></script>
+
+    <!-- SummerNote -->
+    <!-- <script src="./plugins/summernote/summernote.min.js"></script>
+
+    <script src="./plugins/summernote/angular-summernote.min.js"></script>
+
+
+    <script src="./plugins/summernote/html2canvas.min.js"></script>
+    <script src="./plugins/summernote/jspdf.debug.js"></script> -->
 
     <!-- Angular JS Controllers -->
     <script src="scripts/controllers/dashboardCtrl.js?version=<%= CodeVersion %>"></script>
@@ -314,8 +310,6 @@
     <script src="scripts/controllers/daftarDokumenApprovedCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/newKrCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/krCtrl.js?version=<%= CodeVersion %>"></script>
-    <script src="scripts/controllers/newRiskEventCtrl.js?version=<%= CodeVersion %>"></script>
-    <script src="scripts/controllers/riskEventCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/ormCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/dmrCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/newDmrCtrl.js?version=<%= CodeVersion %>"></script>
@@ -327,6 +321,8 @@
     <script src="scripts/controllers/mDepartemenCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mPenyebabCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mRisikoCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/duplikasiDmrCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/riskEventCtrl.js?version=<%= CodeVersion %>"></script>
 
     <script src="scripts/controllers/mMenuCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mPeranCtrl.js?version=<%= CodeVersion %>"></script>
@@ -346,11 +342,10 @@
 
 
     <!-- Angular Input Masks -->
-    <%--<script src="plugins/angular-input-masks/masks.js"></script>--%>
+    <!-- <%--<script src="plugins/angular-input-masks/masks.js"></script>--%> -->
 
     <script type="text/javascript">
-
-        function downloadManualGuide(){
+        function downloadManualGuide() {
             window.open("/media/User Guide New ProRBA.pdf", "_blank");
             return false;
         }
@@ -359,14 +354,9 @@
         function loginFormClick(e) {
             $('#modalLogin').modal('show');
         }
-        
+
         function menuKRClick(e) {
             $('#modalNewKR').modal('show');
-            return false;
-        }
-
-        function menuRiskEventClick(e) {
-            $('#modalNewRiskEvent').modal('show');
             return false;
         }
 
@@ -377,32 +367,31 @@
         }
         // END FOR DMR
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             var currYear = new Date().getFullYear();
-            
+
             $('#ddTahun').empty();
             //$('#ddTahunDMR').empty();
-            for (var i = currYear-1; i <= currYear + 1; i++) {
+            for (var i = currYear - 1; i <= currYear + 1; i++) {
                 $('#ddTahun').append($("<option></option>").attr("value", i).text(i));
                 //$('#ddTahunDMR').append($("<option></option>").attr("value", i).text(i));
             };
 
-            $('#ddTahun').val(currYear);            
+            $('#ddTahun').val(currYear);
         });
 
         //Sidebar Toggle
         function sidebarToggle(obj) {
             var sidebar = $(".sidebar-toggle");
             var isSidebarHidden = $(".sidebar-toggle").hasClass("sidebar-collapse");
-            
+
             if (isSidebarHidden) {
                 sidebar.removeClass("sidebar-collapse");
                 $("#page-wrapper").removeClass("page-wrapper-expanded");
                 $(".navbar-collapse").removeClass("display-none");
                 $("#iconSidebarToggle").removeClass("arrow-r");
                 $("#iconSidebarToggle").addClass("arrow-l");
-            }
-            else {
+            } else {
                 sidebar.addClass("sidebar-collapse");
                 $("#page-wrapper").addClass("page-wrapper-expanded");
                 $(".navbar-collapse").addClass("display-none");
@@ -414,4 +403,3 @@
 </body>
 
 </html>
-

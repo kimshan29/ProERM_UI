@@ -9,8 +9,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>ProRBA</title>
-    <link rel="icon" href="css/asset/logo.ico" />
+    <title>ERM Enterprise Risk Management</title>
+    <link rel="icon" href="./images/icoBatam.png" />
     <!-- Bootstrap Core CSS -->
     <link href="plugins/bootstrap/css/bootstrap-semi-compact.min.css" rel="stylesheet">
 
@@ -70,21 +70,28 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Integrated Risk Management</b></a>
+                <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Enterprise Risk Management</b></a>
                 <ul class="nav navbar-nav navbar-right" style="position: relative;float: right;" ng-controller="logoutCtrl">
                     <li class="dropdown no-border" style="border:none !important; ">
-                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b style="color:#FB991E"><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
-                        <ul class="dropdown-menu padding-10 bg-orange" style="width:300px;">
-                            <li>
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
+                        <ul class="dropdown-menu padding-10 bg-orange" style="width:300px;border-bottom: 1px solid #fff !important;">
+                            <li style="border-bottom: 1px solid #fff !important;">
                                 <img id="profile-img" class="profile-img-card" src="../css/asset/avatar_2x.png" />
                             </li>
-                            <li class="text-left">
-                                <p class="padding-5 margin-5" ng-bind="currentUser.name"></p>
+                            <li class="text-left" style="border-bottom: 1px solid #fff !important;">
+                                <p class="padding-5 margin-5 main-font-2" ng-bind="currentUser.name"></p>
                             </li>
-                            <li class="text-left">
-                                <p class="padding-5 margin-5" ng-bind="currentUser.jobTitle"></p>
+                            <li class="text-left" style="border-bottom: 1px solid #fff !important;">
+                                <p class="padding-5 margin-5 main-font-2" ng-bind="currentUser.jobTitle"></p>
                             </li>
-                            <li class="text-center"><a class="color-blue" href="" ng-click="logout()"><b class="color-blue"><i class="fa fa-sign-out fa-fw"></i> Sign Out</b></a></li>
+                            <!-- <li class="text-center" style="border-bottom: 1px solid #fff !important;">
+                                <a class="color-blue" href="" ng-click="logout()"><b class="main-font-2"><i class="fa fa-sign-out fa-fw"></i> Sign Out</b></a>
+                                
+                            </li> -->
+                            <div class="text-center" style="margin-top:10px;">
+                                <button class="btn btn-primary" ng-click="logout()"><i class="fa fa-sign-out fa-fw"></i> Sign Out</button>
+                            </div>
+
                         </ul>
                     </li>
                     <li style="border:none !important">
@@ -107,7 +114,7 @@
 
         <!-- Start of Sidebar Toggle -->
         <div class="sidebar-toggle">
-            <button class="btn btn-danger btn-xs btn-sidebar-toggle" onclick="sidebarToggle(this)">
+            <button class="btn btn-primary-2 btn-xs btn-sidebar-toggle" onclick="sidebarToggle(this)">
                 <i id="iconSidebarToggle" class="fa arrow"></i>
             </button>
         </div>
