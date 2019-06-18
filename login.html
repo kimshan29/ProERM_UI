@@ -9,7 +9,7 @@
     <style>
         .bg-login {
             background: #2865ac;
-            background: url('/css/asset/bg-login.png') no-repeat center center fixed;
+            background: url('/images/pltg-panaran-batam.jpg') no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -46,8 +46,15 @@
  * Card component
  */
         .card {
-            background-color: #F7F7F7;
-            border: 2px solid #2865ac;
+            /* background-color: #F7F7F7; */
+            background: rgba(255, 199, 30, 0.95);
+            background: -moz-linear-gradient(top, rgba(255, 199, 30, 0.95) 0%, rgba(255, 199, 30, 1) 0%, rgba(226, 141, 14, 1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255, 199, 30, 0.95)), color-stop(0%, rgba(255, 199, 30, 1)), color-stop(100%, rgba(226, 141, 14, 1)));
+            background: -webkit-linear-gradient(top, rgba(255, 199, 30, 0.95) 0%, rgba(255, 199, 30, 1) 0%, rgba(226, 141, 14, 1) 100%);
+            background: -o-linear-gradient(top, rgba(255, 199, 30, 0.95) 0%, rgba(255, 199, 30, 1) 0%, rgba(226, 141, 14, 1) 100%);
+            background: -ms-linear-gradient(top, rgba(255, 199, 30, 0.95) 0%, rgba(255, 199, 30, 1) 0%, rgba(226, 141, 14, 1) 100%);
+            background: linear-gradient(to bottom, rgba(255, 199, 30, 0.95) 0%, rgba(255, 199, 30, 1) 0%, rgba(226, 141, 14, 1) 100%);
+            border: 2px solid #fff;
             /* just in case there no content*/
             padding: 20px 25px 30px;
             margin: 0 auto 25px;
@@ -62,13 +69,21 @@
         }
 
         .profile-img-card {
-            width: 96px;
+            /* width: 96px;
             height: 96px;
             margin: 0 auto 10px;
             display: block;
             -moz-border-radius: 50%;
             -webkit-border-radius: 50%;
-            border-radius: 50%;
+            border-radius: 50%; */
+
+            width: 185px;
+            height: 96px;
+            margin: 0 auto 10px;
+            display: block;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            border-radius: 13px;
         }
 
         /*
@@ -80,7 +95,8 @@
             text-align: center;
             margin: 10px 0 0;
             min-height: 1em;
-            color: #2865ac;
+            color: #fff;
+            /* font-family: 'Bliss 2 reguler'; */
         }
 
         .profile-name-card2 {
@@ -89,7 +105,7 @@
             text-align: center;
             margin: 10px 0 0;
             min-height: 1em;
-            color: #2865ac;
+            color: #fff;
             margin-bottom: 40px;
         }
 
@@ -113,6 +129,7 @@
             direction: ltr;
             height: 44px;
             font-size: 16px;
+            border-radius: 20px;
         }
 
         .form-signin input[type=email],
@@ -138,7 +155,7 @@
 
         .btn.btn-signin {
             /*background-color: #4d90fe; */
-            background-color: #2865ac;
+            background-color: #fff;
             /* background-color: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));*/
             padding: 0px;
             font-weight: 700;
@@ -146,20 +163,22 @@
             height: 36px;
             -moz-border-radius: 3px;
             -webkit-border-radius: 3px;
-            border-radius: 3px;
+            border-radius: 10px;
             border: none;
             -o-transition: all 0.218s;
             -moz-transition: all 0.218s;
             -webkit-transition: all 0.218s;
             transition: all 0.218s;
+            border: #FB991E 1px solid;
+            color: #FB991E;
         }
 
         .btn.btn-signin:hover,
         .btn.btn-signin:active,
         .btn.btn-signin:focus {
             background-color: #fff;
-            color: #2865ac;
-            border: #2865ac 1px solid;
+            color: #b3aaa4;
+            border: #b3aaa4 1px solid;
         }
 
         .forgot-password {
@@ -181,15 +200,22 @@
             background: #F7F7F7;
             font-size: 20px;
         }
+
+        .form-control:focus {
+            border-color: #FB991E !important;
+            outline: 0;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px #f4ba44 !important;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px #f4ba44 !important;
+        }
     </style>
 </head>
 
 <body class="bg-login">
     <div class="container" ng-app="loginApp" ng-controller="loginCtrl">
         <div class="card card-container">
-            <img id="profile-img" class="profile-img-card" src="css/asset/avatar_2x.png" />
-            <p id="profile-name" class="profile-name-card">IRMA </p>
-            <p id="profile-name2" class="profile-name-card2">Integrated Risk Management</p>
+            <img id="profile-img" class="profile-img-card" src="images/main_logo.jpg" />
+            <p id="profile-name" class="profile-name-card">ERM </p>
+            <p id="profile-name2" class="profile-name-card2">Enterprise Risk Management</p>
             <form class="form-signin">
                 <span id="reauth-email" class="reauth-email"></span>
                 <input type="text" ng-model="email" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
