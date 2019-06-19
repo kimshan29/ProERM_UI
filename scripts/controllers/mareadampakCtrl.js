@@ -5,6 +5,8 @@
     $scope.areadampak = {};
     $scope.areadampak.input = {};
     $scope.areadampak.isEditMode = false;
+    $scope.master = {};
+    $scope.master.tahun = [];
 
     //Procedures =====================================================================================================================
     $scope.formLoad = function () {
@@ -16,8 +18,12 @@
 
         $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withOption('responsive', true).withDisplayLength(10);
 
-        NProgress.set(0.20)
-        // $scope.renderdataDampak();
+
+        //Master Tahun
+        var years = Helper.generateStackedYears(2018, 2);
+        $scope.master.tahun = years;
+
+        $scope.renderdataDampak();
     }
 
     //Event Handlers ===================================================================================================================
@@ -42,6 +48,11 @@
     }
 
     $scope.eventAddDampak = function () {
+        $scope.areadampak.input.id = "";
+        $scope.areadampak.input.userEmail = $scope.currentUser.email;
+        // console.log(JSON.stringify($scope.areadampak.input));
+
+
         var apiUrl = "/api/MasterAreaDampak";
         HttpRequest.post(apiUrl, $scope.areadampak.input).success(function (response) {
             $scope.renderdataDampak();
