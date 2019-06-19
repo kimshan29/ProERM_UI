@@ -10,14 +10,14 @@
     $scope.formLoad = function () {
         try {
             $scope.currentUser = JSON.parse($cookies.get('currentUser'));
-        }
-        catch (err) {
+        } catch (err) {
             $scope.currentUser = {};
         }
 
         $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withOption('responsive', true).withDisplayLength(10);
 
-        $scope.renderdataDampak();
+        NProgress.set(0.20)
+        // $scope.renderdataDampak();
     }
 
     //Event Handlers ===================================================================================================================
@@ -31,18 +31,17 @@
         $scope.areadampak.isEditMode = false;
     }
 
-    $scope.renderdataDampak = function ()
-    {
+    $scope.renderdataDampak = function () {
         NProgress.start();
-            var apiUrl = "/api/MasterAreaDampak";
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.areadampak.data = response;
-                NProgress.done();
-            });
+        // alert("test")
+        var apiUrl = "/api/MasterAreaDampak";
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.areadampak.data = response;
+            NProgress.done();
+        });
     }
 
-    $scope.eventAddDampak = function ()
-    {
+    $scope.eventAddDampak = function () {
         var apiUrl = "/api/MasterAreaDampak";
         HttpRequest.post(apiUrl, $scope.areadampak.input).success(function (response) {
             $scope.renderdataDampak();
@@ -60,8 +59,7 @@
         });
     }
 
-    $scope.eventHapusDampak = function (id, name)
-    {
+    $scope.eventHapusDampak = function (id, name) {
         var apiUrl = "/api/MasterAreaDampak/" + id + "?email=" + $scope.currentUser.email;
         var hapus = confirm("Hapus " + name + "?");
 
