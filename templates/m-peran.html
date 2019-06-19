@@ -61,9 +61,9 @@
 <div class="row" ng-show="peran.isEditMode">
     <div class="col-lg-12">
         <div class="panel">
-            <div class="panel-body bg-white border-gray color-blue">
+            <div class="panel-body bg-white border-gray main-font">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3 class="color-blue">
+                    <h3>
                         FORM MASTER PERAN
                     </h3>
                     <hr />
@@ -91,16 +91,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Awal Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="peran.input.tglAwalAktif"
-                                       ng-init="peran.input.tglAwalAktif = peran.input.tglAwalAktif.toDate()"
-                                       is-open="peran.input.tglAwalAktif.$$periodeAwalOpened"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="peran.input.tglAwalAktif" ng-init="peran.input.tglAwalAktif = peran.input.tglAwalAktif.toDate()" is-open="peran.input.tglAwalAktif.$$periodeAwalOpened" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="peran.input.tglAwalAktif.$$periodeAwalOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
@@ -109,16 +100,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Akhir Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="peran.input.tglAkhirAktif"
-                                       ng-init="peran.input.tglAkhirAktif = peran.input.tglAkhirAktif.toDate()"
-                                       is-open="peran.input.tglAkhirAktif.$$periodeAwalOpened"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="peran.input.tglAkhirAktif" ng-init="peran.input.tglAkhirAktif = peran.input.tglAkhirAktif.toDate()" is-open="peran.input.tglAkhirAktif.$$periodeAwalOpened" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="peran.input.tglAkhirAktif.$$periodeAwalOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>

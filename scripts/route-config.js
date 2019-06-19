@@ -219,6 +219,15 @@ mainApp.config(function ($routeProvider) {
             controller: 'mareadampakCtrl'
         })
 
+
+        // Master  Dampak
+        .when('/mDampak', {
+            cache: false,
+            templateUrl: 'templates/mDampak.html?' + $.now(),
+            controller: 'mDampakCtrl'
+        })
+
+
         // Master Employee
         .when('/m-employee', {
             cache: false,

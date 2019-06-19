@@ -59,9 +59,9 @@
 <div class="row" ng-show="user.isEditMode">
     <div class="col-lg-12">
         <div class="panel">
-            <div class="panel-body bg-white border-gray color-blue">
+            <div class="panel-body bg-white border-gray main-font">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3 class="color-blue">
+                    <h3>
                         FORM MASTER USER
                     </h3>
                     <hr />
@@ -71,12 +71,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Username</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <input type="text"
-                                       required
-                                       class="form-control"
-                                       ng-model="user.input.userName"
-                                       ng-model-options="{ debounce:1000 }"
-                                       ng-change="eventCekUserExist(user.input.userName)" />
+                                <input type="text" required class="form-control" ng-model="user.input.userName" ng-model-options="{ debounce:1000 }" ng-change="eventCekUserExist(user.input.userName)" />
                                 <span ng-show="userexist" style="color:red;"><b>Username sudah ada!</b></span>
                             </div>
                         </div>
@@ -89,42 +84,26 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Email</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <input type="text" ng-model-options="{ debounce:1000 }"
-                                       ng-change="eventCekUserExistEmail(user.input.email)" class="form-control" ng-model="user.input.email" />
+                                <input type="text" ng-model-options="{ debounce:1000 }" ng-change="eventCekUserExistEmail(user.input.email)" class="form-control" ng-model="user.input.email" />
                                 <span ng-show="emailexist" style="color:red;"><b>Email sudah ada!</b></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Peran</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="user.input.peran.id"
-                                        ng-options="item.id as item.namaPeran for item in user.master.peran"
-                                        ng-change="eventChangePeran()"></select>
+                                <select class="form-control" ng-model="user.input.peran.id" ng-options="item.id as item.namaPeran for item in user.master.peran" ng-change="eventChangePeran()"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Unit</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="user.input.unit.id"
-                                        ng-options="item.id as item.name for item in user.master.unit"
-                                        ng-change="eventChangeUnit()"></select>
+                                <select class="form-control" ng-model="user.input.unit.id" ng-options="item.id as item.name for item in user.master.unit" ng-change="eventChangeUnit()"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Awal Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="user.input.tglAwalAktif"
-                                       ng-init="user.input.tglAwalAktif = user.input.tglAwalAktif.toDate()"
-                                       is-open="user.input.tglAwalAktif.$$periodeAwalOpened"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="user.input.tglAwalAktif" ng-init="user.input.tglAwalAktif = user.input.tglAwalAktif.toDate()" is-open="user.input.tglAwalAktif.$$periodeAwalOpened" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="user.input.tglAwalAktif.$$periodeAwalOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
@@ -133,16 +112,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Akhir Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="user.input.tglAkhirAktif"
-                                       is-open="user.input.tglAkhirAktif.$$periodeAkhirOpened"
-                                       ng-init="user.input.tglAkhirAktif = user.input.tglAkhirAktif.toDate()"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="user.input.tglAkhirAktif" is-open="user.input.tglAkhirAktif.$$periodeAkhirOpened" ng-init="user.input.tglAkhirAktif = user.input.tglAkhirAktif.toDate()" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="user.input.tglAkhirAktif.$$periodeAkhirOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>

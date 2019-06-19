@@ -72,9 +72,9 @@
 <div class="row" ng-show="menu.isEditMode">
     <div class="col-lg-12">
         <div class="panel">
-            <div class="panel-body bg-white border-gray color-blue">
+            <div class="panel-body bg-white border-gray main-font">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3 class="color-blue">
+                    <h3>
                         FORM MASTER MENU
                     </h3>
                     <hr />
@@ -96,10 +96,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Menu Parent</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="menu.input.menuParent.id"
-                                        ng-options="item.id as item.namaMenu for item in menu.master.menuParent"
-                                        ng-change="eventChangeParent()">
+                                <select class="form-control" ng-model="menu.input.menuParent.id" ng-options="item.id as item.namaMenu for item in menu.master.menuParent" ng-change="eventChangeParent()">
                                 </select>
                             </div>
                         </div>
@@ -125,17 +122,14 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Level Menu</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="menu.input.level"
-                                        ng-options="item as item for item in menu.master.level">
+                                <select class="form-control" ng-model="menu.input.level" ng-options="item as item for item in menu.master.level">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tipe Menu</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="menu.input.tipe">
+                                <select class="form-control" ng-model="menu.input.tipe">
                                     <option value="">-</option>
                                     <option value="Header">Header</option>
                                     <option value="Item">Item</option>
@@ -145,8 +139,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Target</label>
                             <div class="col-lg-6 col-md-9 col-sm-9">
-                                <select class="form-control"
-                                        ng-model="menu.input.target">
+                                <select class="form-control" ng-model="menu.input.target">
                                     <option value="">-</option>
                                     <option value="_self">_self</option>
                                     <option value="_blank">_blank</option>
@@ -174,16 +167,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Awal Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="menu.input.tglAwalAktif"
-                                       ng-init="menu.input.tglAwalAktif = menu.input.tglAwalAktif.toDate()"
-                                       is-open="menu.input.tglAwalAktif.$$periodeAwalOpened"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="menu.input.tglAwalAktif" ng-init="menu.input.tglAwalAktif = menu.input.tglAwalAktif.toDate()" is-open="menu.input.tglAwalAktif.$$periodeAwalOpened" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="menu.input.tglAwalAktif.$$periodeAwalOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
@@ -192,16 +176,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tanggal Akhir Aktif</label>
                             <div class="col-lg-6 col-md-9 col-sm-9 input-group padding-left-15-important padding-right-15-important">
-                                <input type="text" class="form-control"
-                                       datepicker-localdate
-                                       uib-datepicker-popup="dd/MM/yyyy"
-                                       required="required"
-                                       ng-required="true"
-                                       ng-model="menu.input.tglAkhirAktif"
-                                       is-open="menu.input.tglAkhirAktif.$$periodeAkhirOpened"
-                                       ng-init="menu.input.tglAkhirAktif = menu.input.tglAkhirAktif.toDate()"
-                                       close-text="Close"
-                                       alt-input-formats="['dd/MM//yyyy']" />
+                                <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" required="required" ng-required="true" ng-model="menu.input.tglAkhirAktif" is-open="menu.input.tglAkhirAktif.$$periodeAkhirOpened" ng-init="menu.input.tglAkhirAktif = menu.input.tglAkhirAktif.toDate()" close-text="Close" alt-input-formats="['dd/MM//yyyy']" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="menu.input.tglAkhirAktif.$$periodeAkhirOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
@@ -327,16 +302,9 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">
                                 <button type="button" class="btn btn-primary" ng-click="eventClickBack()">
-                                    <- Back
-                                </button>
-                            </label>
+                                    <- Back </button> </label> </div> </div> </form> </div> <!-- /.panel-body -->
                         </div>
+                        <!-- /.panel -->
                     </div>
-                </form>
+                    <!-- /.col-lg-12 -->
             </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
