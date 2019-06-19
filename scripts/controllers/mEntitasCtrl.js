@@ -11,8 +11,7 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
     $scope.formLoad = function () {
         try {
             $scope.currentUser = JSON.parse($cookies.get('currentUser'));
-        }
-        catch (err) {
+        } catch (err) {
             $scope.currentUser = {};
         }
 
@@ -48,24 +47,27 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
     $scope.eventClickSave = function () {
         var apiUrl = "/api/MasterEntitas";
 
+        $scope.entitas.input.id = "";
         var data = $scope.entitas.input;
         data.userEmail = $scope.currentUser.email;
 
-        HttpRequest.post(apiUrl, data).success(function (response) {
-            $scope.renderDataEntitas();
-            $scope.entitas.isEditMode = false;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "Entitas",
-                exception: response,
-                exceptionCode: code,
-                operation: "POST",
-                apiUrl: apiUrl
-            };
+        console.log(JSON.stringify(data));
 
-            Helper.notifErrorHttp(data);
-        });
+        // HttpRequest.post(apiUrl, data).success(function (response) {
+        //     $scope.renderDataEntitas();
+        //     $scope.entitas.isEditMode = false;
+        // })
+        // .error(function (response, code) {
+        //     var data = {
+        //         title: "Entitas",
+        //         exception: response,
+        //         exceptionCode: code,
+        //         operation: "POST",
+        //         apiUrl: apiUrl
+        //     };
+
+        //     Helper.notifErrorHttp(data);
+        // });
     }
 
     $scope.eventClickEdit = function (id) {
@@ -74,23 +76,23 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var apiUrl = "/api/MasterEntitas/" + id;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.entitas.input = response;
-            $scope.entitas.isEditMode = true;
-            NProgress.done();
-        })
-        .error(function (response, code) {
-            NProgress.done();
+                $scope.entitas.input = response;
+                $scope.entitas.isEditMode = true;
+                NProgress.done();
+            })
+            .error(function (response, code) {
+                NProgress.done();
 
-            var data = {
-                title: "Entitas",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                var data = {
+                    title: "Entitas",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.eventClickHapus = function (id, name) {
@@ -102,23 +104,23 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
             NProgress.start();
 
             HttpRequest.del(apiUrl).success(function (response) {
-                $scope.renderDataEntitas();
-                $scope.entitas.isEditMode = false;
-                NProgress.done();
-            })
-            .error(function (response, code) {
-                NProgress.done();
+                    $scope.renderDataEntitas();
+                    $scope.entitas.isEditMode = false;
+                    NProgress.done();
+                })
+                .error(function (response, code) {
+                    NProgress.done();
 
-                var data = {
-                    title: "Entitas",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "DELETE",
-                    apiUrl: apiUrl
-                };
+                    var data = {
+                        title: "Entitas",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "DELETE",
+                        apiUrl: apiUrl
+                    };
 
-                Helper.notifErrorHttp(data);
-            });
+                    Helper.notifErrorHttp(data);
+                });
         }
     }
 
