@@ -1,4 +1,4 @@
-mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $injector,$sce, $location, Constant, HttpRequest, Model, Helper) {
+mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $injector, $sce, $location, Constant, HttpRequest, Model, Helper) {
     var $validationProvider = $injector.get('$validation');
     $scope.Helper = Helper;
     var currentUser = {};
@@ -86,7 +86,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.persetujuan = {};
     $scope.persetujuan.data = {};
     $scope.persetujuan.isEditMode = false;
-    
+
     $scope.logApprovals = [];
     $scope.isCurrentApprover = false;
     $scope.isDataEditable = false;
@@ -107,69 +107,84 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.getCurrentUser = function () {
         try {
             currentUser = JSON.parse($cookies.get('currentUser'));
-        }
-        catch (err) {
+        } catch (err) {
             currentUser = {};
         }
     }
 
     $scope.renderApprovalStatus = function () {
         NProgress.start();
-        var apiUrl = "/api/DMRApprovalStatus/" + idDmr + "?email=" + currentUser.email; 
+        var apiUrl = "/api/DMRApprovalStatus/" + idDmr + "?email=" + currentUser.email;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.approvalStatus = response;
+                $scope.approvalStatus = response;
 
-            if ($scope.approvalStatus.kodeApproval != 1) {
-                $scope.isSubmitAble = false;
-            } else {
-                $scope.isSubmitAble = true;
-            }
+                if ($scope.approvalStatus.kodeApproval != 1) {
+                    $scope.isSubmitAble = false;
+                } else {
+                    $scope.isSubmitAble = true;
+                }
 
-            $scope.isCurrentApprover = (response.currentApproval == currentUser.email) || (currentUser.email == "adminprorba@indonesiapower.co.id");
-            $scope.isDataEditable = response.isDataEditable;//$scope.isCurrentApprover ; //&& response.kodeApproval == 1;
-            $cookies.put('dmrApprovalStatus', JSON.stringify(response));
+                $scope.isCurrentApprover = (response.currentApproval == currentUser.email) || (currentUser.email == "adminprorba@indonesiapower.co.id");
+                $scope.isDataEditable = response.isDataEditable; //$scope.isCurrentApprover ; //&& response.kodeApproval == 1;
+                $cookies.put('dmrApprovalStatus', JSON.stringify(response));
 
-            apiUrl = "/api/DMRListNextApprover/" + idDmr;
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.listNextApprover = response;
+                apiUrl = "/api/DMRListNextApprover/" + idDmr;
+                HttpRequest.get(apiUrl).success(function (response) {
+                        $scope.listNextApprover = response;
+                    })
+                    .error(function (response, code) {
+                        var data = {
+                            title: "List Next Approver",
+                            exception: response,
+                            exceptionCode: code,
+                            operation: "GET",
+                            apiUrl: apiUrl
+                        };
+
+                        Helper.notifErrorHttp(data);
+                    });
+
+                apiUrl = "/api/DMRListTujuanDisposisi/" + idDmr;
+                HttpRequest.get(apiUrl).success(function (response) {
+                        $scope.listTujuanDisposisi = response;
+                    })
+                    .error(function (response, code) {
+                        var data = {
+                            title: "List Tujuan Disposisi",
+                            exception: response,
+                            exceptionCode: code,
+                            operation: "GET",
+                            apiUrl: apiUrl
+                        };
+
+                        Helper.notifErrorHttp(data);
+                    });
+
+                apiUrl = "/api/DMRLogTrail/" + idDmr;
+                HttpRequest.get(apiUrl).success(function (response) {
+                        $scope.logApprovals = response;
+                        NProgress.done();
+                    })
+                    .error(function (response, code) {
+                        var data = {
+                            title: "Log Trail",
+                            exception: response,
+                            exceptionCode: code,
+                            operation: "GET",
+                            apiUrl: apiUrl
+                        };
+
+                        Helper.notifErrorHttp(data);
+                    });
+
+                $scope.approveDone = false;
             })
             .error(function (response, code) {
-                var data = {
-                    title: "List Next Approver",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "GET",
-                    apiUrl: apiUrl
-                };
-
-                Helper.notifErrorHttp(data);
-            });
-
-            apiUrl = "/api/DMRListTujuanDisposisi/" + idDmr;
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.listTujuanDisposisi = response;
-            })
-            .error(function (response, code) {
-                var data = {
-                    title: "List Tujuan Disposisi",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "GET",
-                    apiUrl: apiUrl
-                };
-
-                Helper.notifErrorHttp(data);
-            });
-
-            apiUrl = "/api/DMRLogTrail/" + idDmr;
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.logApprovals = response;
                 NProgress.done();
-            })
-            .error(function (response, code) {
+
                 var data = {
-                    title: "Log Trail",
+                    title: "Approval Status",
                     exception: response,
                     exceptionCode: code,
                     operation: "GET",
@@ -178,22 +193,6 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
                 Helper.notifErrorHttp(data);
             });
-
-            $scope.approveDone = false;
-        })
-        .error(function (response, code) {
-            NProgress.done();
-
-            var data = {
-                title: "Approval Status",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
-
-            Helper.notifErrorHttp(data);
-        });
     }
 
     $scope.submitClick = function () {
@@ -201,7 +200,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var konfirmasi = confirm('Apakah Anda yakin akan Submit Data ?');
         if (konfirmasi) {
             NProgress.start();
-            
+
             $scope.approveDone = true;
 
             var apiUrl = "/api/DMRSubmit";
@@ -212,27 +211,27 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             };
 
             HttpRequest.post(apiUrl, data).success(function (response) {
-                alert('Data berhasil di-submit.');
-                $('#modalSubmit').modal('hide');
-                $scope.renderApprovalStatus();
-                $scope.approveDone = false;    
-                NProgress.done();
-                
-            })
-            .error(function (response, code) {
-                $scope.renderApprovalStatus();
-                NProgress.done();
+                    alert('Data berhasil di-submit.');
+                    $('#modalSubmit').modal('hide');
+                    $scope.renderApprovalStatus();
+                    $scope.approveDone = false;
+                    NProgress.done();
 
-                var data = {
-                    title: "DMR Submit",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "POST",
-                    apiUrl: apiUrl
-                };
+                })
+                .error(function (response, code) {
+                    $scope.renderApprovalStatus();
+                    NProgress.done();
 
-                Helper.notifErrorHttp(data);
-            });
+                    var data = {
+                        title: "DMR Submit",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "POST",
+                        apiUrl: apiUrl
+                    };
+
+                    Helper.notifErrorHttp(data);
+                });
         }
         $scope.isSubmitClick = false;
     }
@@ -253,29 +252,29 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             };
 
             HttpRequest.post(apiUrl, data).success(function (response) {
-                alert('Data berhasil di-approve.');
+                    alert('Data berhasil di-approve.');
 
-                //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
-                $('#modalApproval').modal('hide');
+                    //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
+                    $('#modalApproval').modal('hide');
 
-                $scope.renderApprovalStatus();
-                $scope.approveDone = false;
-                NProgress.done();
-            })
-            .error(function (response, code) {
-                $scope.renderApprovalStatus();
-                NProgress.done();
+                    $scope.renderApprovalStatus();
+                    $scope.approveDone = false;
+                    NProgress.done();
+                })
+                .error(function (response, code) {
+                    $scope.renderApprovalStatus();
+                    NProgress.done();
 
-                var data = {
-                    title: "DMR Approve",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "POST",
-                    apiUrl: apiUrl
-                };
+                    var data = {
+                        title: "DMR Approve",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "POST",
+                        apiUrl: apiUrl
+                    };
 
-                Helper.notifErrorHttp(data);
-            });
+                    Helper.notifErrorHttp(data);
+                });
         }
         $scope.isSubmitClick = false;
     }
@@ -296,68 +295,68 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             };
 
             HttpRequest.post(apiUrl, data).success(function (response) {
-                $scope.renderApprovalStatus();
-                alert('Data berhasil di-revise.');
-                //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
-                $('#modalRevise').modal('hide');
-                $scope.approveDone = false;
-                NProgress.done();
-            })
-            .error(function (response, code) {
-                $scope.renderApprovalStatus();
-                NProgress.done();
+                    $scope.renderApprovalStatus();
+                    alert('Data berhasil di-revise.');
+                    //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
+                    $('#modalRevise').modal('hide');
+                    $scope.approveDone = false;
+                    NProgress.done();
+                })
+                .error(function (response, code) {
+                    $scope.renderApprovalStatus();
+                    NProgress.done();
 
-                var data = {
-                    title: "DMR Revise",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "POST",
-                    apiUrl: apiUrl
-                };
+                    var data = {
+                        title: "DMR Revise",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "POST",
+                        apiUrl: apiUrl
+                    };
 
-                Helper.notifErrorHttp(data);
-            });
+                    Helper.notifErrorHttp(data);
+                });
         }
         $scope.isSubmitClick = false;
     }
 
     $scope.submitDispositionClick = function () {
-        
+
         var konfirmasi = confirm('Apakah Anda yakin akan Men-disposisi Data ?');
         if (konfirmasi) {
-        NProgress.start();
-        $scope.isSubmitClick = true;
-        $scope.approveDone = true;
-        var apiUrl = "/api/DMRDisposition";
-        var data = {
-            idDmr: idDmr,
-            keterangan: $scope.dispositioner.keterangan,
-            tujuanDisposisi: $scope.dispositioner.tujuan,
-            userEmail: currentUser.email
-        };
-
-        HttpRequest.post(apiUrl, data).success(function (response) {
-            $scope.renderApprovalStatus();
-            alert('Data berhasil didisposisi.');
-            //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
-            $('#modalDisposition').modal('hide');
-            $scope.approveDone = false;
-            NProgress.done();
-        })
-        .error(function (response, code) {
-            $scope.renderApprovalStatus();
-            NProgress.done();
-
+            NProgress.start();
+            $scope.isSubmitClick = true;
+            $scope.approveDone = true;
+            var apiUrl = "/api/DMRDisposition";
             var data = {
-                title: "DMR Disposition",
-                exception: response,
-                exceptionCode: code,
-                operation: "POST",
-                apiUrl: apiUrl
+                idDmr: idDmr,
+                keterangan: $scope.dispositioner.keterangan,
+                tujuanDisposisi: $scope.dispositioner.tujuan,
+                userEmail: currentUser.email
             };
 
-            Helper.notifErrorHttp(data);
-        });
+            HttpRequest.post(apiUrl, data).success(function (response) {
+                    $scope.renderApprovalStatus();
+                    alert('Data berhasil didisposisi.');
+                    //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
+                    $('#modalDisposition').modal('hide');
+                    $scope.approveDone = false;
+                    NProgress.done();
+                })
+                .error(function (response, code) {
+                    $scope.renderApprovalStatus();
+                    NProgress.done();
+
+                    var data = {
+                        title: "DMR Disposition",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "POST",
+                        apiUrl: apiUrl
+                    };
+
+                    Helper.notifErrorHttp(data);
+                });
         }
         $scope.isSubmitClick = false;
     }
@@ -367,27 +366,27 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/DMRStatusForm/" + idDmr;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.allowSubmit = response.status;
-            $scope.rekomendasiComplete = response.rekomendasi;
-            $scope.isSubmitClick = response.status;
-            console.log($scope.allowSubmit);
-            console.log("Submit : " + $scope.isSubmitClick);
-            NProgress.done();
-        })
-        .error(function (response, code) {
-            NProgress.done();
-            var data = {
-                title: "DMR Status FORM",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
-            Helper.notifErrorHttp(data);
-        });
+                $scope.allowSubmit = response.status;
+                $scope.rekomendasiComplete = response.rekomendasi;
+                $scope.isSubmitClick = response.status;
+                console.log($scope.allowSubmit);
+                console.log("Submit : " + $scope.isSubmitClick);
+                NProgress.done();
+            })
+            .error(function (response, code) {
+                NProgress.done();
+                var data = {
+                    title: "DMR Status FORM",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
+                Helper.notifErrorHttp(data);
+            });
     }
 
-    
+
 
     // ====================================== HELPER, FUNCTION, FORM LOAD ====================================\\
     $scope.trustAsHtml = function (string) {
@@ -430,8 +429,8 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         if ($scope.idDmr != "") {
 
             $scope.currUrl = "main.aspx#" + $location.path();
-		console.log(JSON.stringify($scope.currUrl));
-		$cookies.put('lastUrl',$scope.currUrl);
+            console.log(JSON.stringify($scope.currUrl));
+            $cookies.put('lastUrl', $scope.currUrl);
 
             //NProgress.start();
 
@@ -443,7 +442,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.renderKklForm();
             $scope.renderKhForm();
             $scope.renderKkfForm();
-            
+
             // KAJIAN RISIKO
             $scope.renderPenetapanKonteks();
             $scope.renderIdentifikasi();
@@ -485,16 +484,16 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.informasiUmum.master.jenisValuta = response;
         });
-        
+
         apiUrl = "/api/DMRInformasiUmum?idDMR=" + idDmr;
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.informasiUmum.data = response;
-            
+
             if ($scope.informasiUmum.data.jenisKegiatan.name == 'Investasi') {
                 $scope.isInvestasi = true;
                 apiUrl = "/api/DMRGetProgram/" + idDmr;
                 HttpRequest.get(apiUrl).success(function (response) {
-                    
+
                     $scope.informasiUmum.master.program = response;
 
                     NProgress.done();
@@ -510,12 +509,12 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.informasiUmum.data.periodeAwal = Helper.isNullOrEmpty($scope.informasiUmum.data.periodeAwal) ? null : $scope.informasiUmum.data.periodeAwal.toDate();
             $scope.informasiUmum.data.periodeAkhir = Helper.isNullOrEmpty($scope.informasiUmum.data.periodeAkhir) ? null : $scope.informasiUmum.data.periodeAkhir.toDate();
 
-            apiUrl = "/api/DMRListRiskOwner/" + $scope.informasiUmum.data.idEntitas;
-            
+            apiUrl = "/api/DMRListRiskOwner/" + idDmr;
+
             HttpRequest.get(apiUrl).success(function (response) {
                 $scope.informasiUmum.master.pemilikResiko = response;
             });
-            
+
             NProgress.done();
         }).error(function (response, code) {
             $('#modalError2').modal("show");
@@ -543,8 +542,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.informasiUmum.isEditMode = false;
     }
 
-    $scope.eventChangeJenisKegiatan = function ()
-    {
+    $scope.eventChangeJenisKegiatan = function () {
         var masterJenisKegiatan = $scope.informasiUmum.master.jenisKegiatan;
         var selectedJenisKegiatan = Helper.findItem(masterJenisKegiatan, "id", $scope.informasiUmum.data.jenisKegiatan.id);
         $scope.informasiUmum.data.jenisKegiatan.name = selectedJenisKegiatan.name;
@@ -583,7 +581,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.eventChangeProgram = function () {
         var masterProgram = $scope.informasiUmum.master.program;
         var selectedProgram = Helper.findItem(masterProgram, "id", $scope.informasiUmum.data.program.id);
-        
+
         $scope.informasiUmum.data.program.name = selectedProgram.name;
         $scope.informasiUmum.data.judulDMR = selectedProgram.name;
 
@@ -615,16 +613,14 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
     // =========== PENDAHULUAN ================ //
 
-    $scope.renderPendahuluan = function ()
-    {
+    $scope.renderPendahuluan = function () {
         NProgress.start();
 
         apiUrl = "/api/DasarKebijakan/" + $scope.idDmr;
-        HttpRequest.get(apiUrl).success(function(response){
+        HttpRequest.get(apiUrl).success(function (response) {
             $scope.listKebijakan = response;
             console.log(JSON.stringify($scope.listKebijakan));
-        }
-        );
+        });
 
         apiUrl = "/api/DMRPendahuluan/" + idDmr;
         HttpRequest.get(apiUrl).success(function (response) {
@@ -646,10 +642,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             HttpRequest.get(apiUrl3).success(function (response) {
                 $scope.pendahuluan.master.strategicInitiative = response;
             });
-            
+
             NProgress.done();
         });
-        
+
     }
 
     // CKEditor
@@ -683,9 +679,11 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.pendahuluan.data.strategicInitiative.name = selectedStrategicInitiative.name;
     }
 
-    $scope.eventClickAlternatifTambahCara = function ()
-    {
-        $scope.pendahuluan.data.alternatifCaraPencapaianSasaran.push({ id: "", name: "" });
+    $scope.eventClickAlternatifTambahCara = function () {
+        $scope.pendahuluan.data.alternatifCaraPencapaianSasaran.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickAlternatifHapusCara = function (index) {
@@ -693,15 +691,17 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickAlternatifTambahKebijakan = function () {
-        $scope.pendahuluan.data.dasarKebijakan.push({ id: "", name: "" });
+        $scope.pendahuluan.data.dasarKebijakan.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickAlternatifHapusKebijakan = function (index) {
         $scope.pendahuluan.data.dasarKebijakan.splice(index, 1);
     }
 
-    $scope.eventClickPendahuluanEdit = function ()
-    {
+    $scope.eventClickPendahuluanEdit = function () {
         $scope.pendahuluan.isEditMode = true;
     }
 
@@ -729,8 +729,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.kkoDataAspek = [];
     $scope.kkoStart = "";
     $scope.kkoEnd = "";
-    $scope.renderKkoForm = function ()
-    {
+    $scope.renderKkoForm = function () {
         NProgress.start();
         apiUrl = "/api/DMRKKO/" + idDmr;
         HttpRequest.get(apiUrl)
@@ -769,8 +768,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             })
             .error(function (response, code) {
                 $scope.errorCode = response.ExceptionMessage + " - " + code;
-                if (response.ExceptionType == "System.ArgumentNullException")
-                {
+                if (response.ExceptionType == "System.ArgumentNullException") {
                     $scope.error = {};
                     $scope.error.message = "Silahkan lengkapi data pada Modul Informasi Umum & Modul Pendahuluan!";
                     $('#modalError2').modal('show');
@@ -784,16 +782,13 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
     $scope.bobotIsValid = false;
     $scope.jumlahBobot = 0;
-    $scope.fillAspekMain = function ()
-    {
+    $scope.fillAspekMain = function () {
         $scope.jumlahBobot = 0;
         $scope.kkoDataAspek = [];
         var aspek = $scope.kko.data.penilaianAlternative.length;
-        if (aspek > 0)
-        {
+        if (aspek > 0) {
             angular.forEach($scope.kko.data.penilaianAlternative[0].aspek, function (item, i) {
-                $scope.kkoDataAspek.push(
-                {
+                $scope.kkoDataAspek.push({
                     id: item.id,
                     idPenilaian: item.idPenilaian,
                     idAlt: item.idAlt,
@@ -845,12 +840,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     });
 
     // === KKO JADWAL KEGIATAN ===//
-    $scope.eventClickKkoAspekAllAdd = function ()
-    {
+    $scope.eventClickKkoAspekAllAdd = function () {
         if ($scope.kkoData != null) {
             $scope.jumlahBobot = 0;
-            $scope.kkoDataAspek.push(
-            {
+            $scope.kkoDataAspek.push({
                 id: "",
                 idPenilaian: "",
                 idAlt: "",
@@ -863,8 +856,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                 if (Helper.isNullOrEmpty($scope.kko.data.penilaianAlternative[i].aspek)) {
                     $scope.kko.data.penilaianAlternative[i].aspek = [];
                 }
-                $scope.kko.data.penilaianAlternative[i].aspek.push(
-                {
+                $scope.kko.data.penilaianAlternative[i].aspek.push({
                     id: "00000000-0000-0000-0000-000000000000",
                     idPenilaian: "",
                     idAlt: "",
@@ -939,8 +931,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         });
     }
 
-    $scope.eventAspekDeleteMain = function (index)
-    {
+    $scope.eventAspekDeleteMain = function (index) {
         var nilaiTotal = 0;
         angular.forEach($scope.kko.data.penilaianAlternative, function (item, i) {
             $scope.kko.data.penilaianAlternative[i].aspek.splice(index, 1);
@@ -968,7 +959,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var val = $scope.kko.data.penilaianAlternative[index].aspek[indexItem].aspek;
         angular.forEach($scope.kko.data.penilaianAlternative, function (item, i) {
             angular.forEach(item.aspek, function (subItem, a) {
-                if (i != index && a == indexItem){
+                if (i != index && a == indexItem) {
                     $scope.kko.data.penilaianAlternative[i].aspek[a].aspek = val;
                 }
             });
@@ -990,7 +981,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var val = $scope.kko.data.penilaianAlternative[index].aspek[indexItem].uraian;
         angular.forEach($scope.kko.data.penilaianAlternative, function (item, i) {
             angular.forEach(item.aspek, function (subItem, a) {
-                if (i != index && a == indexItem){
+                if (i != index && a == indexItem) {
                     $scope.kko.data.penilaianAlternative[i].aspek[a].uraian = val;
                 }
             });
@@ -1003,26 +994,33 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.kko.data.penilaianAlternative[index].aspek[indexItem].nilai = (bobot * skor) / 100;
 
         var nilaiTotal = 0;
-        
-            angular.forEach($scope.kko.data.penilaianAlternative[index].aspek, function (subItem, a) {
-                if ($scope.kko.data.penilaianAlternative[index].aspek[a].nilai != "")
-                {
-                    nilaiTotal = nilaiTotal + $scope.kko.data.penilaianAlternative[index].aspek[a].nilai;   
-                }
-            });
-            $scope.kko.data.penilaianAlternative[index].totNilai = nilaiTotal;
+
+        angular.forEach($scope.kko.data.penilaianAlternative[index].aspek, function (subItem, a) {
+            if ($scope.kko.data.penilaianAlternative[index].aspek[a].nilai != "") {
+                nilaiTotal = nilaiTotal + $scope.kko.data.penilaianAlternative[index].aspek[a].nilai;
+            }
+        });
+        $scope.kko.data.penilaianAlternative[index].totNilai = nilaiTotal;
     }
 
     $scope.eventClickKkoAspekAdd = function (index) {
-        $scope.kko.data.penilaianAlternative[index].aspek.push({ id: "", idPenilaian: "", idAlt: "", aspek: "", bobot: "", uraian: "", skala: "", nilai: "" });
+        $scope.kko.data.penilaianAlternative[index].aspek.push({
+            id: "",
+            idPenilaian: "",
+            idAlt: "",
+            aspek: "",
+            bobot: "",
+            uraian: "",
+            skala: "",
+            nilai: ""
+        });
     }
 
     $scope.eventClickKkoAspekDelete = function (index) {
         $scope.kko.data.aspek.splice(index, 1);
     }
 
-    $scope.eventClickKkoAddFile = function ()
-    {
+    $scope.eventClickKkoAddFile = function () {
         var newFile = {
             id: "",
             idDmr: idDmr,
@@ -1040,11 +1038,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickKkoDeleteFile = function (index) {
-        $scope.kko.data.file.splice(index,1);
+        $scope.kko.data.file.splice(index, 1);
     }
 
-    $scope.eventClickKKOGetFile = function (idFile)
-    {
+    $scope.eventClickKKOGetFile = function (idFile) {
         document.location.href = webServiceBaseUrl + "/api/UploadFile/" + idFile;
     }
 
@@ -1089,21 +1086,46 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.fillTimeBound = function () {
         var waktu = $scope.kko.data.timebound;
         if (waktu.length == 0) {
-            $scope.kko.data.timebound.push({ id: "", deskripsi: "Perencanaan", start: "", end: "" },
-                                           { id: "", deskripsi: "Pengadaan", start: "", end: "" },
-                                           { id: "", deskripsi: "Pelaksanaan", start: "", end: "" },
-                                           { id: "", deskripsi: "Pengujian / Commissioning", start: "", end: "" },
-                                           { id: "", deskripsi: "Serah Terima", start: "", end: "" });
+            $scope.kko.data.timebound.push({
+                id: "",
+                deskripsi: "Perencanaan",
+                start: "",
+                end: ""
+            }, {
+                id: "",
+                deskripsi: "Pengadaan",
+                start: "",
+                end: ""
+            }, {
+                id: "",
+                deskripsi: "Pelaksanaan",
+                start: "",
+                end: ""
+            }, {
+                id: "",
+                deskripsi: "Pengujian / Commissioning",
+                start: "",
+                end: ""
+            }, {
+                id: "",
+                deskripsi: "Serah Terima",
+                start: "",
+                end: ""
+            });
         }
     }
 
     $scope.eventClickKkoJadwalKegiatanAdd = function () {
-        $scope.kko.data.timebound.push({ id:"",deskripsi: "", start: "", end: "" });
+        $scope.kko.data.timebound.push({
+            id: "",
+            deskripsi: "",
+            start: "",
+            end: ""
+        });
     }
     $scope.eventClickKkoJadwalKegiatanDelete = function (index) {
         var hapus = confirm('Hapus Jadwal ?');
-        if (hapus)
-        {
+        if (hapus) {
             $scope.kko.data.timebound.splice(index, 1);
         }
     }
@@ -1136,29 +1158,29 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.renderKklForm = function () {
         apiUrl = "/api/DMRKKL/" + idDmr;
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.kkl.data = response;
-            if ($scope.kkl.data.file.length == 0) {
-                var newFile = [{
-                    id: "",
-                    idDmr: idDmr,
-                    title: "",
-                    url: "",
-                    file: {
-                        fileName: "",
-                        fileType: "",
-                        fileSize: "",
-                        base64: ""
-                    },
-                    attachmentType: "KKL"
-                }];
-                $scope.kkl.data.file = newFile;
-            }
-        })
-        .error(function (response, code) {
-            $scope.error.message = response.ExceptionMessage + " - " + code;
-            $('#modalError2').modal('show');
-            NProgress.done();
-        });
+                $scope.kkl.data = response;
+                if ($scope.kkl.data.file.length == 0) {
+                    var newFile = [{
+                        id: "",
+                        idDmr: idDmr,
+                        title: "",
+                        url: "",
+                        file: {
+                            fileName: "",
+                            fileType: "",
+                            fileSize: "",
+                            base64: ""
+                        },
+                        attachmentType: "KKL"
+                    }];
+                    $scope.kkl.data.file = newFile;
+                }
+            })
+            .error(function (response, code) {
+                $scope.error.message = response.ExceptionMessage + " - " + code;
+                $('#modalError2').modal('show');
+                NProgress.done();
+            });
     }
 
     $scope.kklpenjelasanPelaksanaan = {
@@ -1223,7 +1245,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.eventClickKKLGetFile = function (idFile) {
         document.location.href = webServiceBaseUrl + "/api/UploadFile/" + idFile;
     }
-    
+
     // =========== END OF KKL ================ //
 
     // =========== KH ================ //
@@ -1270,7 +1292,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.$on("ckeditor.ready", function (event) {
         $scope.isReady = true;
     });
-    
+
     $scope.eventClickKhEdit = function () {
         $scope.kh.isEditMode = true;
     }
@@ -1410,8 +1432,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.kkf.isEditMode = false;
     }
 
-    $scope.kkfChange = function (nama)
-    {
+    $scope.kkfChange = function (nama) {
         $scope.kkf.data.tangible.name = nama;
     }
 
@@ -1517,7 +1538,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.renderKesimpulanForm();
         $scope.kesimpulan.isEditMode = false;
     }
-    
+
     // =========== END OF KESIMPULAN ================ //
 
 
@@ -1529,7 +1550,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.penetapanKonteks.data = response;
 
             if ($scope.penetapanKonteks.data.sasaranOperasional.length == 0) {
-                $scope.penetapanKonteks.data.sasaranOperasional.push({ id: "", name: "" });
+                $scope.penetapanKonteks.data.sasaranOperasional.push({
+                    id: "",
+                    name: ""
+                });
             }
 
 
@@ -1549,10 +1573,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                 }];
                 $scope.penetapanKonteks.data.file = newFile;
             }
-                var apiUrl2 = "/api/DMRKRListSasaranFinansial/" + idDmr;
-                HttpRequest.get(apiUrl2).success(function (responseMaster) {
-                    $scope.penetapanKonteks.master.sasaranFinansial = responseMaster;
-                });
+            var apiUrl2 = "/api/DMRKRListSasaranFinansial/" + idDmr;
+            HttpRequest.get(apiUrl2).success(function (responseMaster) {
+                $scope.penetapanKonteks.master.sasaranFinansial = responseMaster;
+            });
             NProgress.done();
         }).error(function (response, code) {
             $scope.error.message = response.ExceptionMessage + " - " + code;
@@ -1565,8 +1589,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.penetapanKonteks.isEditMode = true;
     }
 
-    $scope.eventClickPenetapanKonteksSave = function ()
-    {
+    $scope.eventClickPenetapanKonteksSave = function () {
         var apiUrl = "/api/DMRKRPenetapanKonteks";
         $scope.penetapanKonteks.data.userEmail = currentUser.email;
         HttpRequest.post(apiUrl, $scope.penetapanKonteks.data).success(function (response) {
@@ -1576,8 +1599,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         });
     }
 
-    $scope.eventClickPenetapanKonteksDiscard = function ()
-    {
+    $scope.eventClickPenetapanKonteksDiscard = function () {
         $scope.renderPenetapanKonteks();
         $scope.penetapanKonteks.isEditMode = false;
     }
@@ -1590,9 +1612,11 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.penetapanKonteks.data.sasaranFinansial.id = selectedSasaranFinansial.id;
     }
 
-    $scope.eventClickPenetapanKonteksSasaranOperasionalAdd = function ()
-    {
-        $scope.penetapanKonteks.data.sasaranOperasional.push({ id:"",name: ""});
+    $scope.eventClickPenetapanKonteksSasaranOperasionalAdd = function () {
+        $scope.penetapanKonteks.data.sasaranOperasional.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickPenetapanKonteksSasaranOperasionalRemove = function (index) {
@@ -1630,8 +1654,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
     $scope.bidangStrategisModel = false;
 
-    $scope.renderIdentifikasi = function ()
-    {
+    $scope.renderIdentifikasi = function () {
         NProgress.start();
         // DATA IDENTIFIKASI
         apiUrl = "/api/DMRKRIdentifikasi/" + idDmr;
@@ -1772,264 +1795,288 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     // ++ RENDER MASTER ++ //
-        $scope.renderIdentifikasiMasterStrategis = function (induk, item) {
-            $scope.identifikasi.master.sasaranStrategis[induk] = { kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [], penyebab: [] };
-            $scope.bidangStrategisModel = true;
-                // MASTER KATEGORI
-                        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[item] = response;
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER KATEGORI
+    $scope.renderIdentifikasiMasterStrategis = function (induk, item) {
+        $scope.identifikasi.master.sasaranStrategis[induk] = {
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: [],
+            penyebab: []
+        };
+        $scope.bidangStrategisModel = true;
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[item] = response;
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KATEGORI
+
+        // MASTER SUB KATEGORI
+        var idKategoriRisiko = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.id;
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
+
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUB KATEGORI
+
+        // MASTER TIPE SUMBER RISIKO
+        apiUrl = "/api/DMRKRListTipeSumberRisiko";
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER TIPE SUMBER RISIKO
+
+        // MASTER RISIKO
+        var idSubKategori = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id;
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
+
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].risiko[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER RISIKO
+
+
+        // MASTER KEJADIAN
+        var idKejadian = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id;
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
+
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].kejadian[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KEJADIAN
+
 
-                // MASTER SUB KATEGORI
-                        var idKategoriRisiko = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.id;
-                        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
+        // MASTER SUMBER RISIKO
+        var idTipeSumberRisiko = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.id;
+        apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
 
-                        HttpRequest.get(apiUrl).success(function (response) {
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko[item] = response;
 
-                            $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item] = response;
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUMBER RISIKO
+
+    }
+
+    $scope.renderIdentifikasiMasterOperasional = function (induk, item) {
+        $scope.identifikasi.master.sasaranOperasional[induk] = {
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: [],
+            penyebab: []
+        };
+
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[item] = response;
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KATEGORI
+
+        // MASTER SUB KATEGORI
+        var idKategoriRisiko = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.id;
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
+
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUB KATEGORI
 
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER SUB KATEGORI
+        // MASTER TIPE SUMBER RISIKO
+        apiUrl = "/api/DMRKRListTipeSumberRisiko";
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[item] = response;
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER TIPE SUMBER RISIKO
 
-                // MASTER TIPE SUMBER RISIKO
-                        apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                        HttpRequest.get(apiUrl).success(function (response) {
+        // MASTER RISIKO
+        var idSubKategori = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id;
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
 
-                            $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[item] = response;
+        HttpRequest.get(apiUrl).success(function (response) {
+
+            $scope.identifikasi.master.sasaranOperasional[induk].risiko[item] = response;
 
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER TIPE SUMBER RISIKO
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER RISIKO
 
-                // MASTER RISIKO
-                        var idSubKategori = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id;
-                        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
 
-                        HttpRequest.get(apiUrl).success(function (response) {
+        // MASTER KEJADIAN
+        var idKejadian = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id;
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
 
-                            $scope.identifikasi.master.sasaranStrategis[induk].risiko[item] = response;
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER RISIKO
+            $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item] = response;
 
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KEJADIAN
 
-                // MASTER KEJADIAN
-                        var idKejadian = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id;
-                        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
 
-                        HttpRequest.get(apiUrl).success(function (response) {
+        // MASTER SUMBER RISIKO
+        var idTipeSumberRisiko = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.id;
+        apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
 
-                            $scope.identifikasi.master.sasaranStrategis[induk].kejadian[item] = response;
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER KEJADIAN
+            $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item] = response;
 
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUMBER RISIKO
 
-                // MASTER SUMBER RISIKO
-                        var idTipeSumberRisiko = $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.id;
-                        apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
+    }
 
-                        HttpRequest.get(apiUrl).success(function (response) {
+    $scope.renderIdentifikasiMasterFinansial = function (induk, item) {
+        $scope.identifikasi.master.sasaranFinansial[induk] = {
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: [],
+            penyebab: []
+        };
 
-                            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko[item] = response;
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko[item] = response;
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KATEGORI
 
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                        });
-                // END MASTER SUMBER RISIKO
+        // MASTER SUB KATEGORI
+        var idKategoriRisiko = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.id;
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
 
-        }
+        HttpRequest.get(apiUrl).success(function (response) {
 
-        $scope.renderIdentifikasiMasterOperasional = function (induk, item) {
-            $scope.identifikasi.master.sasaranOperasional[induk] = { kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [], penyebab: [] };
+            $scope.identifikasi.master.sasaranFinansial[induk].subKategori[item] = response;
 
-            // MASTER KATEGORI
-                    apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                    HttpRequest.get(apiUrl).success(function (response) {
-                        $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[item] = response;
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER KATEGORI
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUB KATEGORI
 
-            // MASTER SUB KATEGORI
-                    var idKategoriRisiko = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.id;
-                    apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
+        // MASTER TIPE SUMBER RISIKO
+        apiUrl = "/api/DMRKRListTipeSumberRisiko";
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                    HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko[item] = response;
 
-                        $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item] = response;
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER TIPE SUMBER RISIKO
 
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER SUB KATEGORI
+        // MASTER RISIKO
+        var idSubKategori = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id;
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
 
-            // MASTER TIPE SUMBER RISIKO
-                    apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                    HttpRequest.get(apiUrl).success(function (response) {
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                        $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[item] = response;
+            $scope.identifikasi.master.sasaranFinansial[induk].risiko[item] = response;
 
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER TIPE SUMBER RISIKO
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER RISIKO
 
-            // MASTER RISIKO
-                    var idSubKategori = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id;
-                    apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
 
-                    HttpRequest.get(apiUrl).success(function (response) {
+        // MASTER KEJADIAN
+        var idKejadian = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id;
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
 
-                        $scope.identifikasi.master.sasaranOperasional[induk].risiko[item] = response;
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER RISIKO
+            $scope.identifikasi.master.sasaranFinansial[induk].kejadian[item] = response;
 
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER KEJADIAN
 
-            // MASTER KEJADIAN
-                    var idKejadian = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id;
-                    apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
 
-                    HttpRequest.get(apiUrl).success(function (response) {
+        // MASTER SUMBER RISIKO
+        var idTipeSumberRisiko = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.id;
+        apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
 
-                        $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item] = response;
+        HttpRequest.get(apiUrl).success(function (response) {
 
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER KEJADIAN
+            $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko[item] = response;
 
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER SUMBER RISIKO
 
-            // MASTER SUMBER RISIKO
-                    var idTipeSumberRisiko = $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.id;
-                    apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
-
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER SUMBER RISIKO
-
-        }
-
-        $scope.renderIdentifikasiMasterFinansial = function (induk, item) {
-            $scope.identifikasi.master.sasaranFinansial[induk] = { kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [], penyebab: [] };
-
-            // MASTER KATEGORI
-                    apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                    HttpRequest.get(apiUrl).success(function (response) {
-                $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko[item] = response;
-            }).error(function (response, code) {
-                $scope.error.message = response.ExceptionMessage + " - " + code;
-                $('#modalError2').modal('show');
-            });
-            // END MASTER KATEGORI
-
-            // MASTER SUB KATEGORI
-                    var idKategoriRisiko = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.id;
-                    apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + idKategoriRisiko;
-
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranFinansial[induk].subKategori[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER SUB KATEGORI
-
-            // MASTER TIPE SUMBER RISIKO
-                    apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER TIPE SUMBER RISIKO
-
-            // MASTER RISIKO
-                    var idSubKategori = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id;
-                    apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + idSubKategori;
-
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranFinansial[induk].risiko[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER RISIKO
-
-
-            // MASTER KEJADIAN
-                    var idKejadian = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id;
-                    apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + idKejadian;
-
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranFinansial[induk].kejadian[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER KEJADIAN
-
-
-            // MASTER SUMBER RISIKO
-                    var idTipeSumberRisiko = $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.id;
-                    apiUrl = "/api/DMRListSumberRisiko/" + idTipeSumberRisiko;
-
-                    HttpRequest.get(apiUrl).success(function (response) {
-
-                        $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko[item] = response;
-
-                    }).error(function (response, code) {
-                        $scope.error.message = response.ExceptionMessage + " - " + code;
-                        $('#modalError2').modal('show');
-                    });
-            // END MASTER SUMBER RISIKO
-
-        }
+    }
     // ++ END RENDER MASTER ++ //
 
     // ++ RENDER PENYEBAB ++ //
-        $scope.renderPenyebab = function (keyword) {
+    $scope.renderPenyebab = function (keyword) {
         var apiUrl = "/api/DMRListPenyebab/" + idDmr + "?keyword=" + keyword;
         return HttpRequest.get(apiUrl).then(function (response) {
             return response.data;
@@ -2041,378 +2088,448 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.identifikasi.sasaranStrategis = {};
     $scope.identifikasi.sasaranStrategis.isEditMode = false;
 
-                    $scope.eventClickIdentifikasiPenyebabAdd = function (induk, item) {
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.push({ id: "", name: "" });
-                    }
+    $scope.eventClickIdentifikasiPenyebabAdd = function (induk, item) {
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.push({
+            id: "",
+            name: ""
+        });
+    }
 
-                    $scope.eventClickIdentifikasiPenyebabRemove = function (induk, item, item2) {
-                        if ($scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.length == 1) {
-                            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
-                        } else {
-                            var hapus = confirm('Hapus Penyebab ?');
-                            if (hapus) {
-                                $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.splice(item2, 1);
-                            }
-                        }
-                    }
+    $scope.eventClickIdentifikasiPenyebabRemove = function (induk, item, item2) {
+        if ($scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.length == 1) {
+            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
+        } else {
+            var hapus = confirm('Hapus Penyebab ?');
+            if (hapus) {
+                $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].penyebab.splice(item2, 1);
+            }
+        }
+    }
 
-                    $scope.eventClickIdentifikasiSubKategoriAdd = function (induk) {
-                        NProgress.start();
-                        var newSubKategoriSasaranStrategis = {
-                            id: Constant.emptyGuid,
-                            kategoriRisiko: { id: "", name: "" },
-                            subKategori: { id: "", name: "" },
-                            risiko: { id: "", name: "" },
-                            kejadian: { id: "", name: "" },
-                            tipeSumberRisiko: { id: "", name: "" },
-                            sumberRisiko: { id: "", name: "" },
-                            penyebab: [{ id: "00000000-0000-0000-0000-000000000000", name: "" }],
-                            areaDampak: { id: "", name: "" }
-                        };
-                        
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori.push(newSubKategoriSasaranStrategis);
-                        $scope.identifikasi.master.sasaranStrategis.push({ kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [], penyebab: [] });
+    $scope.eventClickIdentifikasiSubKategoriAdd = function (induk) {
+        NProgress.start();
+        var newSubKategoriSasaranStrategis = {
+            id: Constant.emptyGuid,
+            kategoriRisiko: {
+                id: "",
+                name: ""
+            },
+            subKategori: {
+                id: "",
+                name: ""
+            },
+            risiko: {
+                id: "",
+                name: ""
+            },
+            kejadian: {
+                id: "",
+                name: ""
+            },
+            tipeSumberRisiko: {
+                id: "",
+                name: ""
+            },
+            sumberRisiko: {
+                id: "",
+                name: ""
+            },
+            penyebab: [{
+                id: "00000000-0000-0000-0000-000000000000",
+                name: ""
+            }],
+            areaDampak: {
+                id: "",
+                name: ""
+            }
+        };
 
-                        var latest = $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko.length;
-                        // MASTER KATEGORI
-                        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[latest] = response;
-                            apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                            HttpRequest.get(apiUrl).success(function (response) {
-                                $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[latest] = response;
-                                NProgress.done();
-                            }).error(function (response, code) {
-                                $scope.error.message = response.ExceptionMessage + " - " + code;
-                                $('#modalError2').modal('show');
-                                NProgress.done();
-                            });
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori.push(newSubKategoriSasaranStrategis);
+        $scope.identifikasi.master.sasaranStrategis.push({
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: [],
+            penyebab: []
+        });
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+        var latest = $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko.length;
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[latest] = response;
+            apiUrl = "/api/DMRKRListTipeSumberRisiko";
+            HttpRequest.get(apiUrl).success(function (response) {
+                $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[latest] = response;
+                NProgress.done();
+            }).error(function (response, code) {
+                $scope.error.message = response.ExceptionMessage + " - " + code;
+                $('#modalError2').modal('show');
+                NProgress.done();
+            });
 
-                    $scope.eventClickIdentifikasiStrategiEdit = function () {
-                        $scope.identifikasi.sasaranStrategis.isEditMode = true;
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    $scope.eventClickIdentifikasiStrategiSave = function () {
-                        $scope.identifikasi.sasaranStrategis.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiStrategiEdit = function () {
+        $scope.identifikasi.sasaranStrategis.isEditMode = true;
+    }
 
-                    $scope.eventClickIdentifikasiStrategiDiscard = function () {
-                        $scope.identifikasi.sasaranStrategis.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiStrategiSave = function () {
+        $scope.identifikasi.sasaranStrategis.isEditMode = false;
+    }
 
-                    // EVENT CHANGE KATEGORI SASARAN STRATEGIS
-                    $scope.eventChangeKategoriStrategis = function (induk, item) {
-                        var masterKategori = $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[item];
-                        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.id);
+    $scope.eventClickIdentifikasiStrategiDiscard = function () {
+        $scope.identifikasi.sasaranStrategis.isEditMode = false;
+    }
 
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
+    // EVENT CHANGE KATEGORI SASARAN STRATEGIS
+    $scope.eventChangeKategoriStrategis = function (induk, item) {
+        var masterKategori = $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko[item];
+        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.id);
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item] = response;
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
 
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id = "";
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.name = "";
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item] = response;
 
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id = "";
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.name = "";
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id = "";
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.name = "";
 
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id = "";
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.name = "";
 
-                    // EVENT CHANGE SUB KATEGORI SASARAN STRATEGIS
-                    $scope.eventChangeSubKategoriStrategis = function (induk, item) {
-                        var masterSubKategori = $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item];
-                        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id);
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.name = selectedSubKategori.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER RISIKO
-                        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].risiko.splice(item, 1);
-                            $scope.identifikasi.master.sasaranStrategis[induk].risiko.push(response);
+    // EVENT CHANGE SUB KATEGORI SASARAN STRATEGIS
+    $scope.eventChangeSubKategoriStrategis = function (induk, item) {
+        var masterSubKategori = $scope.identifikasi.master.sasaranStrategis[induk].subKategori[item];
+        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.id);
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].subKategori.name = selectedSubKategori.name;
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+        // MASTER RISIKO
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].risiko.splice(item, 1);
+            $scope.identifikasi.master.sasaranStrategis[induk].risiko.push(response);
 
-                    // EVENT CHANGE RISIKO SASARAN STRATEGIS
-                    $scope.eventChangeRisikoStrategis = function (induk, item) {
-                        var masterRisiko = $scope.identifikasi.master.sasaranStrategis[induk].risiko[item];
-                        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id);
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.name = selectedRisiko.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].kejadian.splice(item, 1);
-                            $scope.identifikasi.master.sasaranStrategis[induk].kejadian.push(response);
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+    // EVENT CHANGE RISIKO SASARAN STRATEGIS
+    $scope.eventChangeRisikoStrategis = function (induk, item) {
+        var masterRisiko = $scope.identifikasi.master.sasaranStrategis[induk].risiko[item];
+        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.id);
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].risiko.name = selectedRisiko.name;
 
-                    // EVENT CHANGE KEJADIAN SASARAN STRATEGIS
-                    $scope.eventChangeKejadianStrategis = function (induk, item) {
-                        var masterKejadian = $scope.identifikasi.master.sasaranStrategis[induk].kejadian[item];
-                        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.id);
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.name = selectedKejadian.name;
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].kejadian.splice(item, 1);
+            $scope.identifikasi.master.sasaranStrategis[induk].kejadian.push(response);
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis.areaDampak = response;
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranStrategis.areaDampak.id;
-                            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranStrategis.areaDampak.name;
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+    // EVENT CHANGE KEJADIAN SASARAN STRATEGIS
+    $scope.eventChangeKejadianStrategis = function (induk, item) {
+        var masterKejadian = $scope.identifikasi.master.sasaranStrategis[induk].kejadian[item];
+        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.id);
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.name = selectedKejadian.name;
 
-                    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN STRATEGIS
-                    $scope.eventChangeTipeSumberRisikoStrategis = function (induk, item) {
-                        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[item];
-                        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.id);
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis.areaDampak = response;
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranStrategis.areaDampak.id;
+            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranStrategis.areaDampak.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko.splice(item, 1);
-                            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko.push(response);
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN STRATEGIS
+    $scope.eventChangeTipeSumberRisikoStrategis = function (induk, item) {
+        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko[item];
+        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.id);
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
 
-                    // EVENT CHANGE SUMBER RISIKO SASARAN STRATEGIS
-                    $scope.eventChangeSumberRisikoStrategis = function (induk, item) {
-                        var masterSumberRisiko = $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko[item];
-                        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].sumberRisiko.id);
-                        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
-                    }
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko.splice(item, 1);
+            $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko.push(response);
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    
+    // EVENT CHANGE SUMBER RISIKO SASARAN STRATEGIS
+    $scope.eventChangeSumberRisikoStrategis = function (induk, item) {
+        var masterSumberRisiko = $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko[item];
+        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].sumberRisiko.id);
+        $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
+    }
+
+
     // ####### SASARAN OPERASIONAL ####### //
     $scope.identifikasi.sasaranOperasional = {};
     $scope.identifikasi.sasaranOperasional.isEditMode = false;
 
-                    $scope.eventClickIdentifikasiPenyebab2Add = function (induk, item) {
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.push({ id: "00000000-0000-0000-0000-000000000000", name: "" });
-                    }
+    $scope.eventClickIdentifikasiPenyebab2Add = function (induk, item) {
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.push({
+            id: "00000000-0000-0000-0000-000000000000",
+            name: ""
+        });
+    }
 
-                    $scope.eventClickIdentifikasiPenyebab2Remove = function (induk, item, item2) {
-                        if ($scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.length == 1) {
-                            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
-                        } else {
-                            var hapus = confirm('Hapus Penyebab ?');
-                            if (hapus) {
-                                $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.splice(item2, 1);
-                            }
-                        }
-                    }
+    $scope.eventClickIdentifikasiPenyebab2Remove = function (induk, item, item2) {
+        if ($scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.length == 1) {
+            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
+        } else {
+            var hapus = confirm('Hapus Penyebab ?');
+            if (hapus) {
+                $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].penyebab.splice(item2, 1);
+            }
+        }
+    }
 
-                    $scope.eventClickIdentifikasiSubKategori2Add = function (induk) {
-                        NProgress.start();
-                        var newSubKategoriSasaranStrategis = {
-                            id: Constant.emptyGuid,
-                            kategoriRisiko: { id: "", name: "" },
-                            subKategori: { id: "", name: "" },
-                            risiko: { id: "", name: "" },
-                            kejadian: { id: "", name: "" },
-                            tipeSumberRisiko: { id: "", name: "" },
-                            sumberRisiko: { id: "", name: "" },
-                            penyebab: [{ id: "00000000-0000-0000-0000-000000000000", name: "" }],
-                            areaDampak: { id: "", name: "" }
-                        };
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori.push(newSubKategoriSasaranStrategis);
-                        $scope.identifikasi.master.sasaranOperasional.push({ kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [], penyebab:[] });
+    $scope.eventClickIdentifikasiSubKategori2Add = function (induk) {
+        NProgress.start();
+        var newSubKategoriSasaranStrategis = {
+            id: Constant.emptyGuid,
+            kategoriRisiko: {
+                id: "",
+                name: ""
+            },
+            subKategori: {
+                id: "",
+                name: ""
+            },
+            risiko: {
+                id: "",
+                name: ""
+            },
+            kejadian: {
+                id: "",
+                name: ""
+            },
+            tipeSumberRisiko: {
+                id: "",
+                name: ""
+            },
+            sumberRisiko: {
+                id: "",
+                name: ""
+            },
+            penyebab: [{
+                id: "00000000-0000-0000-0000-000000000000",
+                name: ""
+            }],
+            areaDampak: {
+                id: "",
+                name: ""
+            }
+        };
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori.push(newSubKategoriSasaranStrategis);
+        $scope.identifikasi.master.sasaranOperasional.push({
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: [],
+            penyebab: []
+        });
 
-                        var latest = $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko.length;
-                        // MASTER KATEGORI
-                        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[latest] = response;
-                            apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                                HttpRequest.get(apiUrl).success(function (response) {
-                                    $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[latest] = response;
-                                    NProgress.done();
-                                }).error(function (response, code) {
-                                    $scope.error.message = response.ExceptionMessage + " - " + code;
-                                    $('#modalError2').modal('show');
-                                    NProgress.done();
-                                });
+        var latest = $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko.length;
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[latest] = response;
+            apiUrl = "/api/DMRKRListTipeSumberRisiko";
+            HttpRequest.get(apiUrl).success(function (response) {
+                $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[latest] = response;
+                NProgress.done();
+            }).error(function (response, code) {
+                $scope.error.message = response.ExceptionMessage + " - " + code;
+                $('#modalError2').modal('show');
+                NProgress.done();
+            });
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    $scope.eventClickIdentifikasiOperasionalEdit = function () {
-                        $scope.identifikasi.sasaranOperasional.isEditMode = true;
-                    }
+    $scope.eventClickIdentifikasiOperasionalEdit = function () {
+        $scope.identifikasi.sasaranOperasional.isEditMode = true;
+    }
 
-                    $scope.eventClickIdentifikasiOperasionalSave = function () {
-                        $scope.identifikasi.sasaranOperasional.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiOperasionalSave = function () {
+        $scope.identifikasi.sasaranOperasional.isEditMode = false;
+    }
 
-                    $scope.eventClickIdentifikasiOperasionalDiscard = function () {
-                        $scope.identifikasi.sasaranOperasional.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiOperasionalDiscard = function () {
+        $scope.identifikasi.sasaranOperasional.isEditMode = false;
+    }
 
-                    // EVENT CHANGE KATEGORI SASARAN OPERASIONAL
-                    $scope.eventChangeKategoriOperasional = function (induk, item) {
-                        var masterKategori = $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[item];
-                        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.id);
+    // EVENT CHANGE KATEGORI SASARAN OPERASIONAL
+    $scope.eventChangeKategoriOperasional = function (induk, item) {
+        var masterKategori = $scope.identifikasi.master.sasaranOperasional[induk].kategoriRisiko[item];
+        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.id);
 
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item] = response;
-                            
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.name = "";
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item] = response;
 
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.name = "";
 
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
 
-                    // EVENT CHANGE SUB KATEGORI SASARAN OPERASIONAL
-                    $scope.eventChangeSubKategoriOperasional = function (induk, item) {
-                        var masterSubKategori = $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item];
-                        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id);
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.name = selectedSubKategori.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional[induk].risiko[item] = response;
+    // EVENT CHANGE SUB KATEGORI SASARAN OPERASIONAL
+    $scope.eventChangeSubKategoriOperasional = function (induk, item) {
+        var masterSubKategori = $scope.identifikasi.master.sasaranOperasional[induk].subKategori[item];
+        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.id);
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].subKategori.name = selectedSubKategori.name;
 
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = "";
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].risiko[item] = response;
 
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
 
-                    // EVENT CHANGE RISIKO SASARAN OPERASIONAL
-                    $scope.eventChangeRisikoOperasional = function (induk, item) {
-                        var masterRisiko = $scope.identifikasi.master.sasaranOperasional[induk].risiko[item];
-                        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id);
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = selectedRisiko.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item] = response;
+    // EVENT CHANGE RISIKO SASARAN OPERASIONAL
+    $scope.eventChangeRisikoOperasional = function (induk, item) {
+        var masterRisiko = $scope.identifikasi.master.sasaranOperasional[induk].risiko[item];
+        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.id);
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].risiko.name = selectedRisiko.name;
 
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item] = response;
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = "";
 
-                    // EVENT CHANGE KEJADIAN SASARAN OPERASIONAL
-                    $scope.eventChangeKejadianOperasional = function (induk, item) {
-                        var masterKejadian = $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item];
-                        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id);
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = selectedKejadian.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional.areaDampak = response;
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranOperasional.areaDampak.id;
-                            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranOperasional.areaDampak.name;
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
-                    
-                    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN OPERASIONAL
-                    $scope.eventChangeTipeSumberRisikoOperasional = function (induk, item) {
-                        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[item];
-                        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.id);
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
+    // EVENT CHANGE KEJADIAN SASARAN OPERASIONAL
+    $scope.eventChangeKejadianOperasional = function (induk, item) {
+        var masterKejadian = $scope.identifikasi.master.sasaranOperasional[induk].kejadian[item];
+        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.id);
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = selectedKejadian.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item] = response;
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional.areaDampak = response;
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranOperasional.areaDampak.id;
+            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranOperasional.areaDampak.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE SUMBER RISIKO SASARAN OPERASIONAL
-                    $scope.eventChangeSumberRisikoOperasional = function (induk, item) {
-                        var masterSumberRisiko = $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item];
-                        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].sumberRisiko.id);
-                        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
-                    }
+    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN OPERASIONAL
+    $scope.eventChangeTipeSumberRisikoOperasional = function (induk, item) {
+        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranOperasional[induk].tipeSumberRisiko[item];
+        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.id);
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
+
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item] = response;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
+
+    // EVENT CHANGE SUMBER RISIKO SASARAN OPERASIONAL
+    $scope.eventChangeSumberRisikoOperasional = function (induk, item) {
+        var masterSumberRisiko = $scope.identifikasi.master.sasaranOperasional[induk].sumberRisiko[item];
+        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].sumberRisiko.id);
+        $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
+    }
 
 
 
@@ -2420,196 +2537,230 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.identifikasi.sasaranFinansial = {};
     $scope.identifikasi.sasaranFinansial.isEditMode = false;
 
-                    $scope.eventClickIdentifikasiPenyebab3Add = function (induk, item) {
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.push({ id: "", name: "" });
-                    }
+    $scope.eventClickIdentifikasiPenyebab3Add = function (induk, item) {
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.push({
+            id: "",
+            name: ""
+        });
+    }
 
-                    $scope.eventClickIdentifikasiPenyebab3Remove = function (induk, item, item2) {
-                        if ($scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.length == 1) {
-                            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
-                        } else {
-                            var hapus = confirm('Hapus Penyebab ?');
-                            if (hapus) {
-                                $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.splice(item2, 1);
-                            }
-                        }
-                    }
+    $scope.eventClickIdentifikasiPenyebab3Remove = function (induk, item, item2) {
+        if ($scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.length == 1) {
+            alert("Penyebab tidak dapat dihapus, minimal ada 1 penyebab.");
+        } else {
+            var hapus = confirm('Hapus Penyebab ?');
+            if (hapus) {
+                $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].penyebab.splice(item2, 1);
+            }
+        }
+    }
 
-                    $scope.eventClickIdentifikasiSubKategori3Add = function (induk) {
-                        NProgress.start();
-                        var newSubKategoriSasaranStrategis = {
-                            id: Constant.emptyGuid,
-                            kategoriRisiko: { id: "", name: "" },
-                            subKategori: { id: "", name: "" },
-                            risiko: { id: "", name: "" },
-                            kejadian: { id: "", name: "" },
-                            tipeSumberRisiko: { id: "", name: "" },
-                            sumberRisiko: { id: "", name: "" },
-                            penyebab: [{ id: "00000000-0000-0000-0000-000000000000", name: "" }],
-                            areaDampak: { id: "", name: "" }
-                        };
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori.push(newSubKategoriSasaranStrategis);
-                        $scope.identifikasi.master.sasaranFinansial.push({ kategoriRisiko: [], subKategori: [], risiko: [], kejadian: [], tipeSumberRisiko: [], sumberRisiko: [] });
+    $scope.eventClickIdentifikasiSubKategori3Add = function (induk) {
+        NProgress.start();
+        var newSubKategoriSasaranStrategis = {
+            id: Constant.emptyGuid,
+            kategoriRisiko: {
+                id: "",
+                name: ""
+            },
+            subKategori: {
+                id: "",
+                name: ""
+            },
+            risiko: {
+                id: "",
+                name: ""
+            },
+            kejadian: {
+                id: "",
+                name: ""
+            },
+            tipeSumberRisiko: {
+                id: "",
+                name: ""
+            },
+            sumberRisiko: {
+                id: "",
+                name: ""
+            },
+            penyebab: [{
+                id: "00000000-0000-0000-0000-000000000000",
+                name: ""
+            }],
+            areaDampak: {
+                id: "",
+                name: ""
+            }
+        };
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori.push(newSubKategoriSasaranStrategis);
+        $scope.identifikasi.master.sasaranFinansial.push({
+            kategoriRisiko: [],
+            subKategori: [],
+            risiko: [],
+            kejadian: [],
+            tipeSumberRisiko: [],
+            sumberRisiko: []
+        });
 
 
-                        // MASTER KATEGORI
-                        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko.push(response);
-                            apiUrl = "/api/DMRKRListTipeSumberRisiko";
-                            HttpRequest.get(apiUrl).success(function (response) {
-                                $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko.push(response);
-                                NProgress.done();
-                            }).error(function (response, code) {
-                                $scope.error.message = response.ExceptionMessage + " - " + code;
-                                $('#modalError2').modal('show');
-                                NProgress.done();
-                            });
+        // MASTER KATEGORI
+        apiUrl = "/api/DMRListKategoriRisiko/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko.push(response);
+            apiUrl = "/api/DMRKRListTipeSumberRisiko";
+            HttpRequest.get(apiUrl).success(function (response) {
+                $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko.push(response);
+                NProgress.done();
+            }).error(function (response, code) {
+                $scope.error.message = response.ExceptionMessage + " - " + code;
+                $('#modalError2').modal('show');
+                NProgress.done();
+            });
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    $scope.eventClickIdentifikasiFinansialEdit = function () {
-                        $scope.identifikasi.sasaranFinansial.isEditMode = true;
-                    }
+    $scope.eventClickIdentifikasiFinansialEdit = function () {
+        $scope.identifikasi.sasaranFinansial.isEditMode = true;
+    }
 
-                    $scope.eventClickIdentifikasiFinansialSave = function () {
-                        $scope.identifikasi.sasaranFinansial.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiFinansialSave = function () {
+        $scope.identifikasi.sasaranFinansial.isEditMode = false;
+    }
 
-                    $scope.eventClickIdentifikasiFinansialDiscard = function () {
-                        $scope.identifikasi.sasaranFinansial.isEditMode = false;
-                    }
+    $scope.eventClickIdentifikasiFinansialDiscard = function () {
+        $scope.identifikasi.sasaranFinansial.isEditMode = false;
+    }
 
-                    // EVENT CHANGE KATEGORI SASARAN FINANSIAL
-                    $scope.eventChangeKategoriFinansial = function (induk, item) {
-                        var masterKategori = $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko[item];
-                        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.id);
+    // EVENT CHANGE KATEGORI SASARAN FINANSIAL
+    $scope.eventChangeKategoriFinansial = function (induk, item) {
+        var masterKategori = $scope.identifikasi.master.sasaranFinansial[induk].kategoriRisiko[item];
+        var selectedKategori = Helper.findItem(masterKategori, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.id);
 
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kategoriRisiko.name = selectedKategori.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial[induk].subKategori.splice(item, 1);
-                            $scope.identifikasi.master.sasaranFinansial[induk].subKategori.push(response);
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSubKategoriRisiko/" + idDmr + "?idKat=" + selectedKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].subKategori.splice(item, 1);
+            $scope.identifikasi.master.sasaranFinansial[induk].subKategori.push(response);
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.name = "";
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = "";
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE SUB KATEGORI SASARAN FINANSIAL
-                    $scope.eventChangeSubKategoriFinansial = function (induk, item) {
-                        var masterSubKategori = $scope.identifikasi.master.sasaranFinansial[induk].subKategori[item];
-                        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id);
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.name = selectedSubKategori.name;
+    // EVENT CHANGE SUB KATEGORI SASARAN FINANSIAL
+    $scope.eventChangeSubKategoriFinansial = function (induk, item) {
+        var masterSubKategori = $scope.identifikasi.master.sasaranFinansial[induk].subKategori[item];
+        var selectedSubKategori = Helper.findItem(masterSubKategori, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.id);
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].subKategori.name = selectedSubKategori.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial[induk].risiko.splice(item, 1);
-                            $scope.identifikasi.master.sasaranFinansial[induk].risiko.push(response);
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListRisiko/" + idDmr + "?idSubkat=" + selectedSubKategori.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].risiko.splice(item, 1);
+            $scope.identifikasi.master.sasaranFinansial[induk].risiko.push(response);
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = "";
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE RISIKO SASARAN FINANSIAL
-                    $scope.eventChangeRisikoFinansial = function (induk, item) {
-                        var masterRisiko = $scope.identifikasi.master.sasaranFinansial[induk].risiko[item];
-                        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id);
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = selectedRisiko.name;
+    // EVENT CHANGE RISIKO SASARAN FINANSIAL
+    $scope.eventChangeRisikoFinansial = function (induk, item) {
+        var masterRisiko = $scope.identifikasi.master.sasaranFinansial[induk].risiko[item];
+        var selectedRisiko = Helper.findItem(masterRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.id);
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].risiko.name = selectedRisiko.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial[induk].kejadian.splice(item, 1);
-                            $scope.identifikasi.master.sasaranFinansial[induk].kejadian.push(response);
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListKejadianRisiko/" + idDmr + "?idRisk=" + selectedRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].kejadian.splice(item, 1);
+            $scope.identifikasi.master.sasaranFinansial[induk].kejadian.push(response);
 
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id = "";
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = "";
 
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE KEJADIAN SASARAN FINANSIAL
-                    $scope.eventChangeKejadianFinansial = function (induk, item) {
-                        var masterKejadian = $scope.identifikasi.master.sasaranFinansial[induk].kejadian[item];
-                        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id);
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = selectedKejadian.name;
+    // EVENT CHANGE KEJADIAN SASARAN FINANSIAL
+    $scope.eventChangeKejadianFinansial = function (induk, item) {
+        var masterKejadian = $scope.identifikasi.master.sasaranFinansial[induk].kejadian[item];
+        var selectedKejadian = Helper.findItem(masterKejadian, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.id);
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].kejadian.name = selectedKejadian.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial.areaDampak = response;
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranFinansial.areaDampak.id;
-                            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranFinansial.areaDampak.name;
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial.areaDampak = response;
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranFinansial.areaDampak.id;
+            $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranFinansial.areaDampak.name;
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN FINANSIAL
-                    $scope.eventChangeTipeSumberRisikoFinansial = function (induk, item) {
-                        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko[item];
-                        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.id);
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
+    // EVENT CHANGE TIPE SUMBER RISIKO SASARAN FINANSIAL
+    $scope.eventChangeTipeSumberRisikoFinansial = function (induk, item) {
+        var masterTipeSumberRisiko = $scope.identifikasi.master.sasaranFinansial[induk].tipeSumberRisiko[item];
+        var selectedTipeSumberRisiko = Helper.findItem(masterTipeSumberRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.id);
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].tipeSumberRisiko.name = selectedTipeSumberRisiko.name;
 
-                        // MASTER SUB KATEGORI
-                        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
-                        HttpRequest.get(apiUrl).success(function (response) {
-                            $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko.splice(item, 1);
-                            $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko.push(response);
-                            NProgress.done();
-                        }).error(function (response, code) {
-                            $scope.error.message = response.ExceptionMessage + " - " + code;
-                            $('#modalError2').modal('show');
-                            NProgress.done();
-                        });
-                    }
+        // MASTER SUB KATEGORI
+        apiUrl = "/api/DMRListSumberRisiko/" + selectedTipeSumberRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko.splice(item, 1);
+            $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko.push(response);
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
+    }
 
-                    // EVENT CHANGE SUMBER RISIKO SASARAN FINANSIAL
-                    $scope.eventChangeSumberRisikoFinansial = function (induk, item) {
-                        var masterSumberRisiko = $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko[item];
-                        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].sumberRisiko.id);
-                        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
-                    }
+    // EVENT CHANGE SUMBER RISIKO SASARAN FINANSIAL
+    $scope.eventChangeSumberRisikoFinansial = function (induk, item) {
+        var masterSumberRisiko = $scope.identifikasi.master.sasaranFinansial[induk].sumberRisiko[item];
+        var selectedSumberRisiko = Helper.findItem(masterSumberRisiko, "id", $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].sumberRisiko.id);
+        $scope.identifikasi.data.sasaranFinansial[induk].kategori[item].sumberRisiko.name = selectedSumberRisiko.name;
+    }
 
 
     // ####### EVENT DELETE TAKSONOMI RISIKO ####### //
@@ -2671,7 +2822,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.renderApprovalStatus();
             NProgress.done();
         }).error(function (response, code) {
-            
+
             $scope.error.message = response.ExceptionMessage + " - " + code;
             $('#modalError2').modal('show');
             NProgress.done();
@@ -2706,7 +2857,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                     $scope.analisaEvaluasi.master.sasaranStrategis[i].tipePeringkatKemungkinan = [];
                     $scope.analisaEvaluasi.master.sasaranStrategis[i].peringkatKemungkinan = [];
                     angular.forEach(induk.risiko, function (subitem, j) {
-                        
+
                         $scope.analisaEvaluasi.master.efektivitasDLI.push([]);
                         $scope.analisaEvaluasi.master.peringkatDampak.push([]);
 
@@ -2727,14 +2878,30 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
 
                     //Master Efektivitas - Approach
-                    var efektivitasA =
-                    [
-                        { id: 0, name: "0 : Tidak Ada" },
-                        { id: 1, name: "1 : Sangat Lemah" },
-                        { id: 2, name: "2 : Lemah" },
-                        { id: 3, name: "3 : Sedang" },
-                        { id: 4, name: "4 : Kuat" },
-                        { id: 5, name: "5 : Sangat Kuat" }
+                    var efektivitasA = [{
+                            id: 0,
+                            name: "0 : Tidak Ada"
+                        },
+                        {
+                            id: 1,
+                            name: "1 : Sangat Lemah"
+                        },
+                        {
+                            id: 2,
+                            name: "2 : Lemah"
+                        },
+                        {
+                            id: 3,
+                            name: "3 : Sedang"
+                        },
+                        {
+                            id: 4,
+                            name: "4 : Kuat"
+                        },
+                        {
+                            id: 5,
+                            name: "5 : Sangat Kuat"
+                        }
                     ];
                     $scope.analisaEvaluasi.master.efektivitasA = efektivitasA;
                 });
@@ -2754,31 +2921,47 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                         $scope.analisaEvaluasi.master.efektivitasDLI2.push([]);
                         $scope.analisaEvaluasi.master.peringkatDampak.push([]);
 
-                            angular.forEach(subitem.penyebab, function (item, k) {
+                        angular.forEach(subitem.penyebab, function (item, k) {
 
-                                $scope.analisaEvaluasi.master.sasaranOperasional[i].peringkatDampak[j] = [];
-                                $scope.analisaEvaluasi.master.sasaranOperasional[i].tipePeringkatKemungkinan[j] = [];
-                                $scope.analisaEvaluasi.master.sasaranOperasional[i].peringkatKemungkinan[j] = [];
+                            $scope.analisaEvaluasi.master.sasaranOperasional[i].peringkatDampak[j] = [];
+                            $scope.analisaEvaluasi.master.sasaranOperasional[i].tipePeringkatKemungkinan[j] = [];
+                            $scope.analisaEvaluasi.master.sasaranOperasional[i].peringkatKemungkinan[j] = [];
 
-                                    $scope.renderListEfektivitasDLI2(i, j, k, true);
-                                    $scope.renderPeringkatDampakSasaranOperasional(i, j, k, true);
-                                    $scope.renderTipePeringkatKemungkinanSasaranOperasional(i, j, k, true);
-                                    $scope.renderPeringkatKemungkinanSasaranOperasional(i,j,k);
+                            $scope.renderListEfektivitasDLI2(i, j, k, true);
+                            $scope.renderPeringkatDampakSasaranOperasional(i, j, k, true);
+                            $scope.renderTipePeringkatKemungkinanSasaranOperasional(i, j, k, true);
+                            $scope.renderPeringkatKemungkinanSasaranOperasional(i, j, k);
 
-                            });
+                        });
 
                     });
 
-                    
+
                     //Master Efektivitas - Approach
-                    var efektivitasA2 =
-                    [
-                        { id: 0, name: "0 : Tidak Ada" },
-                        { id: 1, name: "1 : Sangat Lemah" },
-                        { id: 2, name: "2 : Lemah" },
-                        { id: 3, name: "3 : Sedang" },
-                        { id: 4, name: "4 : Kuat" },
-                        { id: 5, name: "5 : Sangat Kuat" }
+                    var efektivitasA2 = [{
+                            id: 0,
+                            name: "0 : Tidak Ada"
+                        },
+                        {
+                            id: 1,
+                            name: "1 : Sangat Lemah"
+                        },
+                        {
+                            id: 2,
+                            name: "2 : Lemah"
+                        },
+                        {
+                            id: 3,
+                            name: "3 : Sedang"
+                        },
+                        {
+                            id: 4,
+                            name: "4 : Kuat"
+                        },
+                        {
+                            id: 5,
+                            name: "5 : Sangat Kuat"
+                        }
                     ];
                     $scope.analisaEvaluasi.master.efektivitasA2 = efektivitasA2;
                 });
@@ -2807,7 +2990,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                             $scope.renderListEfektivitasDLI3(i, j, k, true);
                             $scope.renderPeringkatDampakSasaranFinansial(i, j, k, true);
                             $scope.renderTipePeringkatKemungkinanSasaranFinansial(i, j, k, true);
-                            $scope.renderPeringkatKemungkinanSasaranFinansial(i,j,k);
+                            $scope.renderPeringkatKemungkinanSasaranFinansial(i, j, k);
 
                         });
 
@@ -2815,14 +2998,30 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
 
                     //Master Efektivitas - Approach
-                    var efektivitasA3 =
-                    [
-                        { id: 0, name: "0 : Tidak Ada" },
-                        { id: 1, name: "1 : Sangat Lemah" },
-                        { id: 2, name: "2 : Lemah" },
-                        { id: 3, name: "3 : Sedang" },
-                        { id: 4, name: "4 : Kuat" },
-                        { id: 5, name: "5 : Sangat Kuat" }
+                    var efektivitasA3 = [{
+                            id: 0,
+                            name: "0 : Tidak Ada"
+                        },
+                        {
+                            id: 1,
+                            name: "1 : Sangat Lemah"
+                        },
+                        {
+                            id: 2,
+                            name: "2 : Lemah"
+                        },
+                        {
+                            id: 3,
+                            name: "3 : Sedang"
+                        },
+                        {
+                            id: 4,
+                            name: "4 : Kuat"
+                        },
+                        {
+                            id: 5,
+                            name: "5 : Sangat Kuat"
+                        }
                     ];
                     $scope.analisaEvaluasi.master.efektivitasA3 = efektivitasA3;
                 });
@@ -2985,7 +3184,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         //                                                 }]
         //                                         }],
         //}];
-        
+
         NProgress.done();
     }
 
@@ -2996,32 +3195,30 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var nilai = 0;
         try {
             idAreaDampak = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranStrategis[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].areaDampak.id, Constant.emptyGuid);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var apiUrl = "/api/DmrKRListPeringkatDampak/" + idDmr + "?idArea=" + idAreaDampak;
-        console.log("API Url",apiUrl);
+        console.log("API Url", apiUrl);
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatDampak[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatDampak[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.renderTipePeringkatKemungkinanSasaranStrategis = function (indexSasaran, indexAE, indexPenyebab, isAppended) {
@@ -3031,23 +3228,23 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.renderPeringkatKemungkinanSasaranStrategis = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3057,20 +3254,20 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatDampakSasaranStrategisChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3098,19 +3295,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.master.sasaranStrategis[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatKemungkinanSasaranStrategisChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3131,105 +3328,102 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/KRHitungTingkatRisiko?idPeringkatDampak=" + idPerDampak + "&idPeringkatKemungkinan=" + idPerKemungkinan;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.data.sasaranStrategis[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE Hitung Tingkat Risiko CR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.data.sasaranStrategis[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE Hitung Tingkat Risiko CR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
 
 
     // === ++ RENDER MASTER SASARAN OPERASIONAL
-    $scope.renderPeringkatDampakSasaranOperasional = function (indexSasaran,indexAE, indexPenyebab, isAppended) {
+    $scope.renderPeringkatDampakSasaranOperasional = function (indexSasaran, indexAE, indexPenyebab, isAppended) {
         //Master Peringkat Kemungkinan
         var idAreaDampak = Constant.emptyGuid;
         var nilai = 0;
         try {
             idAreaDampak = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].areaDampak.id, Constant.emptyGuid);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var apiUrl = "/api/DmrKRListPeringkatDampak/" + idDmr + "?idArea=" + idAreaDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatDampak[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatDampak[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.renderTipePeringkatKemungkinanSasaranOperasional = function (indexSasaran, indexAE, indexPenyebab, isAppended) {
         //Master Tipe Peringkat Kemungkinan
-        
+
         var apiUrl = "/api/DmrKRListTipePeringkatKemungkinan";
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
-    $scope.renderPeringkatKemungkinanSasaranOperasional = function (indexSasaran, indexAE, indexPenyebab)
-    {
+    $scope.renderPeringkatKemungkinanSasaranOperasional = function (indexSasaran, indexAE, indexPenyebab) {
         var idTipePeringkatKemungkinan = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tipePeringkatKemungkinan.id, Constant.emptyGuid);
         var nilaiEfektifitas = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].efektifitas.nilai, 0);
         var nilaiDampak = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].peringkatDampak.nilai, 0);
 
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatDampakSasaranOperasionalChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3257,19 +3451,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.master.sasaranOperasional[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatKemungkinanSasaranOperasionalChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3280,7 +3474,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].peringkatKemungkinan.name = Helper.isNullOrEmpty(selectedPeringkatKemungkinan) ? "" : selectedPeringkatKemungkinan.name;
         $scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].peringkatKemungkinan.keterangan = Helper.isNullOrEmpty(selectedPeringkatKemungkinan) ? "" : selectedPeringkatKemungkinan.keterangan;
         $scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].peringkatKemungkinan.nilai = Helper.isNullOrEmpty(selectedPeringkatKemungkinan) ? "" : selectedPeringkatKemungkinan.nilai;
-        
+
         $scope.hitungTingkatRisikoSasaranOperasional(indexSasaran, indexAE, indexPenyebab);
     }
 
@@ -3291,19 +3485,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/KRHitungTingkatRisiko?idPeringkatDampak=" + idPerDampak + "&idPeringkatKemungkinan=" + idPerKemungkinan;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE Hitung Tingkat Risiko CR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.data.sasaranOperasional[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE Hitung Tingkat Risiko CR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
 
@@ -3315,31 +3509,29 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var nilai = 0;
         try {
             idAreaDampak = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranFinansial[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].areaDampak.id, Constant.emptyGuid);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var apiUrl = "/api/DmrKRListPeringkatDampak/" + idDmr + "?idArea=" + idAreaDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatDampak[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatDampak[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatDampak[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.renderTipePeringkatKemungkinanSasaranFinansial = function (indexSasaran, indexAE, indexPenyebab, isAppended) {
@@ -3349,23 +3541,23 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
-            else
-                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
+                if (isAppended)
+                    $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].tipePeringkatKemungkinan[indexAE].push(response);
+                else
+                    $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].tipePeringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.renderPeringkatKemungkinanSasaranFinansial = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3375,20 +3567,20 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatDampakSasaranFinansialChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3416,19 +3608,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.master.sasaranFinansial[indexSasaran].peringkatKemungkinan[indexAE][indexPenyebab] = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatKemungkinanSasaranFinansialChange = function (indexSasaran, indexAE, indexPenyebab) {
@@ -3449,19 +3641,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/KRHitungTingkatRisiko?idPeringkatDampak=" + idPerDampak + "&idPeringkatKemungkinan=" + idPerKemungkinan;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.analisaEvaluasi.data.sasaranFinansial[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "AE Hitung Tingkat Risiko CR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.analisaEvaluasi.data.sasaranFinansial[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].tingkatRisiko = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "AE Hitung Tingkat Risiko CR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
 
@@ -3483,7 +3675,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         }).error(function (response, code) {
             $scope.error.message = response.ExceptionMessage + " - " + code;
             $('#modalError2').modal('show');
-            
+
             NProgress.done();
         });
     }
@@ -3498,8 +3690,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
 
     // Sasaran Strategis
-    $scope.eventClickAnalisaEvaluasiStrategiSave = function ()
-    {
+    $scope.eventClickAnalisaEvaluasiStrategiSave = function () {
         $scope.analisaEvaluasi.data.sasaranStrategis.isEditMode = false;
     }
 
@@ -3512,7 +3703,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickAnalisaEvaluasiAdd = function (pIndex, jenis) {
-        $scope.analisaEvaluasi.data.sasaranStrategis[pIndex].penyebab.push({ id: "", name: "" });
+        $scope.analisaEvaluasi.data.sasaranStrategis[pIndex].penyebab.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickAnalisaEvaluasiRemove = function (pIndex, index, jenis) {
@@ -3569,14 +3763,15 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         try {
             approach = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranStrategis[indexAE].risiko[indexPenyebab].penyebab[indexExistingControl].efektifitas.approach, 0);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var labelEfektivitas = ["0 : Tidak Ada", "1 : Sangat Lemah", "2 : Lemah", "3 : Sedang", "4 : Kuat", "5 : Sangat Kuat"];
 
         for (var i = 0; i <= approach; i++)
-            efektivitasDLI.push({ id: i, name: labelEfektivitas[i] });
+            efektivitasDLI.push({
+                id: i,
+                name: labelEfektivitas[i]
+            });
         if (isAppended)
             $scope.analisaEvaluasi.master.efektivitasDLI[indexPenyebab].push(efektivitasDLI);
         else
@@ -3633,14 +3828,15 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         try {
             approach = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranOperasional[indexAE].risiko[indexPenyebab].penyebab[indexExistingControl].efektifitas.approach, 0);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var labelEfektivitas = ["0 : Tidak Ada", "1 : Sangat Lemah", "2 : Lemah", "3 : Sedang", "4 : Kuat", "5 : Sangat Kuat"];
 
         for (var i = 0; i <= approach; i++)
-            efektivitasDLI.push({ id: i, name: labelEfektivitas[i] });
+            efektivitasDLI.push({
+                id: i,
+                name: labelEfektivitas[i]
+            });
         if (isAppended)
             $scope.analisaEvaluasi.master.efektivitasDLI2[indexPenyebab].push(efektivitasDLI);
         else
@@ -3697,14 +3893,15 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         try {
             approach = Helper.ifNullOrEmpty($scope.analisaEvaluasi.data.sasaranFinansial[indexAE].risiko[indexPenyebab].penyebab[indexExistingControl].efektifitas.approach, 0);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var labelEfektivitas = ["0 : Tidak Ada", "1 : Sangat Lemah", "2 : Lemah", "3 : Sedang", "4 : Kuat", "5 : Sangat Kuat"];
 
         for (var i = 0; i <= approach; i++)
-            efektivitasDLI.push({ id: i, name: labelEfektivitas[i] });
+            efektivitasDLI.push({
+                id: i,
+                name: labelEfektivitas[i]
+            });
         if (isAppended)
             $scope.analisaEvaluasi.master.efektivitasDLI3[indexPenyebab].push(efektivitasDLI);
         else
@@ -3728,7 +3925,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickAnalisaEvaluasiAdd = function (pIndex, jenis) {
-        $scope.analisaEvaluasi.data.sasaranOperasional[pIndex].penyebab.push({ id: "", name: "" });
+        $scope.analisaEvaluasi.data.sasaranOperasional[pIndex].penyebab.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickAnalisaEvaluasiRemove = function (pIndex, index, jenis) {
@@ -3749,7 +3949,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickAnalisaEvaluasiAdd = function (pIndex, jenis) {
-        $scope.analisaEvaluasi.data.sasaranFinansial[pIndex].penyebab.push({ id: "", name: "" });
+        $scope.analisaEvaluasi.data.sasaranFinansial[pIndex].penyebab.push({
+            id: "",
+            name: ""
+        });
     }
 
     $scope.eventClickAnalisaEvaluasiRemove = function (pIndex, index, jenis) {
@@ -3774,10 +3977,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                 $scope.rencanaMitigasi.master.tipePeringkatKemungkinan = [];
                 $scope.rencanaMitigasi.master.peringkatKemungkinan = [];
                 $scope.rencanaMitigasi.master.jenisValuta = [];
-                
+
                 // SASARAN
                 angular.forEach($scope.rencanaMitigasi.data.sasaran, function (induk, i) {
-                       
+
                     if ($scope.rencanaMitigasi.data.sasaran[i].risiko.length > 0) {
                         $scope.tampilSasaranStrategis[i] = true;
                     } else {
@@ -3788,10 +3991,10 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                     $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[i] = [];
                     $scope.rencanaMitigasi.master.peringkatKemungkinan[i] = [];
                     $scope.rencanaMitigasi.master.jenisValuta[i] = [];
-                    
+
                     // RISIKO
                     angular.forEach(induk.risiko, function (subitem, j) {
-                        
+
                         $scope.rencanaMitigasi.master.peringkatDampak[i][j] = [];
                         $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[i][j] = [];
                         $scope.rencanaMitigasi.master.peringkatKemungkinan[i][j] = [];
@@ -3799,7 +4002,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
                         // PENYEBAB
                         angular.forEach(subitem.penyebab, function (item, k) {
-                            
+
                             $scope.rencanaMitigasi.master.peringkatDampak[i][j][k] = [];
                             $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[i][j][k] = [];
                             $scope.rencanaMitigasi.master.peringkatKemungkinan[i][j][k] = [];
@@ -3887,7 +4090,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                                     $scope.rencanaMitigasi.data.sasaran[i].risiko[j].penyebab[k].rencanaMitigasi[0].tingkatRisikoRR.warna = $scope.rencanaMitigasi.data.sasaran[i].risiko[j].penyebab[k].tingkatRisiko.warna;
                                     $scope.rencanaMitigasi.data.sasaran[i].risiko[j].penyebab[k].rencanaMitigasi[0].tingkatRisikoRR.relatifRisiko = $scope.rencanaMitigasi.data.sasaran[i].risiko[j].penyebab[k].tingkatRisiko.relatifRisiko;
                                 }
-                                    
+
                                 // RENCANA MITIGASI
                                 angular.forEach(item.rencanaMitigasi, function (rMitigasi, l) {
 
@@ -3905,11 +4108,11 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
                                 });
                             }
-                            
-                            });
 
                         });
+
                     });
+                });
             }
             $scope.generatePanelClass();
             NProgress.done();
@@ -4040,8 +4243,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.rencanaMitigasi.isEditMode = false;
     }
 
-    $scope.eventClickRencanaMitigasiAdd = function(induk, item, subItem)
-    {
+    $scope.eventClickRencanaMitigasiAdd = function (induk, item, subItem) {
         var newRencanaMitigasi = {
             id: "00000000-0000-0000-0000-000000000000",
             name: "",
@@ -4079,9 +4281,9 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                 relatifRisiko: ""
             }
         }
-        
+
         $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi.push(newRencanaMitigasi);
-        
+
         var l = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi.length - 1;
 
         $scope.rencanaMitigasi.master.peringkatDampak[induk][item][subItem][l] = [];
@@ -4096,52 +4298,61 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
 
         // ISI PERINGKAT BERDASARKAN INDUK RISIKO //
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.id                   = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.id;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.name                 = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.name;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.keterangan           = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.keterangan;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.nilai                = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.nilai;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.id = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.id;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.name = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.name;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.keterangan = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.keterangan;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatDampakRR.nilai = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatDampak.nilai;
 
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tipePeringkatKemungkinan.id            = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tipePeringkatKemungkinan.id;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tipePeringkatKemungkinan.name          = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tipePeringkatKemungkinan.name;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tipePeringkatKemungkinan.id = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tipePeringkatKemungkinan.id;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tipePeringkatKemungkinan.name = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tipePeringkatKemungkinan.name;
 
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.id              = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.id;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.name            = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.name;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.keterangan      = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.keterangan;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.nilai           = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.nilai;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.id = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.id;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.name = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.name;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.keterangan = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.keterangan;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].peringkatKemungkinanRR.nilai = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].peringkatKemungkinan.nilai;
 
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.id                     = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.id;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.name                   = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.name;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.keberterimaanRisiko    = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.keberterimaanRisiko;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.warna                  = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.warna;
-        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.relatifRisiko          = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.relatifRisiko;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.id = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.id;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.name = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.name;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.keberterimaanRisiko = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.keberterimaanRisiko;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.warna = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.warna;
+        $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi[l].tingkatRisikoRR.relatifRisiko = $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].tingkatRisiko.relatifRisiko;
     }
 
-    $scope.eventClickRencanaMitigasiDelete = function (induk, item, subItem,index) {
+    $scope.eventClickRencanaMitigasiDelete = function (induk, item, subItem, index) {
         var hapus = confirm('Hapus Rencana Mitigasi ?');
         if (hapus) {
-            $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi.splice(index,1);
+            $scope.rencanaMitigasi.data.sasaran[induk].risiko[item].penyebab[subItem].rencanaMitigasi.splice(index, 1);
         }
     }
 
-    $scope.eventClickRencanaMitigasiLangkahKerjaAdd = function (data_,risiko_,penyebab_, mitigasi_,isAppend)
-    {
+    $scope.eventClickRencanaMitigasiLangkahKerjaAdd = function (data_, risiko_, penyebab_, mitigasi_, isAppend) {
         var newLangkahKerja = {
-            id: "", name: "", picLangkah: {
-                    id: "00000000-0000-0000-0000-000000000000",
-                    employeeNumber: "",
-                    name: "",
-                    jabatan: "",
-                    email: "",
-                    payrollName: "",
-                    displayCol: ""
-                }, valutaBiaya: { id: "", name: "",keterangan:"" }, biaya: 0, targetMulai: "", targetSelesai: ""
+            id: "",
+            name: "",
+            picLangkah: {
+                id: "00000000-0000-0000-0000-000000000000",
+                employeeNumber: "",
+                name: "",
+                jabatan: "",
+                email: "",
+                payrollName: "",
+                displayCol: ""
+            },
+            valutaBiaya: {
+                id: "",
+                name: "",
+                keterangan: ""
+            },
+            biaya: 0,
+            targetMulai: "",
+            targetSelesai: ""
         };
 
         if ($scope.rencanaMitigasi.data.sasaran[data_].risiko[risiko_].penyebab[penyebab_].rencanaMitigasi[mitigasi_].langkahKerja == "undefined")
             $scope.rencanaMitigasi.data.sasaran[data_].risiko[risiko_].penyebab[penyebab_].rencanaMitigasi[mitigasi_].langkahKerja = [];
 
         $scope.rencanaMitigasi.data.sasaran[data_].risiko[risiko_].penyebab[penyebab_].rencanaMitigasi[mitigasi_].langkahKerja.push(newLangkahKerja);
-        
+
         var m = $scope.rencanaMitigasi.data.sasaran[data_].risiko[risiko_].penyebab[penyebab_].rencanaMitigasi[mitigasi_].langkahKerja.length - 1;
 
         $scope.renderJenisValutaMitigasi(data_, risiko_, penyebab_, mitigasi_, m, isAppend);
@@ -4162,94 +4373,41 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.rencanaMitigasi.master.jenisValuta[indexSasaran][indexAE][indexPenyebab][indexMitigasi].push(response);
-            else
-                $scope.rencanaMitigasi.master.jenisValuta[indexSasaran][indexAE][indexPenyebab][indexMitigasi][indexLangkahKerja] = response;
+                if (isAppended)
+                    $scope.rencanaMitigasi.master.jenisValuta[indexSasaran][indexAE][indexPenyebab][indexMitigasi].push(response);
+                else
+                    $scope.rencanaMitigasi.master.jenisValuta[indexSasaran][indexAE][indexPenyebab][indexMitigasi][indexLangkahKerja] = response;
 
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "RENCANA MITIGASI List Jenis Valuta",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "RENCANA MITIGASI List Jenis Valuta",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
-    $scope.renderPeringkatDampakMitigasi = function (indexSasaran, indexAE, indexPenyebab,indexMitigasi, isAppended) {
+    $scope.renderPeringkatDampakMitigasi = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi, isAppended) {
         //Master Peringkat Kemungkinan
         var idAreaDampak = Constant.emptyGuid;
         var nilai = 0;
         try {
             idAreaDampak = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].areaDampak.id, Constant.emptyGuid);
-        }
-        catch (err) {
-        }
+        } catch (err) {}
 
         var apiUrl = "/api/DmrKRListPeringkatDampak/" + idDmr + "?idArea=" + idAreaDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
 
-            if (isAppended)
-                $scope.rencanaMitigasi.master.peringkatDampak[indexSasaran][indexAE][indexPenyebab].push(response);
-            else
-                $scope.rencanaMitigasi.master.peringkatDampak[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
-
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "RENCANA MITIGASI List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
-
-            Helper.notifErrorHttp(data);
-        });
-    }
-
-    $scope.renderTipePeringkatKemungkinanMitigasi = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi, isAppended) {
-        //Master Tipe Peringkat Kemungkinan
-
-        var apiUrl = "/api/DmrKRListTipePeringkatKemungkinan";
-
-        HttpRequest.get(apiUrl).success(function (response) {
-
-            if (isAppended)
-                $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[indexSasaran][indexAE][indexPenyebab].push(response);
-            else
-                $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
-
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "RENCANA MITIGASI List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
-
-            Helper.notifErrorHttp(data);
-        });
-    }
-
-    $scope.renderPeringkatKemungkinanMitigasi = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi) {
-        
-        if ($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi != null || $scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi != 'undefined') {
-            var idTipePeringkatKemungkinan = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].tipePeringkatKemungkinan.id, Constant.emptyGuid);
-            var nilaiEfektifitas = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].efektifitas.nilai, 0);
-            var nilaiDampak = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].peringkatDampakRR.nilai, 0);
-
-            var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.rencanaMitigasi.master.peringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
+                if (isAppended)
+                    $scope.rencanaMitigasi.master.peringkatDampak[indexSasaran][indexAE][indexPenyebab].push(response);
+                else
+                    $scope.rencanaMitigasi.master.peringkatDampak[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
 
             })
             .error(function (response, code) {
@@ -4263,6 +4421,57 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
                 Helper.notifErrorHttp(data);
             });
+    }
+
+    $scope.renderTipePeringkatKemungkinanMitigasi = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi, isAppended) {
+        //Master Tipe Peringkat Kemungkinan
+
+        var apiUrl = "/api/DmrKRListTipePeringkatKemungkinan";
+
+        HttpRequest.get(apiUrl).success(function (response) {
+
+                if (isAppended)
+                    $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[indexSasaran][indexAE][indexPenyebab].push(response);
+                else
+                    $scope.rencanaMitigasi.master.tipePeringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
+
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "RENCANA MITIGASI List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
+
+                Helper.notifErrorHttp(data);
+            });
+    }
+
+    $scope.renderPeringkatKemungkinanMitigasi = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi) {
+
+        if ($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi != null || $scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi != 'undefined') {
+            var idTipePeringkatKemungkinan = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].tipePeringkatKemungkinan.id, Constant.emptyGuid);
+            var nilaiEfektifitas = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].efektifitas.nilai, 0);
+            var nilaiDampak = Helper.ifNullOrEmpty($scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].peringkatDampakRR.nilai, 0);
+
+            var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
+            HttpRequest.get(apiUrl).success(function (response) {
+                    $scope.rencanaMitigasi.master.peringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
+
+                })
+                .error(function (response, code) {
+                    var data = {
+                        title: "RENCANA MITIGASI List Peringkat Dampak IR",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "GET",
+                        apiUrl: apiUrl
+                    };
+
+                    Helper.notifErrorHttp(data);
+                });
         }
     }
 
@@ -4282,12 +4491,12 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.panelClass2[i] = [];
 
             angular.forEach(induk.risiko, function (subItem, j) {
-                
+
                 angular.forEach(subItem.penyebab, function (item, k) {
                     $scope.panelClass2[i][j] = "panel-default";
 
                     $scope.panelClass1[i] = item.tingkatRisiko.warna;
-                    
+
                 });
 
             });
@@ -4321,19 +4530,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/DmrKRListPeringkatKemungkinan/" + idTipePeringkatKemungkinan + "?efektifitas=" + nilaiEfektifitas + "&dampak=" + nilaiDampak;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.rencanaMitigasi.master.peringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "RENCANA MITIGASI List Peringkat Dampak IR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.rencanaMitigasi.master.peringkatKemungkinan[indexSasaran][indexAE][indexPenyebab][indexMitigasi] = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "RENCANA MITIGASI List Peringkat Dampak IR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.peringkatKemungkinanMitigasiChange = function (indexSasaran, indexAE, indexPenyebab, indexMitigasi) {
@@ -4355,19 +4564,19 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         var apiUrl = "/api/KRHitungTingkatRisiko?idPeringkatDampak=" + idPerDampak + "&idPeringkatKemungkinan=" + idPerKemungkinan;
 
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].tingkatRisikoRR = response;
-        })
-        .error(function (response, code) {
-            var data = {
-                title: "RENCANA MITIGASI Hitung Tingkat Risiko CR",
-                exception: response,
-                exceptionCode: code,
-                operation: "GET",
-                apiUrl: apiUrl
-            };
+                $scope.rencanaMitigasi.data.sasaran[indexSasaran].risiko[indexAE].penyebab[indexPenyebab].rencanaMitigasi[indexMitigasi].tingkatRisikoRR = response;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "RENCANA MITIGASI Hitung Tingkat Risiko CR",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "GET",
+                    apiUrl: apiUrl
+                };
 
-            Helper.notifErrorHttp(data);
-        });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.eventChangeJenisValutaMitigasi = function (indexSasaran, indexRisiko, indexPenyebab, indexMitigasi, indexLangkahKerja) {
@@ -4399,18 +4608,18 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             apiUrl = "/api/DMRStatusVerifikasi?email=" + currentUser.email;
             HttpRequest.get(apiUrl).success(function (response) {
 
-                $scope.persetujuan.viewVerifikasi = response;
-            })
-           .error(function (response, code) {
-               var data = {
-                   title: "Verifikasi DMR",
-                   exception: response,
-                   exceptionCode: code,
-                   operation: "GET",
-                   apiUrl: apiUrl
-               };
-               Helper.notifErrorHttp(data);
-           });
+                    $scope.persetujuan.viewVerifikasi = response;
+                })
+                .error(function (response, code) {
+                    var data = {
+                        title: "Verifikasi DMR",
+                        exception: response,
+                        exceptionCode: code,
+                        operation: "GET",
+                        apiUrl: apiUrl
+                    };
+                    Helper.notifErrorHttp(data);
+                });
 
             $scope.statusForm();
 
