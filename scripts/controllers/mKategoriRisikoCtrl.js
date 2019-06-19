@@ -12,8 +12,7 @@
     $scope.formLoad = function () {
         try {
             $scope.currentUser = JSON.parse($cookies.get('currentUser'));
-        }
-        catch (err) {
+        } catch (err) {
             $scope.currentUser = {};
         }
 
@@ -35,14 +34,17 @@
     }
 
     $scope.eventClickSave = function () {
-        var apiUrl = "/api/MasterKategoriRisiko";
 
+        // var apiUrl = "/api/MasterKategoriRisiko";
+        $scope.kategoriRisiko.input.id = "";
         $scope.kategoriRisiko.input.userEmail = $scope.currentUser.email;
 
-        HttpRequest.post(apiUrl, $scope.kategoriRisiko.input).success(function (response) {
-            $scope.renderKategoriRisiko();
-            $scope.kategoriRisiko.isEditMode = false;
-        });
+        console.log(JSON.stringify($scope.kategoriRisiko.input));
+
+        // HttpRequest.post(apiUrl, $scope.kategoriRisiko.input).success(function (response) {
+        //     $scope.renderKategoriRisiko();
+        //     $scope.kategoriRisiko.isEditMode = false;
+        // });
     }
 
     $scope.eventClickEdit = function (id) {
@@ -58,7 +60,7 @@
         });
     }
 
-    $scope.eventClickHapus = function (id,name) {
+    $scope.eventClickHapus = function (id, name) {
         NProgress.start();
         var apiUrl = "/api/MasterKategoriRisiko/" + id + "?email=" + $scope.currentUser.email;
 
@@ -75,14 +77,13 @@
     }
 
 
-    $scope.renderKategoriRisiko = function ()
-    {
+    $scope.renderKategoriRisiko = function () {
         NProgress.start();
-            var apiUrl = "/api/MasterKategoriRisiko";
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.kategoriRisiko.data = response;
-                NProgress.done();
-            });
+        var apiUrl = "/api/MasterKategoriRisiko";
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.kategoriRisiko.data = response;
+            NProgress.done();
+        });
     }
 
     $scope.formLoad();
