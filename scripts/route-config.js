@@ -270,6 +270,13 @@ mainApp.config(function ($routeProvider) {
             controller: 'mKategoriRisikoCtrl'
         })
 
+        // Master Sub Kategori Risiko
+        .when('/m-SubKategoriRisiko', {
+            cache: false,
+            templateUrl: 'templates/m-subKategoriRisiko.html?' + $.now(),
+            controller: 'mSubKategoriRisikoCtrl'
+        })
+
         // Master Sumber Risiko
         .when('/m-sumberrisiko', {
             cache: false,
