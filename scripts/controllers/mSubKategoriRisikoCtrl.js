@@ -24,7 +24,8 @@ mainApp.controller("mSubKategoriRisikoCtrl", function ($scope, $routeParams, $q,
         var years = Helper.generateStackedYears(2018, 2);
         $scope.master.tahun = years;
 
-        $scope.rendersubKategoriRisiko();
+        $scope.renderSubKategoriRisiko();
+        $scope.renderKategoriRisiko();
     }
 
     $scope.eventClickAdd = function () {
@@ -34,28 +35,28 @@ mainApp.controller("mSubKategoriRisikoCtrl", function ($scope, $routeParams, $q,
 
     $scope.eventClickCancel = function () {
         NProgress.start();
-        $scope.rendersubKategoriRisiko();
+        $scope.renderSubKategoriRisiko();
         $scope.subKategoriRisiko.isEditMode = false;
         NProgress.done();
     }
 
     $scope.eventClickSave = function () {
 
-        // var apiUrl = "/api/MastersubKategoriRisiko";
-        $scope.form.id = "";
+        var apiUrl = "/api/MasterSubKategoriRisiko";
+        // $scope.form.id = "";
         $scope.form.userEmail = $scope.currentUser.email;
 
-        console.log(JSON.stringify($scope.form));
+        // console.log(JSON.stringify($scope.form));
 
-        // HttpRequest.post(apiUrl, $scope.form).success(function (response) {
-        //     $scope.rendersubKategoriRisiko();
-        //     $scope.subKategoriRisiko.isEditMode = false;
-        // });
+        HttpRequest.post(apiUrl, $scope.form).success(function (response) {
+            $scope.renderSubKategoriRisiko();
+            $scope.subKategoriRisiko.isEditMode = false;
+        });
     }
 
     $scope.eventClickEdit = function (id) {
         NProgress.start();
-        var apiUrl = "/api/MastersubKategoriRisiko/" + id;
+        var apiUrl = "/api/MasterSubKategoriRisiko/" + id;
 
         $scope.form.userEmail = $scope.currentUser.email;
 
@@ -68,12 +69,12 @@ mainApp.controller("mSubKategoriRisikoCtrl", function ($scope, $routeParams, $q,
 
     $scope.eventClickHapus = function (id, name) {
         NProgress.start();
-        var apiUrl = "/api/MastersubKategoriRisiko/" + id + "?email=" + $scope.currentUser.email;
+        var apiUrl = "/api/MasterSubKategoriRisiko/" + id + "?email=" + $scope.currentUser.email;
 
         var hapus = confirm("Hapus " + name + "?");
         if (hapus) {
             HttpRequest.del(apiUrl).success(function (response) {
-                $scope.rendersubKategoriRisiko();
+                $scope.renderSubKategoriRisiko();
                 $scope.subKategoriRisiko.isEditMode = false;
                 NProgress.done();
             });
@@ -82,10 +83,17 @@ mainApp.controller("mSubKategoriRisikoCtrl", function ($scope, $routeParams, $q,
         }
     }
 
+    $scope.renderKategoriRisiko = function () {
+        var apiUrl = "/api/MasterKategoriRisiko";
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.master.kategoriRisiko = response;
+            // console.log(JSON.stringify(response));
+        });
+    }
 
-    $scope.rendersubKategoriRisiko = function () {
+    $scope.renderSubKategoriRisiko = function () {
         NProgress.start();
-        var apiUrl = "/api/MastersubKategoriRisiko";
+        var apiUrl = "/api/MasterSubKategoriRisiko";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.subKategoriRisiko.data = response;
 
@@ -95,5 +103,16 @@ mainApp.controller("mSubKategoriRisikoCtrl", function ($scope, $routeParams, $q,
         });
     }
 
+    $scope.searchByTahun = function (tahun) {
+        NProgress.start();
+        var apiUrl = "/api/MasterSubKategoriRisiko?tahun=" + tahun;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.subKategoriRisiko.data = response;
+
+            // console.log(JSON.stringify($scope.subKategoriRisiko.data));
+
+            NProgress.done();
+        });
+    }
     $scope.formLoad();
 });
