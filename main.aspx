@@ -41,7 +41,7 @@
     <link href="plugins/angular-ckeditor/ng-ckeditor.css" rel="stylesheet" type="text/css">
 
     <!-- Sweet Alert -->
-    <link href="plugins/sweet-alert/sweetalert.css" rel="stylesheet" type="text/css">
+    <!-- <link href="plugins/sweet-alert/sweetalert.css" rel="stylesheet" type="text/css"> -->
 
     <!-- Css Custome Batam -->
 
@@ -72,7 +72,7 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Integrated Risk Management</b></a>
+                <a class="navbar-brand" href="#notifikasi" style="color:#FFF;"><b>Enterprise Risk Management</b></a>
                 <ul class="nav navbar-nav navbar-right" style="position: relative;float: right;" ng-controller="logoutCtrl">
                     <li class="dropdown no-border" style="border:none !important; ">
                         <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b><i class="fa fa-user fa-fw"></i> &nbsp; <span ng-bind="currentUser.name"></span><span class="caret"></span></b></a>
@@ -285,7 +285,7 @@
     <script src="scripts/factories.js?version=<%= CodeVersion %>"></script>
 
     <!-- Sweet Alert -->
-    <script src="plugins/sweet-alert/sweetalert.js"></script>
+    <!-- <script src="plugins/sweet-alert/sweetalert.js"></script> -->
 
     <!-- SummerNote -->
     <!-- <script src="./plugins/summernote/summernote.min.js"></script>
@@ -321,7 +321,7 @@
     <script src="scripts/controllers/mDepartemenCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mPenyebabCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mRisikoCtrl.js?version=<%= CodeVersion %>"></script>
-    <script src="scripts/controllers/duplikasiDmrCtrl.js?version=<%= CodeVersion %>"></script>
+    <!-- <script src="scripts/controllers/duplikasiDmrCtrl.js?version=<%= CodeVersion %>"></script> -->
     <script src="scripts/controllers/riskEventCtrl.js?version=<%= CodeVersion %>"></script>
 
     <script src="scripts/controllers/mMenuCtrl.js?version=<%= CodeVersion %>"></script>
@@ -339,6 +339,11 @@
     <script src="scripts/controllers/mainNavigationCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/errorCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/error401Ctrl.js?version=<%= CodeVersion %>"></script>
+
+
+    <script src="scripts/controllers/mDampakCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/mSubKategoriRisikoCtrl.js?version=<%= CodeVersion %>"></script>
+
 
 
     <!-- Angular Input Masks -->
