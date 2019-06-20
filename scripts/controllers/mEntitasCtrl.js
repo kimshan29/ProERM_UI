@@ -27,7 +27,7 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var apiUrl = "/api/MasterEntitas";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.entitas.data = response;
-            console.log(JSON.stringify($scope.entitas.data));
+            // console.log(JSON.stringify($scope.entitas.data));
 
             NProgress.done();
         }).error(function (response, code) {
@@ -53,7 +53,7 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var data = $scope.entitas.input;
         data.userEmail = $scope.currentUser.email;
 
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
 
         HttpRequest.post(apiUrl, data).success(function (response) {
                 $scope.renderDataEntitas();
@@ -78,7 +78,7 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var apiUrl = "/api/MasterEntitas/" + id;
 
         HttpRequest.get(apiUrl).success(function (response) {
-                console.log(JSON.stringify(response));
+                // console.log(JSON.stringify(response));
 
                 $scope.entitas.input = response;
                 $scope.entitas.isEditMode = true;
