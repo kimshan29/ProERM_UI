@@ -22,16 +22,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in sumberrisiko.data">
+                        <tr class="main-font-3" ng-repeat="item in sumberrisiko.data">
                             <td>{{ item.tipeSumberRisiko.tipeSumberRisiko }}</td>
                             <td>{{ item.sumberRisiko }}</td>
                             <td class="text-center">
                                 <button type='button' class='btn btn-info btn-sm' ng-click="eventClickEdit(item.id)" ng-show='!sumberrisiko.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
-                                <button type='button' class='btn btn-danger btn-sm' ng-click="eventClickHapus(item.id,item.sumberRisiko)" ng-show='!sumberrisiko.isEditMode'>
+                                <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventClickHapus(item.id,item.sumberRisiko)" ng-show='!sumberrisiko.isEditMode'>
                                     <span class='fa fa-times-circle'></span> Hapus
-                                </button>
+                                </button> -->
                             </td>
                         </tr>
                     </tbody>
@@ -53,9 +53,9 @@
 <div class="row" ng-show="sumberrisiko.isEditMode">
     <div class="col-lg-12">
         <div class="panel">
-            <div class="panel-body bg-white border-gray color-blue">
+            <div class="panel-body bg-white border-gray main-font">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3 class="color-blue">
+                    <h3 class="main-font-3">
                         TAMBAH MASTER SUMBER RISIKO
                     </h3>
                     <hr />
@@ -66,11 +66,7 @@
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tipe</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <input type="text" class="form-control" ng-model="sumberrisiko.input.id" style="display:none;" />
-                                <select class="form-control"
-                                        ng-model="sumberrisiko.input.tipeSumberRisiko.id"
-                                        ng-options="item.id as item.tipeSumberRisiko for item in sumberrisiko.master"
-                                        ng-change="eventChangeTipe()"
-                                        required>
+                                <select class="form-control" ng-model="sumberrisiko.input.tipeSumberRisiko.id" ng-options="item.id as item.tipeSumberRisiko for item in sumberrisiko.master" ng-change="eventChangeTipe()" required>
                                 </select>
                             </div>
                         </div>

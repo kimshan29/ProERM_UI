@@ -22,16 +22,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in risiko.data">
+                        <tr class="main-font-3" ng-repeat="item in risiko.data">
                             <td>{{ item.risiko }}</td>
                             <td>{{ item.kejadian }}</td>
                             <td class="text-center">
                                 <button type='button' class='btn btn-info btn-sm' ng-click="eventClickEdit(item.id)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
-                                <button type='button' class='btn btn-danger btn-sm' ng-click="eventClickHapus(item.id,item.risiko)" ng-show='!entitas.isEditMode'>
+                                <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventClickHapus(item.id,item.risiko)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-times-circle'></span> Hapus
-                                </button>
+                                </button> -->
                             </td>
                         </tr>
                     </tbody>
@@ -53,9 +53,9 @@
 <div class="row" ng-show="risiko.isEditMode">
     <div class="col-lg-12">
         <div class="panel">
-            <div class="panel-body bg-white border-gray color-blue">
+            <div class="panel-body bg-white border-gray main-font">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3 class="color-blue">
+                    <h3 class="main-font-3">
                         TAMBAH MASTER RISIKO
                     </h3>
                     <hr />
