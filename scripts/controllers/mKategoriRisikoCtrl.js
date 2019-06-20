@@ -35,25 +35,28 @@
 
     $scope.eventClickSave = function () {
 
-        // var apiUrl = "/api/MasterKategoriRisiko";
-        $scope.kategoriRisiko.input.id = "";
+        var apiUrl = "/api/MasterKategoriRisiko";
+        // $scope.kategoriRisiko.input.id = "";
         $scope.kategoriRisiko.input.userEmail = $scope.currentUser.email;
 
         console.log(JSON.stringify($scope.kategoriRisiko.input));
 
-        // HttpRequest.post(apiUrl, $scope.kategoriRisiko.input).success(function (response) {
-        //     $scope.renderKategoriRisiko();
-        //     $scope.kategoriRisiko.isEditMode = false;
-        // });
+        HttpRequest.post(apiUrl, $scope.kategoriRisiko.input).success(function (response) {
+            $scope.renderKategoriRisiko();
+            $scope.kategoriRisiko.isEditMode = false;
+        });
     }
 
     $scope.eventClickEdit = function (id) {
         NProgress.start();
         var apiUrl = "/api/MasterKategoriRisiko/" + id;
 
+
+
         $scope.kategoriRisiko.input.userEmail = $scope.currentUser.email;
 
         HttpRequest.get(apiUrl).success(function (response) {
+            console.log(JSON.stringify(response));
             $scope.kategoriRisiko.input = response;
             $scope.kategoriRisiko.isEditMode = true;
             NProgress.done();
@@ -82,6 +85,7 @@
         var apiUrl = "/api/MasterKategoriRisiko";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.kategoriRisiko.data = response;
+            console.log(JSON.stringify(response));
             NProgress.done();
         });
     }
