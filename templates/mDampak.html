@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label class="control-label col-lg-2 col-md-3 col-sm-3">Tahun</label>
                         <div class="col-lg-3 col-md-3 col-sm-3">
-                            <select class="form-control" ng-model="tahun" ng-options="item.id as item.name for item in master.tahun"></select>
+                            <select class="form-control" ng-model="tahun" ng-options="item.id as item.name for item in master.tahun" ng-change="searchByTahun(tahun)"></select>
                         </div>
                     </div>
                 </form>
@@ -34,20 +34,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="main-font-3" ng-repeat="item in areadampak.data">
+                        <tr class="main-font-3" ng-repeat="item in dampak.data">
                             <td>{{ $index+1 }}</td>
-                            <td>{{ item.peringkatDampak }}</td>
+                            <td>{{ item.peringkatDampak.peringkatDampak }} ({{item.peringkatDampak.Keterangan}})</td>
                             <td>{{ item.detailDampak }}</td>
-                            <td>{{ item.areaDampak }}</td>
+                            <td>{{ item.areaDampak.areaDampak }}</td>
                             <td>{{ item.tahun }}</td>
-                            <td>{{ item.status }}</td>
+                            <td>{{ item.isActive }}</td>
                             <td class="text-center">
                                 <button type='button' class='btn btn-info btn-sm' ng-click="eventEditDampak(item.id)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
-                                <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
+                                <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-times-circle'></span> Hapus
-                                </button>
+                                </button> -->
                             </td>
                         </tr>
                     </tbody>
@@ -82,7 +82,7 @@
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Peringkat Dampak</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <input type="text" class="form-control" ng-model="form.id" style="display:none;" />
-                                <select class="form-control" ng-model="form.peringkatDampak" ng-options="item.id as item.name for item in master.peringkatDampak"></select>
+                                <select class="form-control" ng-model="form.peringkatDampak" ng-options="item as item.peringkatDampak + '-' + item.keterangan for item in master.peringkatDampak track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -94,7 +94,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Area Dampak</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.areaDampak" ng-options="item.id as item.name for item in master.areaDampak"></select>
+                                <select class="form-control" ng-model="form.areaDampak" ng-options="item as item.areaDampak for item in master.areaDampak track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">

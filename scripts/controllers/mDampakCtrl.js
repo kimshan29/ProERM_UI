@@ -25,6 +25,7 @@ mainApp.controller("mDampakCtrl", function ($scope, $routeParams, $q, $cookies, 
 
         $scope.renderdataDampak();
         $scope.renderPeringkatDampak();
+        $scope.renderAreaDampak();
     }
 
     //Event Handlers ===================================================================================================================
@@ -42,6 +43,20 @@ mainApp.controller("mDampakCtrl", function ($scope, $routeParams, $q, $cookies, 
         NProgress.start();
         // alert("test")
         var apiUrl = "/api/MasterDampak";
+        // console.log(apiUrl);
+
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.dampak.data = response;
+            // console.log(JSON.stringify($scope.dampak.data));
+
+            NProgress.done();
+        });
+    }
+
+    $scope.searchByTahun = function (tahun) {
+        NProgress.start();
+        // alert("test")
+        var apiUrl = "/api/MasterDampak?tahun=" + tahun;
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.dampak.data = response;
             NProgress.done();
@@ -52,7 +67,16 @@ mainApp.controller("mDampakCtrl", function ($scope, $routeParams, $q, $cookies, 
         var apiUrl = "/api/MasterPeringkatDampak";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.master.peringkatDampak = response;
-            console.log(JSON.stringify($scope.master.peringkatDampak));
+            // console.log(JSON.stringify($scope.master.peringkatDampak));
+
+        });
+    }
+
+    $scope.renderAreaDampak = function () {
+        var apiUrl = "/api/MasterAreaDampak";
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.master.areaDampak = response;
+            // console.log(JSON.stringify($scope.master.areaDampak));
 
         });
     }
