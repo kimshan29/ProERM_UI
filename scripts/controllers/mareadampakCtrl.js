@@ -44,6 +44,8 @@
         var apiUrl = "/api/MasterAreaDampak";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.areadampak.data = response;
+            // console.log($scope.areadampak.data);
+
 
             NProgress.done();
         });

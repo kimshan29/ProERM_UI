@@ -24,6 +24,7 @@ mainApp.controller("mDampakCtrl", function ($scope, $routeParams, $q, $cookies, 
         $scope.master.tahun = years;
 
         $scope.renderdataDampak();
+        $scope.renderPeringkatDampak();
     }
 
     //Event Handlers ===================================================================================================================
@@ -47,8 +48,16 @@ mainApp.controller("mDampakCtrl", function ($scope, $routeParams, $q, $cookies, 
         });
     }
 
+    $scope.renderPeringkatDampak = function () {
+        var apiUrl = "/api/MasterPeringkatDampak";
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.master.peringkatDampak = response;
+            console.log(JSON.stringify($scope.master.peringkatDampak));
+
+        });
+    }
     $scope.eventClickSave = function () {
-        $scope.form.id = "";
+        // $scope.form.id = "";
         console.log(JSON.stringify($scope.form));
 
 

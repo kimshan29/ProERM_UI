@@ -27,6 +27,8 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var apiUrl = "/api/MasterEntitas";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.entitas.data = response;
+            console.log(JSON.stringify($scope.entitas.data));
+
             NProgress.done();
         }).error(function (response, code) {
             NProgress.done();
@@ -47,27 +49,27 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
     $scope.eventClickSave = function () {
         var apiUrl = "/api/MasterEntitas";
 
-        $scope.entitas.input.id = "";
+        // $scope.entitas.input.id = "";
         var data = $scope.entitas.input;
         data.userEmail = $scope.currentUser.email;
 
         console.log(JSON.stringify(data));
 
-        // HttpRequest.post(apiUrl, data).success(function (response) {
-        //     $scope.renderDataEntitas();
-        //     $scope.entitas.isEditMode = false;
-        // })
-        // .error(function (response, code) {
-        //     var data = {
-        //         title: "Entitas",
-        //         exception: response,
-        //         exceptionCode: code,
-        //         operation: "POST",
-        //         apiUrl: apiUrl
-        //     };
+        HttpRequest.post(apiUrl, data).success(function (response) {
+                $scope.renderDataEntitas();
+                $scope.entitas.isEditMode = false;
+            })
+            .error(function (response, code) {
+                var data = {
+                    title: "Entitas",
+                    exception: response,
+                    exceptionCode: code,
+                    operation: "POST",
+                    apiUrl: apiUrl
+                };
 
-        //     Helper.notifErrorHttp(data);
-        // });
+                Helper.notifErrorHttp(data);
+            });
     }
 
     $scope.eventClickEdit = function (id) {
@@ -76,6 +78,8 @@ mainApp.controller("mEntitasCtrl", function ($scope, $routeParams, $q, $cookies,
         var apiUrl = "/api/MasterEntitas/" + id;
 
         HttpRequest.get(apiUrl).success(function (response) {
+                console.log(JSON.stringify(response));
+
                 $scope.entitas.input = response;
                 $scope.entitas.isEditMode = true;
                 NProgress.done();
