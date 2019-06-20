@@ -262,6 +262,8 @@
                 };
 
                 $http.post(apiUrl, data).success(function (response) {
+                        console.log(JSON.stringify(response));
+
                         if (response.employeeNumber == null && response.name == null) {
                             $scope.isValidLogin = false;
                             NProgress.done();

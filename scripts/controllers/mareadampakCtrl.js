@@ -8,6 +8,9 @@
     $scope.master = {};
     $scope.master.tahun = [];
 
+    //Master Tahun
+    var years = Helper.generateStackedYears(2018, 2);
+    $scope.master.tahun = years;
     //Procedures =====================================================================================================================
     $scope.formLoad = function () {
         try {
@@ -19,9 +22,7 @@
         $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withOption('responsive', true).withDisplayLength(10);
 
 
-        //Master Tahun
-        var years = Helper.generateStackedYears(2018, 2);
-        $scope.master.tahun = years;
+
 
         $scope.renderdataDampak();
     }
@@ -43,12 +44,13 @@
         var apiUrl = "/api/MasterAreaDampak";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.areadampak.data = response;
+
             NProgress.done();
         });
     }
 
     $scope.eventAddDampak = function () {
-        $scope.areadampak.input.id = "";
+        // $scope.areadampak.input.id = "";
         $scope.areadampak.input.userEmail = $scope.currentUser.email;
         // console.log(JSON.stringify($scope.areadampak.input));
 
@@ -82,6 +84,15 @@
                 NProgress.done();
             });
         }
+    }
+
+    $scope.eventSearchByYear = function (tahun) {
+        var apiUrl = "/api/MasterAreaDampak?tahun=" + tahun;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.areadampak.data = response;
+
+            NProgress.done();
+        });
     }
 
     //Start of Application =============================================================================================================

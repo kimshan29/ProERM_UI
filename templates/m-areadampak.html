@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label class="control-label col-lg-2 col-md-3 col-sm-3">Tahun</label>
                         <div class="col-lg-3 col-md-3 col-sm-3">
-                            <select class="form-control" ng-model="tahun" ng-options="item.id as item.name for item in master.tahun"></select>
+                            <select class="form-control" ng-model="tahun" ng-options="item.id as item.name for item in master.tahun" ng-change=eventSearchByYear(tahun)></select>
                         </div>
                     </div>
                 </form>
@@ -36,14 +36,14 @@
                             <td>{{ $index+1 }}</td>
                             <td>{{ item.areaDampak }}</td>
                             <td>{{ item.tahun }}</td>
-                            <td>{{ item.status }}</td>
+                            <td>{{ item.isActive ? "Active" : "Not Active" }}</td>
                             <td class="text-center">
                                 <button type='button' class='btn btn-info btn-sm' ng-click="eventEditDampak(item.id)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
-                                <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
+                                <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-times-circle'></span> Hapus
-                                </button>
+                                </button> -->
                             </td>
                         </tr>
                     </tbody>
@@ -91,9 +91,12 @@
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Status</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <select class="form-control" ng-model="areadampak.input.isActive">
-                                    <option value="True">Active</option>
-                                    <option value="False">Not Active</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Not Active">Not Active</option>
                                 </select>
+                                <!-- <input type="radio" class="form-control" ng-model="areaDampak.input.isActive" value="true"> Active
+
+                                <input type="radio" class="form-control" ng-model="areaDampak.input.isActive" value="false"> Not Active -->
                             </div>
                         </div>
                         <div class="form-group">
