@@ -305,3 +305,45 @@ fieldset[disabled] .btn-info:hover {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(243, 184, 67, 0.72);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(236, 167, 63, 0.42);
 }
+
+.dataTables_filter input[type=search]:focus {
+    border-color: #f1b342 !important;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(243, 184, 67, 0.72);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(236, 167, 63, 0.42);
+}
+
+/*PAGING DATATABLES*/
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: .4em .9em !important;
+    color: #f3993e !important;
+    background-color: #fff !important;
+    border: 1px solid #f3993e !important;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .disabled {
+    color: #fff !important;
+    border: 0;
+    background: #D6D6D6 !important;
+    display: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    padding: .4em .9em !important;
+    color: #fff !important;
+    background-color: #f3993e !important;
+    border-color: #f3993e !important;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important;
+    border: 0;
+    background: #D6D6D6 !important;
+}
