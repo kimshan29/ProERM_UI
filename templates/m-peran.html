@@ -148,7 +148,7 @@
                             </tr>
                         </thead>
                         <tr class="{{haveParent(data.menu.id,data.menu.menuParent)}}" ng-repeat="data in peranPopup.data" on-finish-render="reconfigureTable()">
-                            <td class="{{isParent(data.menu.menuParent)}}">
+                            <td class="{{isParent(data.menu.menuParent)}}; main-font-3">
                                 {{ data.menu.name }}
                             </td>
                             <td><input type="checkbox" ng-model="data.canAccess" /></td>

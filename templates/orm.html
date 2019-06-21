@@ -6,43 +6,32 @@
 <div class="row">
     <div class="col-md-12 text-right">
         <div class="" style="margin-bottom:10px">
-            <button type="button" class="btn btn-primary" 
-                    data-toggle="modal" data-target="#modalInisiasi"  
-                    ng-show="isInitMode" 
-                    ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm) && approvalStatus.kodeApproval == 0">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalInisiasi" ng-show="isInitMode" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm) && approvalStatus.kodeApproval == 0">
                 Send
             </button>
-            <button type="button" class="btn btn-primary" 
-                    data-toggle="modal" data-target="#modalSubmit" 
-                    ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSubmit" ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
                 Submit
             </button>
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise"
-                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3)  && hasCompleteStep">
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3)  && hasCompleteStep">
                 Revise
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition"
-                    ng-show="(approvalStatus.kodeApproval == 3) ">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition" ng-show="(approvalStatus.kodeApproval == 3) ">
                 Disposition
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval"
-                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && hasCompleteStep ">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && hasCompleteStep ">
                 Approve
             </button>
         </div>
     </div>
 </div>
 <form class="form-horizontal" role="form">
-    <h4 class="color-blue">Detail Sasaran</h4>
+    <h4 class="main-font">Detail Sasaran</h4>
     <div class="panel panel-default bg-white">
         <div class="panel-body bg-white">
             <div class="form-group">
                 <label class="control-label col-md-2" for="ddNoOrm">No ORM</label>
                 <div class="col-md-10" ng-show="isInitMode">
-                     <select class="form-control"
-                        ng-model="idOrm" 
-                        ng-change="noOrmChange()" 
-                        ng-options="item.id as item.noORM + ' - ' + item.name for item in master.orm">
+                    <select class="form-control" ng-model="idOrm" ng-change="noOrmChange()" ng-options="item.id as item.noORM + ' - ' + item.name for item in master.orm">
                     </select>
                 </div>
                 <div class="col-md-10" ng-show="!isInitMode">
@@ -75,7 +64,7 @@
             </div>
         </div>
     </div>
-    <h4 class="color-blue">Detail Risiko Sebelum Mitigasi</h4>
+    <h4 class="main-font">Detail Risiko Sebelum Mitigasi</h4>
     <div class="panel panel-default bg-white">
         <div class="panel-body bg-white">
             <div class="form-group">
@@ -139,7 +128,7 @@
             </div>
         </div>
     </div>
-    <h4 class="color-blue">Detail Rencana Mitigasi</h4>
+    <h4 class="main-font">Detail Rencana Mitigasi</h4>
     <div class="panel panel-default bg-white">
         <div class="panel-body bg-white">
             <div class="form-group">
@@ -165,22 +154,18 @@
                                 </h4>
                             </div>
                             <div class="" style="margin-top:10px; margin-right:5px">
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-6 text-right">
-                                    <button type="button" class="btn btn-info" 
-                                        ng-show="lk.isEditMode[$index]" 
-                                        ng-click="lk.saveChangesClick($index)">Save Changes</button>
-                                    <button type="button" class="btn btn-warning" 
-                                        ng-show="lk.isEditMode[$index]" 
-                                        ng-click="lk.discardChangesClick($index)">Discard Changes</button>
-                                    <!--<button type="button" class="btn btn-info" ng-show="!isEditMode && isDataEditable && isPicCoordinator && hasCompleteStep" ng-click="editClick()">
+                                <div class="form-group">
+                                    <div class="col-md-6 col-md-offset-6 text-right">
+                                        <button type="button" class="btn btn-info" ng-show="lk.isEditMode[$index]" ng-click="lk.saveChangesClick($index)">Save Changes</button>
+                                        <button type="button" class="btn btn-warning" ng-show="lk.isEditMode[$index]" ng-click="lk.discardChangesClick($index)">Discard Changes</button>
+                                        <!--<button type="button" class="btn btn-info" ng-show="!isEditMode && isDataEditable && isPicCoordinator && hasCompleteStep" ng-click="editClick()">
                                         <span class="fa fa-pencil"></span> Edit
                                     </button>-->
-                                    <button type="button" class="btn btn-info" ng-show="!lk.isEditMode[$index] && isPicCoordinator" ng-click="lk.editClick($index)">
-                                        <span class="fa fa-pencil"></span> Edit
-                                    </button>
+                                        <button type="button" class="btn btn-info" ng-show="!lk.isEditMode[$index] && isPicCoordinator" ng-click="lk.editClick($index)">
+                                            <span class="fa fa-pencil"></span> Edit
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                             <div id="langkah-kerja-1">
                                 <div class="panel-body">
@@ -189,7 +174,7 @@
                                         <div class="col-md-10">
                                             <p class="form-control-static">{{ item.picLangkah.jabatan }} - <span class="text-uppercase">{{ item.picLangkah.name }}</span></p>
                                         </div>
-                                    </div>                                          
+                                    </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-2">Target Mulai</label>
                                         <div class="col-md-4">
@@ -210,8 +195,7 @@
                                         <label class="control-label col-md-2">Progres Persentase</label>
                                         <div class="col-md-4" ng-show="lk.isEditMode[$index]">
                                             <div class="input-group">
-                                                <input type="text" class="form-control text-right" maxlength="3" 
-                                                ng-model="item.progresPersentase.value" />
+                                                <input type="text" class="form-control text-right" maxlength="3" ng-model="item.progresPersentase.value" />
                                                 <span class="input-group-addon">%</span>
                                             </div>
                                         </div>
@@ -222,7 +206,7 @@
                                         <div class="col-md-4">
                                             <p class="form-control-static">{{item.tanggalUpdate.defaultDateFormat()}}</p>
                                         </div>
-                                    </div>  
+                                    </div>
                                     <div class="form-group">
                                         <label class="col-md-2 control-label">Evidence Attachment</label>
                                         <div class="col-md-10">
@@ -230,7 +214,7 @@
                                                 <a href="javascript:void" onclick="alert('to do: download file')">{{item.name}}</a>
                                             </p>
                                         </div>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +227,7 @@
     <h4 ng-show="data.detailMitigasi.totalProgress==100">Detail Mitigasi</h4>
     <div class="panel panel-default" ng-show="data.detailMitigasi.totalProgress==100">
     -->
-    <h4 class="color-blue" ng-show="!isInitMode">Detail Mitigasi</h4>
+    <h4 class="main-font" ng-show="!isInitMode">Detail Mitigasi</h4>
     <div class="panel panel-default bg-white" ng-show="!isInitMode">
         <div class="panel-body bg-white">
             <div class="form-group">
@@ -268,7 +252,9 @@
                 </div>
             </div>
             <fieldset class="bordered-fieldset">
-                <legend class="bordered-fieldset help-block"><h5><strong>Fungsi Mitigasi</strong></h5></legend>
+                <legend class="bordered-fieldset help-block">
+                    <h5><strong>Fungsi Mitigasi</strong></h5>
+                </legend>
                 <div class="form-group">
                     <label class="control-label col-md-2">Mengurangi</label>
                     <div class="col-md-6" ng-show="isEditMode">
@@ -290,16 +276,15 @@
                 </div>
             </fieldset>
             <fieldset class="bordered-fieldset">
-                <legend class="bordered-fieldset help-block"><h5><strong>Efektifitas</strong></h5></legend>
+                <legend class="bordered-fieldset help-block">
+                    <h5><strong>Efektifitas</strong></h5>
+                </legend>
                 <div class="form-group">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-4">Approach</label>
                             <div class="col-md-8" ng-show="isEditMode">
-                                <select class="form-control"
-                                        ng-model="data.detailMitigasi.approach"
-                                        ng-change="adliChange()"
-                                        ng-options="item.id as item.name for item in master.efektivitasA"></select>
+                                <select class="form-control" ng-model="data.detailMitigasi.approach" ng-change="adliChange()" ng-options="item.id as item.name for item in master.efektivitasA"></select>
                             </div>
                             <div class="col-md-8" ng-show="!isEditMode">
                                 <p class="form-control-static">{{ data.detailMitigasi.approach }}</p>
@@ -308,10 +293,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4">Deployment</label>
                             <div class="col-md-8" ng-show="isEditMode">
-                                <select class="form-control"
-                                        ng-model="data.detailMitigasi.deployment"
-                                        ng-change="adliChange()"
-                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                                <select class="form-control" ng-model="data.detailMitigasi.deployment" ng-change="adliChange()" ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
                             </div>
                             <div class="col-md-8" ng-show="!isEditMode">
                                 <p class="form-control-static">{{ data.detailMitigasi.deployment }}</p>
@@ -320,10 +302,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4">Learning</label>
                             <div class="col-md-8" ng-show="isEditMode">
-                                <select class="form-control"
-                                        ng-model="data.detailMitigasi.learning"
-                                        ng-change="adliChange()"
-                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                                <select class="form-control" ng-model="data.detailMitigasi.learning" ng-change="adliChange()" ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
                             </div>
                             <div class="col-md-8" ng-show="!isEditMode">
                                 <p class="form-control-static">{{ data.detailMitigasi.learning }}</p>
@@ -332,10 +311,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4">Integration</label>
                             <div class="col-md-8" ng-show="isEditMode">
-                                <select class="form-control"
-                                        ng-model="data.detailMitigasi.integration"
-                                        ng-change="adliChange()"
-                                        ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
+                                <select class="form-control" ng-model="data.detailMitigasi.integration" ng-change="adliChange()" ng-options="item.id as item.name for item in master.efektivitasDLI"></select>
                             </div>
                             <div class="col-md-8" ng-show="!isEditMode">
                                 <p class="form-control-static">{{ data.detailMitigasi.integration }}</p>
@@ -377,15 +353,13 @@
                 </div>
             </fieldset>
             <fieldset class="bordered-fieldset">
-                <legend class="bordered-fieldset help-block"><h5><strong>Realisasi Tingkat Residual Risk</strong></h5></legend>
+                <legend class="bordered-fieldset help-block">
+                    <h5><strong>Realisasi Tingkat Residual Risk</strong></h5>
+                </legend>
                 <div class="form-group">
                     <label class="control-label col-md-2">Peringkat Dampak</label>
                     <div class="col-md-7" ng-show="isEditMode">
-                        <select class="form-control"
-                                ng-model="data.detailMitigasi.peringkatDampak.id"
-                                ng-change="peringkatDampakChange()"
-                                ng-disabled="data.detailMitigasi.fungsiMitigasi == 2"
-                                ng-options="item.id as item.name for item in master.peringkatDampak"></select>
+                        <select class="form-control" ng-model="data.detailMitigasi.peringkatDampak.id" ng-change="peringkatDampakChange()" ng-disabled="data.detailMitigasi.fungsiMitigasi == 2" ng-options="item.id as item.name for item in master.peringkatDampak"></select>
                     </div>
                     <div class="col-md-3" ng-show="isEditMode">{{ data.detailMitigasi.peringkatDampak.keterangan }}</div>
                     <div class="col-md-10" ng-show="!isEditMode">
@@ -397,11 +371,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-2">Peringkat Kemungkinan</label>
                     <div class="col-md-7" ng-show="isEditMode">
-                        <select class="form-control"
-                                ng-model="data.detailMitigasi.peringkatKemungkinan.id"
-                                ng-change="peringkatKemungkinanChange()"
-                                ng-disabled="data.detailMitigasi.fungsiMitigasi == 1"
-                                ng-options="item.id as item.name for item in master.peringkatKemungkinan"></select>
+                        <select class="form-control" ng-model="data.detailMitigasi.peringkatKemungkinan.id" ng-change="peringkatKemungkinanChange()" ng-disabled="data.detailMitigasi.fungsiMitigasi == 1" ng-options="item.id as item.name for item in master.peringkatKemungkinan"></select>
                     </div>
                     <div class="col-md-3" ng-show="isEditMode">{{ data.detailMitigasi.peringkatKemungkinan.keterangan }}</div>
                     <div class="col-md-10" ng-show="!isEditMode">
@@ -429,8 +399,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">Rekomendasi Tindak Lanjut</label>
                 <div class="col-md-10" ng-show="isEditMode">
-                    <textarea type="text" class="form-control"
-                              rows="5" ng-model="data.detailMitigasi.rekomendasiTL">
+                    <textarea type="text" class="form-control" rows="5" ng-model="data.detailMitigasi.rekomendasiTL">
                         {{ data.detailMitigasi.rekomendasiTL }}
                     </textarea>
                 </div>
@@ -441,8 +410,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">Keterangan</label>
                 <div class="col-md-10" ng-show="isEditMode">
-                    <textarea type="text" class="form-control"
-                              rows="5" ng-model="data.detailMitigasi.keterangan">
+                    <textarea type="text" class="form-control" rows="5" ng-model="data.detailMitigasi.keterangan">
                         {{ data.detailMitigasi.keterangan }}
                     </textarea>
                 </div>
@@ -453,10 +421,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">Risiko Baru</label>
                 <div class="col-md-4" ng-show="isEditMode">
-                    <select class="form-control"
-                            ng-model="data.detailMitigasi.risikoBaru.value"
-                            ng-change="risikoBaruChange()"
-                            ng-options="item.value as item.name for item in master.risikoBaru"></select>
+                    <select class="form-control" ng-model="data.detailMitigasi.risikoBaru.value" ng-change="risikoBaruChange()" ng-options="item.value as item.name for item in master.risikoBaru"></select>
                 </div>
                 <div class="col-md-4" ng-show="!isEditMode">
                     <p class="form-control-static">{{ data.detailMitigasi.risikoBaru.value.toYaTidak() }}</p>
@@ -472,27 +437,19 @@
 <div class="row">
     <div class="col-md-12 text-right">
         <div class="">
-            <button type="button" class="btn btn-primary"
-                    data-toggle="modal" data-target="#modalInisiasi"
-                    ng-show="isInitMode"
-                    ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm)">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalInisiasi" ng-show="isInitMode" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(idOrm)">
                 Send
             </button>
-            <button type="button" class="btn btn-primary" 
-            data-toggle="modal" data-target="#modalSubmit" 
-            ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
-            Submit
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSubmit" ng-show="approvalStatus.kodeApproval == 1 && isPicCoordinator && hasCompleteStep">
+                Submit
             </button>
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise"
-                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalRevise" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
                 Revise
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition"
-                    ng-show="(approvalStatus.kodeApproval == 3) && isPicCoordinator">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDisposition" ng-show="(approvalStatus.kodeApproval == 3) && isPicCoordinator">
                 Disposition
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval"
-                    ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalApproval" ng-show="(approvalStatus.kodeApproval == 2 || approvalStatus.kodeApproval == 3) && isPicCoordinator">
                 Approve
             </button>
         </div>
@@ -535,9 +492,7 @@
                     <div class="form-group">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary"
-                                    ng-click="sendClick()"
-                                    ng-disabled="Helper.isNullOrEmpty(initiator.keterangan) || 
+                            <button type="button" class="btn btn-primary" ng-click="sendClick()" ng-disabled="Helper.isNullOrEmpty(initiator.keterangan) || 
                                                  (!Helper.isNullOrEmptyOrEmptyGuid(idOrm) && approvalStatus.kodeApproval != 0)">
                                 Send
                             </button>
@@ -569,9 +524,7 @@
                     <div class="form-group" ng-show="listNextApprover.hasNextApprover">
                         <label class="col-md-4 control-label">Approval Selanjutnya</label>
                         <div class="col-md-8">
-                            <select class="form-control"
-                                    ng-model="submitter.nextApproval"
-                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                            <select class="form-control" ng-model="submitter.nextApproval" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
                         </div>
                     </div>
                     <!--<div class="form-group">
@@ -584,9 +537,7 @@
                     <div class="form-group">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary"
-                                    ng-click="submitClick()"
-                                    ng-disabled="(Helper.isNullOrEmpty(submitter.nextApproval) && listNextApprover.hasNextApprover) || Helper.isNullOrEmpty(submitter.keterangan)">
+                            <button type="button" class="btn btn-primary" ng-click="submitClick()" ng-disabled="(Helper.isNullOrEmpty(submitter.nextApproval) && listNextApprover.hasNextApprover) || Helper.isNullOrEmpty(submitter.keterangan)">
                                 Submit
                             </button>
                         </div>
@@ -617,9 +568,7 @@
                     <div class="form-group" ng-show="listNextApprover.hasNextApprover">
                         <label class="col-md-4 control-label">Approval Selanjutnya</label>
                         <div class="col-md-8">
-                            <select class="form-control"
-                                    ng-model="approver.nextApproval"
-                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
+                            <select class="form-control" ng-model="approver.nextApproval" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listNextApprover.data"></select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -632,9 +581,7 @@
                     <div class="form-group">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary"
-                                    ng-click="approveClick()"
-                                    ng-disabled="((!approver.isAgreed || Helper.isNullOrEmpty(approver.nextApproval)) && listNextApprover.hasNextApprover) ||
+                            <button type="button" class="btn btn-primary" ng-click="approveClick()" ng-disabled="((!approver.isAgreed || Helper.isNullOrEmpty(approver.nextApproval)) && listNextApprover.hasNextApprover) ||
                                                  (!approver.isAgreed && !listNextApprover.hasNextApprover) || Helper.isNullOrEmpty(approver.keterangan)">
                                 Approve
                             </button>
@@ -666,18 +613,14 @@
                     <div class="form-group" ng-show="listTujuanDisposisi.hasNextApprover">
                         <label class="col-md-4 control-label">Disposisi Tim MR Unit</label>
                         <div class="col-md-8">
-                            <select class="form-control"
-                                    ng-model="dispositioner.tujuan"
-                                    ng-options="item.email as item.name + ' - ' + item.jabatan for item in listTujuanDisposisi.data"></select>
+                            <select class="form-control" ng-model="dispositioner.tujuan" ng-options="item.email as item.name + ' - ' + item.jabatan for item in listTujuanDisposisi.data"></select>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary"
-                                    ng-disabled="((Helper.isNullOrEmpty(dispositioner.tujuan) || Helper.isNullOrEmpty(dispositioner.keterangan)) && listTujuanDisposisi.hasNextApprover) ||
-                                                (Helper.isNullOrEmpty(dispositioner.keterangan) && !listTujuanDisposisi.hasNextApprover)"
-                                    ng-click="submitDispositionClick()">
+                            <button type="button" class="btn btn-primary" ng-disabled="((Helper.isNullOrEmpty(dispositioner.tujuan) || Helper.isNullOrEmpty(dispositioner.keterangan)) && listTujuanDisposisi.hasNextApprover) ||
+                                                (Helper.isNullOrEmpty(dispositioner.keterangan) && !listTujuanDisposisi.hasNextApprover)" ng-click="submitDispositionClick()">
                                 Submit
                             </button>
                         </div>
@@ -708,9 +651,7 @@
                     <div class="form-group">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary"
-                                    ng-disabled="Helper.isNullOrEmpty(reviser.keterangan)"
-                                    ng-click="reviseClick()">
+                            <button type="button" class="btn btn-primary" ng-disabled="Helper.isNullOrEmpty(reviser.keterangan)" ng-click="reviseClick()">
                                 Revise
                             </button>
                         </div>
