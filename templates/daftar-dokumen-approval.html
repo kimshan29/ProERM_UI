@@ -1,5 +1,6 @@
 ﻿<style>
-    table.dataTable tbody td, table.dataTable tbody th {
+    table.dataTable tbody td,
+    table.dataTable tbody th {
         padding: 5px 5px !important;
     }
 </style>
@@ -40,7 +41,7 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        <tr ng-repeat="item in data.dokumen">
+                        <tr class="main-font-3" ng-repeat="item in data.dokumen">
                             <td class="text-center padding-5">{{ item.dokumen }}</td>
                             <td class="text-center padding-5">
                                 <a href="#{{item.dokumen.toLowerCase()}}/{{ item.id }}" title="Lihat detail data">{{ item.noDokumen }}</a>

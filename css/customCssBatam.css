@@ -306,14 +306,7 @@ fieldset[disabled] .btn-info:hover {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(236, 167, 63, 0.42);
 }
 
-.dataTables_filter input[type=search]:focus {
-    border-color: #f1b342 !important;
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
-        0 0 8px rgba(243, 184, 67, 0.72);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
-        0 0 8px rgba(236, 167, 63, 0.42);
-}
+
 
 /*PAGING DATATABLES*/
 
@@ -346,4 +339,22 @@ fieldset[disabled] .btn-info:hover {
     color: #fff !important;
     border: 0;
     background: #D6D6D6 !important;
+}
+
+.dataTables_filter input[type=search]:focus {
+    border-color: #f1b342 !important;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(243, 184, 67, 0.72);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(236, 167, 63, 0.42);
+}
+
+.table.dataTable tbody td:focus {
+    border-color: #f1b342 !important;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(243, 184, 67, 0.72);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+        0 0 8px rgba(236, 167, 63, 0.42);
 }
