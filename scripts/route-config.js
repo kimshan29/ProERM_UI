@@ -284,6 +284,20 @@ mainApp.config(function ($routeProvider) {
             controller: 'msumberRisikoCtrl'
         })
 
+        // Master Taksonomi Risiko
+        .when('/m-taksonomiRisiko', {
+            cache: false,
+            templateUrl: 'templates/m-taksonomiRisiko.html?' + $.now(),
+            controller: 'mtaksonomiRisikoCtrl'
+        })
+
+        // Master Kejaidan Risiko
+        .when('/m-kejadianRisiko', {
+            cache: false,
+            templateUrl: 'templates/m-kejadianRisiko.html?' + $.now(),
+            controller: 'mKejadianRisikoCtrl'
+        })
+
         // Master Warna
         .when('/m-warna', {
             cache: false,
