@@ -298,6 +298,13 @@ mainApp.config(function ($routeProvider) {
             controller: 'mKejadianRisikoCtrl'
         })
 
+        // Master Kemungkinan
+        .when('/m-kemungkinan', {
+            cache: false,
+            templateUrl: 'templates/m-kemungkinan.html?' + $.now(),
+            controller: 'mKemungkinanCtrl'
+        })
+
         // Master Warna
         .when('/m-warna', {
             cache: false,
