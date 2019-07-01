@@ -288,7 +288,7 @@ mainApp.config(function ($routeProvider) {
         .when('/m-taksonomiRisiko', {
             cache: false,
             templateUrl: 'templates/m-taksonomiRisiko.html?' + $.now(),
-            controller: 'mtaksonomiRisikoCtrl'
+            controller: 'mTaksonomiRisikoCtrl'
         })
 
         // Master Kejaidan Risiko
