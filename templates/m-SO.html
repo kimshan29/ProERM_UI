@@ -9,18 +9,14 @@
     <div class="col-lg-12">
         <div class="panel">
             <div class="panel-body bg-white border-gray">
-                <!--<table datatable=""
-                       dt-options="dtOptions"
-                       dt-columns="dtColumns"
-                       class="table table-striped table-bordered table-hover"></table>-->
-                <form>
+                <!-- <form>
                     <div class="form-group">
                         <label class="control-label col-lg-2 col-md-3 col-sm-3">Tahun</label>
                         <div class="col-lg-3 col-md-3 col-sm-3">
                             <select class="form-control" ng-model="tahun" ng-options="item.id as item.name for item in master.tahun" ng-change=eventSearchByYear(tahun)></select>
                         </div>
                     </div>
-                </form>
+                </form> -->
                 <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover ">
                     <thead>
                         <tr>
@@ -78,19 +74,19 @@
                     </h3>
                     <hr />
                 </div>
-                <form class="form-horizontal">
+                <form class="form-horizontal" name="myForm">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Kode SO</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <input type="text" class="form-control" ng-model="form.id" style="display:none;" />
-                                <input type="text" class="form-control" ng-model="form.kodeSO" />
+                                <input type="text" class="form-control" ng-model="form.kodeSO" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Strategic Objective</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <input type="text" class="form-control" ng-model="form.strategicObjective">
+                                <input type="text" class="form-control" ng-model="form.strategicObjective" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -101,24 +97,14 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Periode RJPP</label>
-                            <div class="col-lg-3 col-md-3 col-sm-3 form-inline">
-                                <div class="input-group date">
-                                    <div class="input-group-addon" ng-click="periodeAkhir = true" style="cursor: pointer;">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" ng-model="form.periodeAkhir" ng-init="form.periodeAkhir = form.periodeAkhir.toDate()" is-open="periodeAkhir" close-text="Close" alt-input-formats="['dd/MM//yyyy']" size="30" name="periodeAkhir" />
-                                </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <select class="form-control" ng-model="form.periodeRjpp" ng-options="item.id as item.name for item in master.tahun"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Periode SO</label>
-                            <div class="col-lg-3 col-md-3 col-sm-3 form-inline">
-                                <div class="input-group date">
-                                    <div class="input-group-addon" ng-click="periodeAkhir = true" style="cursor: pointer;">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input type="text" class="form-control" datepicker-localdate uib-datepicker-popup="dd/MM/yyyy" ng-model="form.periodeAkhir" ng-init="form.periodeAkhir = form.periodeAkhir.toDate()" is-open="periodeAkhir" close-text="Close" alt-input-formats="['dd/MM//yyyy']" size="30" name="periodeAkhir" />
-                                </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <select class="form-control" ng-model="form.periodeSO" ng-options="item.id as item.name for item in master.tahun"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -132,7 +118,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-3 col-md-3 col-sm-3">
-                                <button type="button" class="btn btn-primary" ng-click="eventAddDampak()">
+                                <button type="button" class="btn btn-primary" ng-click="eventClickSave()" ng-disabled="!myForm.$valid">
                                     Save
                                 </button>
                                 <button type="button" class="btn btn-danger" ng-click="eventClickCancel()">

@@ -46,11 +46,11 @@ mainApp.controller("mKPICtrl", function ($scope, $routeParams, $q, $cookies, Con
 
         var apiUrl = "/api/MasterKPI";
         // $scope.KPI.input.id = "";
-        $scope.KPI.input.userEmail = $scope.currentUser.email;
+        $scope.form.userEmail = $scope.currentUser.email;
 
-        console.log(JSON.stringify($scope.KPI.input));
+        console.log(JSON.stringify($scope.form));
 
-        HttpRequest.post(apiUrl, $scope.KPI.input).success(function (response) {
+        HttpRequest.post(apiUrl, $scope.form).success(function (response) {
             $scope.renderKPI();
             $scope.KPI.isEditMode = false;
         });
