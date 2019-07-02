@@ -305,6 +305,13 @@ mainApp.config(function ($routeProvider) {
             controller: 'mKemungkinanCtrl'
         })
 
+        // Master SO
+        .when('/m-SO', {
+            cache: false,
+            templateUrl: 'templates/m-SO.html?' + $.now(),
+            controller: 'mSOCtrl'
+        })
+
         // Master Warna
         .when('/m-warna', {
             cache: false,
