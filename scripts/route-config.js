@@ -312,6 +312,13 @@ mainApp.config(function ($routeProvider) {
             controller: 'mSOCtrl'
         })
 
+        // Master KPI
+        .when('/m-KPI', {
+            cache: false,
+            templateUrl: 'templates/m-KPI.html?' + $.now(),
+            controller: 'mKPICtrl'
+        })
+
         // Master Warna
         .when('/m-warna', {
             cache: false,
