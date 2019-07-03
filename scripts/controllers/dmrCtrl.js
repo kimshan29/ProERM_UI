@@ -2542,17 +2542,17 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].kejadian.name = selectedKejadian.name;
 
         // MASTER SUB KATEGORI
-        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
-        HttpRequest.get(apiUrl).success(function (response) {
-            $scope.identifikasi.master.sasaranOperasional.areaDampak = response;
-            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranOperasional.areaDampak.id;
-            $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranOperasional.areaDampak.name;
-            NProgress.done();
-        }).error(function (response, code) {
-            $scope.error.message = response.ExceptionMessage + " - " + code;
-            $('#modalError2').modal('show');
-            NProgress.done();
-        });
+        // apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
+        // HttpRequest.get(apiUrl).success(function (response) {
+        //     $scope.identifikasi.master.sasaranOperasional.areaDampak = response;
+        //     $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranOperasional.areaDampak.id;
+        //     $scope.identifikasi.data.sasaranOperasional[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranOperasional.areaDampak.name;
+        //     NProgress.done();
+        // }).error(function (response, code) {
+        //     $scope.error.message = response.ExceptionMessage + " - " + code;
+        //     $('#modalError2').modal('show');
+        //     NProgress.done();
+        // });
     }
 
     // EVENT CHANGE TIPE SUMBER RISIKO SASARAN OPERASIONAL
