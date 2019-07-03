@@ -321,6 +321,14 @@
     <script src="scripts/controllers/mDepartemenCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mPenyebabCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mRisikoCtrl.js?version=<%= CodeVersion %>"></script>
+
+    <script src="scripts/controllers/mKejadianRisikoCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/mTaksonomiRisikoCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/mKemungkinanCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/mSOCtrl.js?version=<%= CodeVersion %>"></script>
+    <script src="scripts/controllers/mKPICtrl.js?version=<%= CodeVersion %>"></script>
+
+
     <!-- <script src="scripts/controllers/duplikasiDmrCtrl.js?version=<%= CodeVersion %>"></script> -->
     <script src="scripts/controllers/riskEventCtrl.js?version=<%= CodeVersion %>"></script>
 

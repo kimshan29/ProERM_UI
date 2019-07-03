@@ -80,8 +80,8 @@
             -webkit-border-radius: 50%;
             border-radius: 50%; */
 
-            width: 185px;
-            height: 96px;
+            width: 250px;
+            height: 125px;
             margin: 0 auto 10px;
             display: block;
             -moz-border-radius: 50%;
@@ -217,7 +217,7 @@
 <body class="bg-login">
     <div class="container" ng-app="loginApp" ng-controller="loginCtrl">
         <div class="card card-container">
-            <img id="profile-img" class="profile-img-card" src="images/main_logo.jpg" />
+            <img id="profile-img" class="profile-img-card" src="images/logo-bright-putih.gif" />
             <p id="profile-name" class="profile-name-card">ERM </p>
             <p id="profile-name2" class="profile-name-card2">Enterprise Risk Management</p>
             <form class="form-signin">
@@ -264,6 +264,8 @@
                 };
 
                 $http.post(apiUrl, data).success(function (response) {
+                        console.log(JSON.stringify(response));
+
                         if (response.employeeNumber == null && response.name == null) {
                             $scope.isValidLogin = false;
                             NProgress.done();
@@ -271,7 +273,7 @@
                             $cookies.put('currentUser', JSON.stringify(response));
                             $scope.currentUser = JSON.parse($cookies.get('currentUser'));
                             NProgress.done();
-                            document.location.href = "index.html#/home";
+                            document.location.href = "main.aspx#/home";
                         }
                     })
                     .error(function (response, code) {

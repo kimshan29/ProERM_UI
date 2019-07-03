@@ -17,7 +17,7 @@ mainApp.run(function ($rootScope, $location, $routeParams, $cookies, HttpRequest
         } catch (err) {}
 
         if (currentUser == null)
-            document.location.href = 'login.html';
+            document.location.href = 'login.aspx';
 
     });
 
