@@ -444,7 +444,7 @@ body {
 /*======= BORDER =========*/
 
 .border-blue {
-    border: 1px solid #2865ac;
+    border: 1px solid #FB991E;
 }
 
 .border-white {
@@ -910,7 +910,7 @@ body {
 }
 
 .errorField {
-    border: 2px solid #AD0300;
+    border: 2px solid red;
     /*-webkit-animation: 3s blink step-end infinite;
   -moz-animation: 3s blink step-end infinite;
   animation: 3s blink step-end infinite;*/
