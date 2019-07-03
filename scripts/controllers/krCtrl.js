@@ -26,6 +26,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 	$scope.id.master.kategoriRisiko = [];
 	$scope.id.master.subKategoriRisiko = [];
 	$scope.id.master.risiko = [];
+	$scope.id.master.areaDampak = [];
 	$scope.id.master.kejadian = [];
 	$scope.id.master.tipeSumberRisiko = [];
 	$scope.id.master.sumberRisiko = [];
@@ -352,6 +353,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 					$scope.id.master.kategoriRisiko[i] = [];
 					$scope.id.master.subKategoriRisiko[i] = [];
 					$scope.id.master.risiko[i] = [];
+					$scope.id.master.areaDampak[i] = [];
 					$scope.id.master.kejadian[i] = [];
 					$scope.id.master.tipeSumberRisiko[i] = [];
 					$scope.id.master.sumberRisiko[i] = [];
@@ -393,6 +395,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 				$scope.id.master.kategoriRisiko[indexIdentifikasi] = [];
 				$scope.id.master.subKategoriRisiko[indexIdentifikasi] = [];
 				$scope.id.master.risiko[indexIdentifikasi] = [];
+				$scope.id.master.areaDampak[indexIdentifikasi] = [];
 				$scope.id.master.kejadian[indexIdentifikasi] = [];
 				$scope.id.master.tipeSumberRisiko[indexIdentifikasi] = [];
 				$scope.id.master.sumberRisiko[indexIdentifikasi] = [];
@@ -471,6 +474,32 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 			.error(function (response, code) {
 				var data = {
 					title: "List Kelompok Risiko",
+					exception: response,
+					exceptionCode: code,
+					operation: "GET",
+					apiUrl: apiUrl
+				};
+
+				Helper.notifErrorHttp(data);
+			});
+
+
+		//KR Identifikasi - Master Area Dampak
+		// var idAreaDampak = $scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].areaDampak == undefined ? Constant.emptyGuid : $scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].areaDampak.id;
+		apiUrl = "/api/krListAreaDampak/" + idKr;
+
+
+		HttpRequest.get(apiUrl).success(function (response) {
+
+				$scope.id.master.areaDampak[indexIdentifikasi][indexDetailKatRisk] = response;
+				console.log(JSON.stringify(response));
+				console.log("Area Dampak");
+
+
+			})
+			.error(function (response, code) {
+				var data = {
+					title: "List Area Dampak",
 					exception: response,
 					exceptionCode: code,
 					operation: "GET",
@@ -1515,6 +1544,14 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 				$scope.id.master.kejadian[indexIdentifikasi][indexDetailKatRisk] = response;
 
 				$scope.id.kejadianChange(indexIdentifikasi, indexDetailKatRisk);
+
+				// Get List Area Dmapak
+				var apiAreaDampak = "/api/krListAreaDampak/" + idKr;
+				HttpRequest.get(apiAreaDampak).success(function (responseAreaDampak) {
+					$scope.id.master.areaDampak[indexIdentifikasi][indexDetailKatRisk] = responseAreaDampak
+					console.log("List Area Dampak:" + JSON.stringify(responseAreaDampak));
+
+				})
 			})
 			.error(function (response, code) {
 				var data = {
@@ -1529,6 +1566,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 			});
 	}
 
+
 	$scope.id.kejadianChange = function (indexIdentifikasi, indexDetailKatRisk) {
 		//Update KR Identifikasi - Kejadian
 		var idKejadian = $scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian == undefined ? Constant.emptyGuid : $scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian.id;
@@ -1537,10 +1575,10 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 
 		$scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian.idRisk = Helper.isNullOrEmpty(selectedKejadian) ? "" : selectedKejadian.idRisk;
 		$scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian.name = Helper.isNullOrEmpty(selectedKejadian) ? "" : selectedKejadian.name;
-		$scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian.areaDampak = Helper.isNullOrEmpty(selectedKejadian) ? {
-			id: "",
-			name: ""
-		} : selectedKejadian.areaDampak;
+		// $scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian.areaDampak = Helper.isNullOrEmpty(selectedKejadian) ? {
+		// 	id: "",
+		// 	name: ""
+		// } : selectedKejadian.areaDampak;
 	}
 
 	$scope.id.tipeSumberRisikoChange = function (indexIdentifikasi, indexDetailKatRisk) {
@@ -1609,6 +1647,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 			$scope.id.master.kategoriRisiko[indexIdentifikasi].splice(indexDetailKatRisk, 1);
 			$scope.id.master.subKategoriRisiko[indexIdentifikasi].splice(indexDetailKatRisk, 1)
 			$scope.id.master.risiko[indexIdentifikasi].splice(indexDetailKatRisk, 1)
+			$scope.id.master.areaDampak[indexIdentifikasi].splice(indexDetailKatRisk, 1)
 			$scope.id.master.kejadian[indexIdentifikasi].splice(indexDetailKatRisk, 1)
 			$scope.id.master.tipeSumberRisiko[indexIdentifikasi].splice(indexDetailKatRisk, 1)
 			$scope.id.master.sumberRisiko[indexIdentifikasi].splice(indexDetailKatRisk, 1)

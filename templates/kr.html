@@ -303,10 +303,14 @@
                                                     <div class="col-md-4" ng-show="!id.isEditMode[$parent.$index]">
                                                         <p class="form-control-static">{{id.data[$parent.$index].detailRisiko[$index].risiko.name}}</p>
                                                     </div>
-                                                    <label class="control-label col-md-2">Area Dampak</label>
+                                                    <label class="control-label col-md-2">Area Dampak </label>
+                                                    <div class="col-md-4" ng-show="id.isEditMode[$parent.$index]">
+                                                        <select class="form-control" name="ddIdKelompokRisk{{$parent.$index}}{{$index}}" ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].subKategori.id) ||
+                                                    !Helper.isNullOrEmptyOrEmptyGuid(id.data[$parent.$index].detailRisiko[$index].penyebab[0].id)" ng-model="id.data[$parent.$index].detailRisiko[$index].areaDampak.id" ng-change="id.areaDampakChange($parent.$index, $index)" ng-options="item.id as item.name for item in id.master.areaDampak[$parent.$index][$index]" validator="required, emptyGuid"></select>
+                                                    </div>
                                                     <div class="col-md-4">
                                                         <p class="form-control-static">
-                                                            {{ id.data[$parent.$index].detailRisiko[$index].kejadian.areaDampak.name }}
+                                                            {{ id.data[$parent.$index].detailRisiko[$index].areaDampak.name }}
                                                         </p>
                                                     </div>
                                                 </div>
