@@ -1,5 +1,4 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="main.aspx.cs" Inherits="IP.ProRBA.Web.main" %>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,6 +48,9 @@
     <!-- Angular Loading Bar -->
     <script src="plugins/loader/nprogress.js"></script>
     <link href="plugins/loader/nprogress.css" rel='stylesheet' />
+
+    <!-- Summernote Editor -->
+    <link rel="stylesheet" href="plugins/summernote/summernote.css">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
 
@@ -226,6 +228,9 @@
     <!-- <%--<script src="plugins/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>--%> -->
     <script src="plugins/datatables/js/dataTables.columnFilter.js"></script>
 
+    <!-- SummerNote -->
+    <script src="./plugins/summernote/summernote.min.js"></script>
+
     <!-- Angular JS -->
     <script src="plugins/angular-js/angular.min.js"></script>
     <script src="plugins/angular-js/angular-route.min.js"></script>
@@ -234,6 +239,8 @@
     <script src="plugins/angular-js/angular-cookies.min.js"></script>
     <script src="plugins/angular-js/angular-locale_custom.js"></script>
 
+
+    <script src="./plugins/summernote/angular-summernote.min.js"></script>
     <!-- Angular Validation-->
     <script src="plugins/angular-validation/angular-validation.min.js"></script>
     <script src="plugins/angular-validation/angular-validation-rule.js?version=<%= CodeVersion %>"></script>
@@ -254,6 +261,8 @@
 
     <!-- CKEditor WYSIWYG -->
     <script src="plugins/ckeditor/ckeditor.js"></script>
+
+
 
     <!-- Angular CKEditor -->
     <script src="plugins/angular-ckeditor/ng-ckeditor.min.js"></script>
@@ -353,6 +362,9 @@
     <script src="scripts/controllers/mDampakCtrl.js?version=<%= CodeVersion %>"></script>
     <script src="scripts/controllers/mSubKategoriRisikoCtrl.js?version=<%= CodeVersion %>"></script>
 
+    <!-- Summernote -->
+    <script src="./plugins/summernote/html2canvas.min.js"></script>
+    <script src="./plugins/summernote/jspdf.debug.js"></script>
 
 
     <!-- Angular Input Masks -->
