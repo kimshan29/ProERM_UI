@@ -1138,6 +1138,9 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         NProgress.start();
         var apiUrl = "/api/DMRKKO";
         $scope.kko.data.userEmail = currentUser.email;
+
+        console.log($scope.kko.data);
+
         HttpRequest.post(apiUrl, $scope.kko.data).success(function (response) {
             $scope.renderKkoForm();
             $scope.kko.isEditMode = false;
@@ -1417,12 +1420,14 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickKkfSave = function () {
+        NProgress.start();
         var apiUrl = "/api/DMRKKF";
         $scope.kkf.data.userEmail = currentUser.email;
         HttpRequest.post(apiUrl, $scope.kkf.data).success(function (response) {
             $scope.renderKkfForm();
             $scope.kkf.isEditMode = false;
             $scope.renderApprovalStatus();
+            NProgress.done()
         });
     }
 
@@ -1590,12 +1595,14 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     }
 
     $scope.eventClickPenetapanKonteksSave = function () {
+        NProgress.start();
         var apiUrl = "/api/DMRKRPenetapanKonteks";
         $scope.penetapanKonteks.data.userEmail = currentUser.email;
         HttpRequest.post(apiUrl, $scope.penetapanKonteks.data).success(function (response) {
             $scope.renderPenetapanKonteks();
             $scope.penetapanKonteks.isEditMode = false;
             $scope.renderApprovalStatus();
+            NProgress.done();
         });
     }
 
