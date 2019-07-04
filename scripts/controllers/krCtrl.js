@@ -795,7 +795,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 		var idAreaDampak = Constant.emptyGuid;
 		var nilai = 0;
 		try {
-			idAreaDampak = Helper.ifNullOrEmpty($scope.ae.data[indexAE].kejadian.areaDampak.id, Constant.emptyGuid);
+			idAreaDampak = Helper.ifNullOrEmpty($scope.ae.data[indexAE].areaDampak.id, Constant.emptyGuid);
 			console.log("ID Area Dampak : " + idAreaDampak);
 		} catch (err) {}
 
@@ -890,7 +890,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 		var idAreaDampak = Constant.emptyGuid;
 		var nilai = 0;
 		try {
-			idAreaDampak = Helper.ifNullOrEmpty($scope.ae.data[indexAE].kejadian.areaDampak.id, Constant.emptyGuid);
+			idAreaDampak = Helper.ifNullOrEmpty($scope.ae.data[indexAE].areaDampak.id, Constant.emptyGuid);
 		} catch (err) {}
 
 		try {
@@ -1140,7 +1140,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 		var idAreaDampak = Constant.emptyGuid;
 		var nilai = 0;
 		try {
-			idAreaDampak = Helper.ifNullOrEmpty($scope.rm.data[indexRM].kejadian.areaDampak.id, Constant.emptyGuid);
+			idAreaDampak = Helper.ifNullOrEmpty($scope.rm.data[indexRM].areaDampak.id, Constant.emptyGuid);
 		} catch (err) {}
 
 		try {
@@ -1230,7 +1230,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 	}
 
 	$scope.rm.listPeringkatDampak = function (indexRM, indexPenyebab) {
-		var idAreaDampak = Helper.iif($scope.rm.data[indexRM].listPenyebab[indexPenyebab].kejadian.areaDampak == undefined) ? Constant.emptyGuid : $scope.rm.data[indexRM].listPenyebab[indexPenyebab].kejadian.areaDampak.id;
+		var idAreaDampak = Helper.iif($scope.rm.data[indexRM].listPenyebab[indexPenyebab].areaDampak == undefined) ? Constant.emptyGuid : $scope.rm.data[indexRM].listPenyebab[indexPenyebab].areaDampak.id;
 		var apiUrl = "/api/krListPeringkatDampak/" + idKr + "?idArea=" + idAreaDampak + "&efektifitas=0";
 
 		HttpRequest.get(apiUrl).success(function (response) {
@@ -1538,7 +1538,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 				//Update KR Identifikasi - Kejadian
 				var kejadian = new Model.kr.id.kejadian();
 				kejadian.id = Constant.emptyGuid;
-				kejadian.areaDampak.id = Constant.emptyGuid;
+				areaDampak.id = Constant.emptyGuid;
 
 				$scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian = kejadian;
 				$scope.id.master.kejadian[indexIdentifikasi][indexDetailKatRisk] = response;
