@@ -1731,6 +1731,19 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="form-group">
+                                                                                            <label class="control-label col-md-3">Area Dampak</label>
+                                                                                            <div class="col-md-9" ng-show="identifikasi.isEditMode">
+                                                                                                <select class="form-control {{ (item.areaDampak.id == null || item.areaDampak.id == '') ? 'errorField' : '' }}" required ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(item.risiko.id)" ng-model="item.areaDampak.id" ng-options="item.id as item.name for item in identifikasi.master.sasaranStrategis[$parent.$index].areaDampak[$index]"></select>
+                                                                                            </div>
+                                                                                            <div class="col-md-9" ng-show="!identifikasi.isEditMode">
+                                                                                                <p class="form-control-static">{{ item.areaDampak.name }}</p>
+                                                                                            </div>
+                                                                                            <!-- <label class="control-label col-md-3">Area Dampak</label>
+                                                                                            <div class="col-md-9">
+                                                                                                <p class="form-control-static">{{ item.areaDampak.name }}</p>
+                                                                                            </div> -->
+                                                                                        </div>
+                                                                                        <div class="form-group">
                                                                                             <label class="control-label col-md-3">Kejadian</label>
                                                                                             <div class="col-md-9" ng-show="identifikasi.isEditMode">
                                                                                                 <select class="form-control {{ (item.kejadian.id == null || item.kejadian.id == '') ? 'errorField' : '' }}" required ng-disabled="Helper.isNullOrEmptyOrEmptyGuid(item.risiko.id)" ng-model="item.kejadian.id" ng-change="eventChangeKejadianStrategis($parent.$index,$index)" ng-options="item.id as item.name for item in identifikasi.master.sasaranStrategis[$parent.$index].kejadian[$index]"></select>
@@ -1786,12 +1799,12 @@
                                                                                                 </button>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div class="form-group">
-                                                                                            <label class="control-label col-md-3">Area Dampak</label>
+                                                                                        <!-- <div class="form-group">
+                                                                                            <label class="control-label col-md-3">Area Dampak 123</label>
                                                                                             <div class="col-md-9">
                                                                                                 <p class="form-control-static">{{ item.areaDampak.name }}</p>
                                                                                             </div>
-                                                                                        </div>
+                                                                                        </div> -->
                                                                                     </div>
                                                                                 </div>
                                                                             </div>

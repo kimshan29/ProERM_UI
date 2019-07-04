@@ -1803,7 +1803,8 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             kejadian: [],
             tipeSumberRisiko: [],
             sumberRisiko: [],
-            penyebab: []
+            penyebab: [],
+            areaDampak: []
         };
         $scope.bidangStrategisModel = true;
         // MASTER KATEGORI
@@ -1855,6 +1856,21 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $('#modalError2').modal('show');
         });
         // END MASTER RISIKO
+
+        // MASTER AREA DAMPAK
+        apiUrlAreaDampak = "/api/DMRListAreaDampak/" + idDmr;
+
+        HttpRequest.get(apiUrlAreaDampak).success(function (response) {
+
+            $scope.identifikasi.master.sasaranStrategis[induk].areaDampak[item] = response;
+            console.log("ListAreaDampakSasaran:" + JSON.stringify($scope.identifikasi.master.sasaranStrategis[induk].areaDampak[item]));
+
+
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+        });
+        // END MASTER AREA DAMPAK
 
 
         // MASTER KEJADIAN
@@ -2183,7 +2199,8 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             kejadian: [],
             tipeSumberRisiko: [],
             sumberRisiko: [],
-            penyebab: []
+            penyebab: [],
+            areaDampak: []
         });
 
         var latest = $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko.length;
@@ -2287,6 +2304,18 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $('#modalError2').modal('show');
             NProgress.done();
         });
+
+        // MASTER AREA DAMPAK
+        apiUrl = "/api/DMRListAreaDampak/" + idDmr;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.identifikasi.master.sasaranStrategis[induk].areaDampak.splice(item, 1);
+            $scope.identifikasi.master.sasaranStrategis[induk].areaDampak.push(response);
+            NProgress.done();
+        }).error(function (response, code) {
+            $scope.error.message = response.ExceptionMessage + " - " + code;
+            $('#modalError2').modal('show');
+            NProgress.done();
+        });
     }
 
     // EVENT CHANGE KEJADIAN SASARAN STRATEGIS
@@ -2296,17 +2325,17 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].kejadian.name = selectedKejadian.name;
 
         // MASTER SUB KATEGORI
-        apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
-        HttpRequest.get(apiUrl).success(function (response) {
-            $scope.identifikasi.master.sasaranStrategis.areaDampak = response;
-            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranStrategis.areaDampak.id;
-            $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranStrategis.areaDampak.name;
-            NProgress.done();
-        }).error(function (response, code) {
-            $scope.error.message = response.ExceptionMessage + " - " + code;
-            $('#modalError2').modal('show');
-            NProgress.done();
-        });
+        // apiUrl = "/api/DMRListAreaDampak/" + selectedKejadian.id;
+        // HttpRequest.get(apiUrl).success(function (response) {
+        //     $scope.identifikasi.master.sasaranStrategis.areaDampak = response;
+        //     $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.id = $scope.identifikasi.master.sasaranStrategis.areaDampak.id;
+        //     $scope.identifikasi.data.sasaranStrategis[induk].kategori[item].areaDampak.name = $scope.identifikasi.master.sasaranStrategis.areaDampak.name;
+        //     NProgress.done();
+        // }).error(function (response, code) {
+        //     $scope.error.message = response.ExceptionMessage + " - " + code;
+        //     $('#modalError2').modal('show');
+        //     NProgress.done();
+        // });
     }
 
     // EVENT CHANGE TIPE SUMBER RISIKO SASARAN STRATEGIS
@@ -2837,6 +2866,7 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
             $scope.identifikasi.master.sasaranStrategis[induk].kategoriRisiko.splice(index, 1);
             $scope.identifikasi.master.sasaranStrategis[induk].subKategori.splice(index, 1);
             $scope.identifikasi.master.sasaranStrategis[induk].risiko.splice(index, 1);
+            $scope.identifikasi.master.sasaranStrategis[induk].areaDampak.splice(index, 1);
             $scope.identifikasi.master.sasaranStrategis[induk].kejadian.splice(index, 1);
             $scope.identifikasi.master.sasaranStrategis[induk].tipeSumberRisiko.splice(index, 1);
             $scope.identifikasi.master.sasaranStrategis[induk].sumberRisiko.splice(index, 1);
