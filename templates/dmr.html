@@ -364,7 +364,8 @@
                                         <div class="form-group" ng-show="pendahuluan.isEditMode">
                                             <label class="control-label col-md-3">Latar Belakang</label>
                                             <div class="col-md-9 {{ pendahuluan.data.latarBelakang == null && pendahuluan.isEditMode ? 'errorField' : '' }}">
-                                                <textarea class="form-control" required ckeditor="pendahuluanlatarBelakang" id="pendahuluanlatarBelakang" ng-model="pendahuluan.data.latarBelakang"></textarea>
+                                                <!-- <textarea class="form-control" required ckeditor="pendahuluanlatarBelakang" id="pendahuluanlatarBelakang" ng-model="pendahuluan.data.latarBelakang"></textarea> -->
+                                                <summernote height="200" ng-model="pendahuluan.data.latarBelakang"></summernote>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-show="!pendahuluan.isEditMode">
@@ -405,7 +406,8 @@
                                         <div class="form-group" ng-show="pendahuluan.isEditMode">
                                             <label class="control-label col-md-3">Permasalahan</label>
                                             <div class="col-md-9 {{ pendahuluan.data.permasalahan == null && pendahuluan.isEditMode ? 'errorField' : '' }}">
-                                                <textarea class="form-control" required ckeditor="pendahuluanpermasalahan" id="pendahuluanpermasalahan" name="pendahuluanpermasalahan" ng-model="pendahuluan.data.permasalahan"></textarea>
+                                                <!-- <textarea class="form-control" required ckeditor="pendahuluanpermasalahan" id="pendahuluanpermasalahan" name="pendahuluanpermasalahan" ng-model="pendahuluan.data.permasalahan"></textarea> -->
+                                                <summernote height="200" ng-model="pendahuluan.data.permasalahan"></summernote>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-show="!pendahuluan.isEditMode">
@@ -487,7 +489,8 @@
                                         <div class="form-group" ng-show="pendahuluan.isEditMode">
                                             <label class="control-label col-md-12">Deksripsi Alternatif Cara Pencapaian Sasaran</label>
                                             <div class="col-md-9 col-md-offset-3 {{ pendahuluan.data.deskripsiAlternatifCaraPencapaianSasaran == null && pendahuluan.isEditMode ? 'errorField' : '' }}">
-                                                <textarea class="form-control" required ng-show="pendahuluan.isEditMode" ckeditor="pendahuluandeskripsiAlternatif" id="pendahuluandeskripsiAlternatif" name="pendahuluandeskripsiAlternatif" ng-model="pendahuluan.data.deskripsiAlternatifCaraPencapaianSasaran"></textarea>
+                                                <!-- <textarea class="form-control" required ng-show="pendahuluan.isEditMode" ckeditor="pendahuluandeskripsiAlternatif" id="pendahuluandeskripsiAlternatif" name="pendahuluandeskripsiAlternatif" ng-model="pendahuluan.data.deskripsiAlternatifCaraPencapaianSasaran"></textarea> -->
+                                                <summernote height="200" ng-model="pendahuluan.data.deskripsiAlternatifCaraPencapaianSasaran"></summernote>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-show="!pendahuluan.isEditMode">
@@ -510,8 +513,9 @@
                                                 </div>
                                                 <div class="panel-body collapse bg-white" style="display:block;padding: 5px !important;padding-left: 5px !important;">
                                                     <div class="col-md-12" style="padding:0px !important;" ng-show="pendahuluan.isEditMode">
-                                                        <textarea class="form-control" ckeditor="commentPendahuluan" id="commentPendahuluan" name="commentPendahuluan" ng-model="pendahuluan.data.comment"></textarea>
+                                                        <!-- <textarea class="form-control" ckeditor="commentPendahuluan" id="commentPendahuluan" name="commentPendahuluan" ng-model="pendahuluan.data.comment"></textarea> -->
                                                         <!--<textarea class="form-control" ng-model="pendahuluan.data.comment"></textarea>-->
+                                                        <summernote height="200" ng-model="pendahuluan.data.comment"></summernote>
                                                     </div>
                                                     <div class="col-md-12" style="padding:0px !important;" ng-show="!pendahuluan.isEditMode">
                                                         <p class="form-control-static" ng-show="!pendahuluan.isEditMode" ng-bind-html="trustAsHtml(pendahuluan.data.comment)"></p>

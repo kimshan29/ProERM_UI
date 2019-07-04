@@ -3,7 +3,7 @@ var modules = [
     'validation', 'validation.rule',
     'ui.bootstrap', 'uiSwitch', 'ngCkeditor',
     'datatables', 'datatables.columnfilter',
-    'naif.base64', 'highcharts-ng'
+    'naif.base64', 'highcharts-ng', 'summernote'
 ];
 
 var mainApp = angular.module('mainApp', modules);
