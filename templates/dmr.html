@@ -3410,19 +3410,19 @@
                                 </div>
                                 <!--<div class="form-group"><label class="control-label col-md-3">Pemeriksa</label><div class="col-md-9"><input ng-show="persetujuan.isEditMode" type="text" class="form-control" ng-model="persetujuan.data.pemeriksa"><p ng-show="!persetujuan.isEditMode" class="form-control-static" ng-bind-html="persetujuan.data.pemeriksa"></p></div></div>-->
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">Verifikasi SMR</label>
-                                    <div class="col-md-9" ng-show="(persetujuan.isEditMode && persetujuan.viewVerifikasi.view)">
+                                    <label class="col-md-3 control-label">Verifikasi PPRM</label>
+                                    <div class="col-md-9" style="padding:0px !important;" ng-show="persetujuan.isEditMode">
                                         <select class="form-control" ng-model="persetujuan.data.isVerifikasi">
                                             <option value="Ya">Ya</option>
                                             <option value="Tidak">Tidak</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-9" ng-show="!persetujuan.isEditMode">
+                                    <div class="col-md-9" style="padding:0px !important;" ng-show="!persetujuan.isEditMode">
                                         {{ persetujuan.data.isVerifikasi }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Rekomendasi KSRM</label>
+                                    <label class="control-label col-md-3">Rekomendasi EVP PPRM</label>
                                     <!--<div class="col-md-9"><textarea ng-show="persetujuan.isEditMode" class="form-control" ng-model="persetujuan.data.rekomendasiKSRM"></textarea><p class="form-control-static" ng-show="!persetujuan.isEditMode" ng-bind-html="trustAsHtml(persetujuan.data.rekomendasiKSRM)"></p></div>-->
                                     <div class="col-md-9" style="padding:0px !important;" ng-show="persetujuan.isEditMode">
                                         <textarea class="form-control" ckeditor="persetujuanRekomendasiKSRM" id="persetujuanRekomendasiKSRM" name="persetujuanRekomendasiKSRM" ng-model="persetujuan.data.rekomendasiKSRM"></textarea>
