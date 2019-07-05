@@ -1538,7 +1538,7 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 				//Update KR Identifikasi - Kejadian
 				var kejadian = new Model.kr.id.kejadian();
 				kejadian.id = Constant.emptyGuid;
-				areaDampak.id = Constant.emptyGuid;
+				// areaDampak.id = Constant.emptyGuid;
 
 				$scope.id.data[indexIdentifikasi].detailRisiko[indexDetailKatRisk].kejadian = kejadian;
 				$scope.id.master.kejadian[indexIdentifikasi][indexDetailKatRisk] = response;
