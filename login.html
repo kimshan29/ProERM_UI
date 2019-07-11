@@ -253,9 +253,9 @@
             $scope.loginClick = function () {
                 NProgress.start();
 
-                var apiUrl = "http://10.28.0.35:1080/api/login";
-                //var apiUrl = "http://localhost:83/api/login";
-                //var apiUrl = "http://erm.indonesiapower.co.id:9010/api/login";
+                // var apiUrl = "http://10.28.0.35:1080/api/login"; //Dev Batam
+
+                var apiUrl = "http://192.168.100.185:20081/api/login"; //Dev IP
                 var data = {
                     userEmail: $scope.email,
                     password: $scope.password

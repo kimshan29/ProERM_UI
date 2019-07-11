@@ -29,14 +29,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="main-font-3" ng-repeat="item in kejadian.data">
+                        <tr class="main-font-3" ng-repeat="item in kemungkinan.data">
                             <td>{{ $index+1 }}</td>
-                            <td>{{ item.peringkatKemungkinan }}</td>
-                            <td>{{ item.tipeKemungkinan }}</td>
+                            <td>{{ item.kriteriaKemungkinan.peringkatKemungkinan }}</td>
+                            <td>{{ item.tipeKemungkinan.tipePeringkatKemungkinan }}</td>
                             <td>{{ item.kemungkinan }}</td>
                             <td>{{ item.isActive }}</td>
                             <td class="text-center">
-                                <button type='button' class='btn btn-info btn-sm' ng-click="eventEditDampak(item.id)" ng-show='!entitas.isEditMode'>
+                                <button type='button' class='btn btn-info btn-sm' ng-click="eventClickEdit(item.id)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
                                 <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
@@ -76,13 +76,13 @@
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Peringkat Kemungkinan</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <input type="text" class="form-control" ng-model="form.id" style="display:none;" />
-                                <select class="form-control" ng-model="form.peringkatKemungkinan" ng-options="item as item.peringkatKemungkinan for item in master.peringkatKemungkinan track by item.id"></select>
+                                <select class="form-control" ng-model="form.peringkatKemungkinan" ng-options="item as item.peringkatKemungkinan + '-' + item.keterangan for item in master.peringkatKemungkinan track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Tipe Kemungkinan</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.tipeKemungkinan" ng-options="item as item.tipeKemungkinan for item in master.tipeKemungkinan track by item.id"></select>
+                                <select class="form-control" ng-model="form.tipeKemungkinan" ng-options="item as item.tipePeringkatKemungkinan for item in master.tipeKemungkinan track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -102,7 +102,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-3 col-md-3 col-sm-3">
-                                <button type="button" class="btn btn-primary" ng-click="eventAddDampak()">
+                                <button type="button" class="btn btn-primary" ng-click="eventClickSave()">
                                     Save
                                 </button>
                                 <button type="button" class="btn btn-danger" ng-click="eventClickCancel()">
