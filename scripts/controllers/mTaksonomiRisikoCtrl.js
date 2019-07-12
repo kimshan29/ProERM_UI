@@ -27,8 +27,9 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         $scope.renderTaksonomiRisiko();
         $scope.renderKategoriRisiko();
         $scope.renderSubKategoriRisiko();
-        $scope.renderAreaDampak();
+
     }
+
 
     $scope.eventClickAdd = function () {
         $scope.taksonomiRisiko.input = {};
@@ -39,19 +40,21 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         NProgress.start();
         $scope.renderTaksonomiRisiko();
         $scope.taksonomiRisiko.isEditMode = false;
+        $scope.clearData();
         NProgress.done();
     }
 
+    $scope.clearData = () => {
+        $scope.form = '';
+    }
     $scope.eventClickSave = function () {
 
         var apiUrl = "/api/MasterTaksonomiRisiko";
         // $scope.taksonomiRisiko.input.id = "";
-        $scope.taksonomiRisiko.input.userEmail = $scope.currentUser.email;
+        console.log(JSON.stringify($scope.form));
 
-        console.log(JSON.stringify($scope.taksonomiRisiko.input));
-
-        HttpRequest.post(apiUrl, $scope.taksonomiRisiko.input).success(function (response) {
-            $scope.rendertaksonomiRisiko();
+        HttpRequest.post(apiUrl, $scope.form).success(function (response) {
+            $scope.renderTaksonomiRisiko();
             $scope.taksonomiRisiko.isEditMode = false;
         });
     }
@@ -59,14 +62,9 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
     $scope.eventClickEdit = function (id) {
         NProgress.start();
         var apiUrl = "/api/MastertaksonomiRisiko/" + id;
-
-
-
-        $scope.taksonomiRisiko.input.userEmail = $scope.currentUser.email;
-
         HttpRequest.get(apiUrl).success(function (response) {
             console.log(JSON.stringify(response));
-            $scope.taksonomiRisiko.input = response;
+            $scope.form = response;
             $scope.taksonomiRisiko.isEditMode = true;
             NProgress.done();
         });
@@ -79,7 +77,7 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         var hapus = confirm("Hapus " + name + "?");
         if (hapus) {
             HttpRequest.del(apiUrl).success(function (response) {
-                $scope.rendertaksonomiRisiko();
+                $scope.renderTaksonomiRisiko();
                 $scope.taksonomiRisiko.isEditMode = false;
                 NProgress.done();
             });
@@ -94,7 +92,17 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         var apiUrl = "/api/MasterTaksonomiRisiko";
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.taksonomiRisiko.data = response;
-            console.log(JSON.stringify(response));
+            console.log("Taksonomi:" + JSON.stringify($scope.taksonomiRisiko.data));
+            NProgress.done();
+        });
+    }
+
+    $scope.eventSearchByYear = (year) => {
+        NProgress.start();
+        var apiUrl = "/api/MasterTaksonomiRisiko?tahun=" + year;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.taksonomiRisiko.data = response;
+            console.log("Taksonomi:" + JSON.stringify($scope.taksonomiRisiko.data));
             NProgress.done();
         });
     }
@@ -115,13 +123,38 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         });
     }
 
-    $scope.renderAreaDampak = function () {
-        var apiUrl = "/api/MasterAreaDampak";
+
+    $scope.getSubKategori = (idKategori) => {
+        // alert(idKategori)
+        console.log(idKategori);
+
+        var apiUrl = "/api/GetSubKategori/" + idKategori.id;
         HttpRequest.get(apiUrl).success(function (response) {
-            $scope.master.areaDampak = response;
+            $scope.master.subKategoriRisiko = response;
             console.log(JSON.stringify(response));
         });
     }
+
+    $scope.getKejadianRisiko = (idSubKatRisiko) => {
+        var apiUrl = "/api/GetKejadianRisiko/" + idSubKatRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.master.kejadianRisiko = response;
+            console.log(JSON.stringify(response));
+        });
+    }
+
+
+
+    $scope.getKelompokRisiko = (idSubKatRisiko) => {
+        console.log(idSubKatRisiko);
+
+        var apiUrl = "/api/GetKelompokRisiko/" + idSubKatRisiko.id;
+        HttpRequest.get(apiUrl).success(function (response) {
+            $scope.master.kelompokRisiko = response;
+            console.log(JSON.stringify(response));
+        });
+    }
+
 
     $scope.formLoad();
 });

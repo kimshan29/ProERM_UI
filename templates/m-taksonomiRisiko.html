@@ -30,24 +30,23 @@
                             <th class="text-center">Sub Kategori Risiko</th>
                             <th class="text-center">Kelompok Risiko</th>
                             <th class="text-center">Kejadian Risiko</th>
-                            <th class="text-center">Area Dampak</th>
                             <th class="text-center">Tahun</th>
                             <th class="text-center">Status</th>
                             <th class="text-center judul-action">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="main-font-3" ng-repeat="item in kejadian.data">
+                        <tr class="main-font-3" ng-repeat="item in taksonomiRisiko.data">
                             <td>{{ $index+1 }}</td>
-                            <td>{{ item.kodeTaksonomi }}</td>
-                            <td>{{ item.kategoriRisiko }}</td>
-                            <td>{{ item.subKategoriRisiko }}</td>
-                            <td>{{ item.kelompokRisiko }}</td>
-                            <td>{{ item.areaDampak }}</td>
+                            <td>{{ item.idTaksonomiRisiko }}</td>
+                            <td>{{ item.kategoriRisiko.kategoriRisiko }}</td>
+                            <td>{{ item.subKategoriRisiko.subKategoriRisiko }}</td>
+                            <td>{{ item.kelompokRisiko.kelompokRisiko }}</td>
+                            <td>{{ item.kejadian.kejadianRisiko }}</td>
                             <td>{{ item.tahun }}</td>
                             <td>{{ item.isActive }}</td>
                             <td class="text-center">
-                                <button type='button' class='btn btn-info btn-sm' ng-click="eventEditDampak(item.id)" ng-show='!entitas.isEditMode'>
+                                <button type='button' class='btn btn-info btn-sm' ng-click="eventClickEdit(item.id)" ng-show='!entitas.isEditMode'>
                                     <span class='fa fa-pencil'></span> Edit
                                 </button>
                                 <!-- <button type='button' class='btn btn-danger btn-sm' ng-click="eventHapusDampak(item.id, item.areaDampak)" ng-show='!entitas.isEditMode'>
@@ -87,37 +86,31 @@
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Kode Taksonomi</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <input type="text" class="form-control" ng-model="form.id" style="display:none;" />
-                                <input type="text" class="form-control" ng-model="form.kodeTaksonomi" />
+                                <input type="text" class="form-control" ng-model="form.idTaksonomiRisiko" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-lg-2 col-md-3 col-sm-3">Kategori RIsiko</label>
+                            <label class="control-label col-lg-2 col-md-3 col-sm-3">Kategori Risiko</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.kategoriRisiko" ng-options="item as item.kategoriRisiko for item in master.kategoriRisiko track by item.id"></select>
+                                <select class="form-control" ng-model="form.kategoriRisiko" ng-change="getSubKategori(form.kategoriRisiko)" ng-options="item as item.kategoriRisiko for item in master.kategoriRisiko track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Sub Kategori Risiko</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.subKategoriRisiko" ng-options="item as item.subKategoriRisiko for item in master.subKategoriRisiko track by item.id"></select>
+                                <select class="form-control" ng-model="form.subKategoriRisiko" ng-change="getKelompokRisiko(form.subKategoriRisiko)" ng-options="item as item.subKategoriRisiko for item in master.subKategoriRisiko track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Kelompok Risiko</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.subKategoriRisiko" ng-options="item as item.subKategoriRisiko for item in master.subKategoriRisiko track by item.id"></select>
+                                <select class="form-control" ng-model="form.kelompokRisiko" ng-change="getKejadianRisiko(form.subKategoriRisiko)" ng-options="item as item.kelompokRisiko for item in master.subKategoriRisiko track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Kejadian Risiko</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
                                 <select class="form-control" ng-model="form.kejadianRisiko" ng-options="item as item.kejadianRisiko for item in master.kejadianRisiko track by item.id"></select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-lg-2 col-md-3 col-sm-3">Area Dampak</label>
-                            <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.areaDampak" ng-options="item as item.areaDampak for item in master.areaDampak track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
