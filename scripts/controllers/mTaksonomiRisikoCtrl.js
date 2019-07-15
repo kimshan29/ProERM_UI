@@ -61,10 +61,14 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
 
     $scope.eventClickEdit = function (id) {
         NProgress.start();
-        var apiUrl = "/api/MastertaksonomiRisiko/" + id;
+        var apiUrl = "/api/MasterTaksonomiRisiko/" + id;
         HttpRequest.get(apiUrl).success(function (response) {
             console.log(JSON.stringify(response));
             $scope.form = response;
+            console.log($scope.form.subKategoriRisiko.id);
+
+            $scope.getKelompokRisiko($scope.form.subKategoriRisiko);
+            $scope.getKejadianRisiko($scope.form.subKategoriRisiko);
             $scope.taksonomiRisiko.isEditMode = true;
             NProgress.done();
         });
@@ -72,7 +76,7 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
 
     $scope.eventClickHapus = function (id, name) {
         NProgress.start();
-        var apiUrl = "/api/MastertaksonomiRisiko/" + id + "?email=" + $scope.currentUser.email;
+        var apiUrl = "/api/MasterTaksonomiRisiko/" + id + "?email=" + $scope.currentUser.email;
 
         var hapus = confirm("Hapus " + name + "?");
         if (hapus) {
@@ -139,7 +143,7 @@ mainApp.controller("mTaksonomiRisikoCtrl", function ($scope, $routeParams, $q, $
         var apiUrl = "/api/GetKejadianRisiko/" + idSubKatRisiko.id;
         HttpRequest.get(apiUrl).success(function (response) {
             $scope.master.kejadianRisiko = response;
-            console.log(JSON.stringify(response));
+            console.log("Kejadian Risiko: " + JSON.stringify($scope.master.kejadianRisiko));
         });
     }
 
