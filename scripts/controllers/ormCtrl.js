@@ -76,14 +76,15 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
             //$scope.isDataEditable = $scope.isPicCoordinator && response.kodeApproval == 1;
             $scope.isDataEditable = response.isDataEditable;//response.kodeApproval == 1;
 			$scope.hasCompleteStep = response.hasCompleteStep;
-			console.log($scope.hasCompleteStep);
+			//console.log($scope.hasCompleteStep);
 
             $cookies.put('ormApprovalStatus', JSON.stringify(response));
 
             apiUrl = "/api/ormListNextApprover/" + $scope.idOrm;
 
             HttpRequest.get(apiUrl).success(function (response) {
-                $scope.listNextApprover = response;
+				$scope.listNextApprover = response;
+				console.log("List approver : " + JSON.stringify(response));
             })
             .error(function (response, code) {
                 var data = {
@@ -97,22 +98,22 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
                 Helper.notifErrorHttp(data);
             });
 
-            apiUrl = "/api/ormListTujuanDisposisi/" + $scope.idOrm;
+            // apiUrl = "/api/ormListTujuanDisposisi/" + $scope.idOrm;
 
-            HttpRequest.get(apiUrl).success(function (response) {
-                $scope.listTujuanDisposisi = response;
-            })
-            .error(function (response, code) {
-                var data = {
-                    title: "List Tujuan Disposisi",
-                    exception: response,
-                    exceptionCode: code,
-                    operation: "GET",
-                    apiUrl: apiUrl
-                };
+            // HttpRequest.get(apiUrl).success(function (response) {
+            //     $scope.listTujuanDisposisi = response;
+            // })
+            // .error(function (response, code) {
+            //     var data = {
+            //         title: "List Tujuan Disposisi",
+            //         exception: response,
+            //         exceptionCode: code,
+            //         operation: "GET",
+            //         apiUrl: apiUrl
+            //     };
 
-                Helper.notifErrorHttp(data);
-            });
+            //     Helper.notifErrorHttp(data);
+            // });
 
             /*
             apiUrl = "/api/ormLogTrail/" + $scope.idOrm;
@@ -217,10 +218,10 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 
     		$scope.renderMaster();
 			$scope.adliChange();
-			console.log(JSON.stringify($scope.data.detailMitigasi));
+			//console.log(JSON.stringify($scope.data.detailMitigasi));
     	})
     	.error(function(response, code) {
-    		console.log(response.Message);
+    		//console.log(response.Message);
     	});
     }
 
@@ -256,7 +257,8 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 		$scope.master.risikoBaru = [ {value:"Y", name:"Ya"}, {value:"N", name:"Tidak"} ];
     	
     	//Master Peringkat Dampak
-		console.log("Render Peringkat Dampak");
+		// console.log("Render Peringkat Dampak");
+		// console.log("Detail Risiko : " + JSON.stringify($scope.data.detailRisikoSM));
 		$scope.renderListPeringkatDampak();
 		
     	//Master Peringkat Kemungkinan
@@ -269,7 +271,8 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
     	var idAreaDampak = Constant.emptyGuid;
     	var nilai = 0;
     	try{
-    		idAreaDampak = Helper.ifNullOrEmpty($scope.data.detailRisikoSM.kejadian.areaDampak.id, Constant.emptyGuid);
+			idAreaDampak = Helper.ifNullOrEmpty($scope.data.detailRisikoSM.areaDampak.id, Constant.emptyGuid);
+			
     	}
     	catch(err){
     	}
@@ -281,7 +284,7 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
     	}
 
 		var apiUrl = "/api/krListPeringkatDampak/" + $scope.idOrm + "?idArea=" + idAreaDampak + "&efektifitas=" + nilai + "&tipe=ORM"; 
-		console.log(apiUrl);
+		//console.log(apiUrl);
 
 	    HttpRequest.get(apiUrl).success(function(response) {
 	        $scope.master.peringkatDampak = response;
@@ -464,7 +467,7 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 	$scope.lk.editClick = function(indexLK)
 	{
 		$scope.lk.isEditMode[indexLK] = true;
-		console.log("lk.isEditMode: "+$scope.lk.isEditMode[indexLK]);
+		//console.log("lk.isEditMode: "+$scope.lk.isEditMode[indexLK]);
 	}
 
 	$scope.editProgressClick = function()
@@ -491,7 +494,7 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 		.error(function (response, code) {
 		    NProgress.done();
 
-			console.log(response.Message, JSON.stringify(data));
+			//console.log(response.Message, JSON.stringify(data));
 		});
 	}
 
@@ -504,7 +507,7 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 			var data = $scope.data;
 			
 			data.userEmail = $scope.currentUser.email;
-			console.log(JSON.stringify(data));
+			//console.log(JSON.stringify(data));
 
 			HttpRequest.post(apiUrl, data)
 			.success(function(response) {
@@ -517,7 +520,7 @@ mainApp.controller("ormCtrl", function($scope, $routeParams, $location, $cookies
 			.error(function (response, code) {
 				NProgress.done();
 
-				console.log(response.Message, JSON.stringify(data));
+				//console.log(response.Message, JSON.stringify(data));
 			});
 		
 	}

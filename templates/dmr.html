@@ -1143,11 +1143,12 @@
                                             <legend class="bordered-fieldset help-block">
                                                 <h4>Tangible Benefit</h4>
                                             </legend>
-                                            <div class="col-md-12" ng-show="!kkf.isEditMode">
+                                            <!-- <div class="col-md-12" ng-show="!kkf.isEditMode">
                                                 <h4>
                                                     <b>{{ kkf.data.tangible.name }}</b>
                                                 </h4>
-                                            </div>
+                                            </div> -->
+                                            <!--
                                             <fieldset class="bordered-fieldset col-md-6" style="height:200px;" ng-show="kkf.isEditMode">
                                                 <legend class="bordered-fieldset help-block">
                                                     <h5>Akuntansi</h5>
@@ -1161,7 +1162,7 @@
                                                     <br>
                                                     <br>
                                                 </div>
-                                            </fieldset>
+                                            </fieldset> 
                                             <fieldset class="bordered-fieldset col-md-6" style="height:200px;" ng-show="kkf.isEditMode">
                                                 <legend class="bordered-fieldset help-block">
                                                     <h5>Ekonomi Teknik</h5>
@@ -1170,10 +1171,16 @@
                                                     <input ng-show="kkf.isEditMode" ng-click="kkfChange('Rasio Keuangan')" value="70c993ca-10e1-436b-beb5-460b3148b80a" type="radio" ng-model="kkf.data.tangible.id" name="RAkuntansi" class="form-element"> Rasio Keuangan
 
                                                 </div>
-                                            </fieldset>
+                                            </fieldset> -->
                                             <div class="col-lg-6 col-md-6 col-sm-6 no-padding">
                                                 <!-- Referensi Harga -->
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == 'd8a87997-e97c-481f-96dd-cdba7b9d8d90')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == 'd8a87997-e97c-481f-96dd-cdba7b9d8d90')"> -->
+                                                <fieldset class="bordered-fieldset">
+                                                <legend class="bordered-fieldset help-block">
+                                                    <h5>Referensi Harga</h5>
+                                                </legend>
+                                                <div class="form-group">
+                                                    
                                                     <label class="control-label col-md-3">Harga</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.harga">
@@ -1182,7 +1189,9 @@
                                                         <p class="form-control-static">{{ kkf.data.harga.formatMoney() }}</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == 'd8a87997-e97c-481f-96dd-cdba7b9d8d90')">
+                                                
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == 'd8a87997-e97c-481f-96dd-cdba7b9d8d90')"> -->
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">Referensi</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control" ng-model="kkf.data.referensiHarga">
@@ -1191,8 +1200,14 @@
                                                         <p class="form-control-static">{{ kkf.data.referensiHarga }}</p>
                                                     </div>
                                                 </div>
+                                                </fieldset>
                                                 <!-- Referensi Return -->
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == '337a024f-003c-4e3b-9774-08f37b742a4e')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == '337a024f-003c-4e3b-9774-08f37b742a4e')"> -->
+                                                <fieldset class="bordered-fieldset">
+                                                <legend class="bordered-fieldset help-block">
+                                                    <h5>Referensi Return</h5>
+                                                </legend>
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">ROE</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.roe">
@@ -1201,7 +1216,8 @@
                                                         <p class="form-control-static">{{ kkf.data.roe.formatMoney() }}</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == '337a024f-003c-4e3b-9774-08f37b742a4e')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == '337a024f-003c-4e3b-9774-08f37b742a4e')"> -->
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">ROI</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.roi">
@@ -1210,8 +1226,14 @@
                                                         <p class="form-control-static">{{ kkf.data.roi.formatMoney() }}</p>
                                                     </div>
                                                 </div>
+                                                </fieldset>
                                                 <!-- Referensi Cost Benefit Analysis -->
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == 'e36b5f48-002b-4e5c-83ae-b13ded6d8b08')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == 'e36b5f48-002b-4e5c-83ae-b13ded6d8b08')"> -->
+                                                <fieldset class="bordered-fieldset">
+                                                <legend class="bordered-fieldset help-block">
+                                                    <h5>Referensi Cost Benefit Analysis</h5>
+                                                </legend>
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">CBA</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.cba">
@@ -1220,17 +1242,24 @@
                                                         <p class="form-control-static">{{ kkf.data.cba }}</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == 'e36b5f48-002b-4e5c-83ae-b13ded6d8b08')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == 'e36b5f48-002b-4e5c-83ae-b13ded6d8b08')"> -->
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">NILAI (Rp.)</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
-                                                        <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="0" maxlength="22" ng-model="kkf.data.nilaiCba">
+                                                        <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.nilaiCba">
                                                     </div>
                                                     <div class="col-md-8" ng-show="!kkf.isEditMode">
-                                                        <p class="form-control-static">{{ kkf.data.nilaiCba | number:0 }}</p>
+                                                        <p class="form-control-static">{{ kkf.data.nilaiCba.formatMoney() }}</p>
                                                     </div>
                                                 </div>
+                                                </fieldset>
                                                 <!-- Referensi Rasio Keuangan -->
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')"> -->
+                                                <fieldset class="bordered-fieldset">
+                                                <legend class="bordered-fieldset help-block">
+                                                    <h5>Referensi Rasio Keuangan</h5>
+                                                </legend>
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">IRR</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.irr">
@@ -1239,7 +1268,8 @@
                                                         <p class="form-control-static">{{ kkf.data.irr.formatMoney() }}</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')"> -->
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">NPV</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control text-right" onkeypress='return event.charCode >= 48 && event.charCode <= 57' fraction-size="2" maxlength="22" sg-number-input ng-model="kkf.data.npv">
@@ -1248,7 +1278,8 @@
                                                         <p class="form-control-static">{{ kkf.data.npv.formatMoney() }}</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')">
+                                                <!-- <div class="form-group" ng-show="(kkf.data.tangible.id == '70c993ca-10e1-436b-beb5-460b3148b80a')"> -->
+                                                <div class="form-group">
                                                     <label class="control-label col-md-3">Payback Period</label>
                                                     <div class="col-md-8" ng-show="kkf.isEditMode">
                                                         <input type="text" class="form-control" ng-model="kkf.data.paybackPeriod">
@@ -1257,11 +1288,12 @@
                                                         <p class="form-control-static">{{ kkf.data.paybackPeriod }}</p>
                                                     </div>
                                                 </div>
+                                                </fieldset>
                                             </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 no-padding">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 ">
                                                 <div class="form-group">
                                                     <label class="control-label col-md-3">Lampiran</label>
-                                                    <div class="col-md-9">
+                                                    <div class="col-md-8">
                                                         <div class="form-group">
                                                             <div class="col-md-12 margin-5" ng-repeat="item in kkf.data.tangible.file">
                                                                 <div class="col-md-12 input-group">

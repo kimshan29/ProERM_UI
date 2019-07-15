@@ -1,7 +1,7 @@
 //Http Request
 
-var webServiceBaseUrl = "http://192.168.100.185:20081"; // Dev IP
-// var webServiceBaseUrl = "http://10.28.0.35:1080"; //Dev Batam
+// var webServiceBaseUrl = "http://192.168.100.185:20081"; // Dev IP
+var webServiceBaseUrl = "http://10.28.0.35:1080"; //Dev Batam
 
 mainApp.factory("HttpRequest", function ($http, $q) {
     var get = function (query) {

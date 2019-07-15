@@ -104,7 +104,7 @@
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-md-3 col-sm-3">Kelompok Risiko</label>
                             <div class="col-lg-3 col-md-3 col-sm-3">
-                                <select class="form-control" ng-model="form.kelompokRisiko" ng-change="getKejadianRisiko(form.subKategoriRisiko)" ng-options="item as item.kelompokRisiko for item in master.subKategoriRisiko track by item.id"></select>
+                                <select class="form-control" ng-model="form.kelompokRisiko" ng-change="getKejadianRisiko(form.subKategoriRisiko)" ng-options="item as item.kelompokRisiko for item in master.kelompokRisiko track by item.id"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -130,7 +130,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-3 col-md-3 col-sm-3">
-                                <button type="button" class="btn btn-primary" ng-click="eventAddDampak()">
+                                <button type="button" class="btn btn-primary" ng-click="eventClickSave()">
                                     Save
                                 </button>
                                 <button type="button" class="btn btn-danger" ng-click="eventClickCancel()">
