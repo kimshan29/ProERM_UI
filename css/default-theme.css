@@ -780,12 +780,27 @@ body {
     background: #2865ac !important;
 }
 
+.panel-blue-batam {
+    background: #2865ac !important;
+    color: white !important;
+}
+
+.panel-green-batam {
+    background: #5cb85c !important;
+    color: white !important;
+}
+
+
 .pnl-white {
     background: #fff !important;
 }
 
 .pnl-red {
     background: red !important;
+}
+
+.pnl-yellow {
+    background: yellow !important;
 }
 
 .pnl-red>.panel-heading {

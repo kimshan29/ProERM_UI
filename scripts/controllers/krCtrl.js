@@ -2490,26 +2490,47 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 		$scope.rm.panelClass1 = [];
 		$scope.rm.panelClass2 = [];
 
+		// console.log(JSON.stringify($scope.rm.data));
+
 		angular.forEach($scope.rm.data, function (item, i) {
-			$scope.rm.panelClass1[i] = "panel-default";
+			$scope.rm.panelClass1[i] = "panel-green-batam";
+			// console.log($scope.rm.panelClass1[i]);
+
 			$scope.rm.panelClass2[i] = [];
 
 			angular.forEach(item.listPenyebab, function (subItem, j) {
-				$scope.rm.panelClass2[i][j] = "panel-default";
+				$scope.rm.panelClass2[i][j] = "panel-green-batam";
 
 				var cr = subItem.controlledRisk.name.toLowerCase();
+				// console.log(JSON.stringify(cr));
+
+				// console.log("panel:" + JSON.stringify($scope.rm.panelClass1[i][j]));
+
+
 
 				if (cr.includes('tinggi')) {
-					$scope.rm.panelClass2[i][j] = "pnl-orange";
+					// console.log("Tinggi Kuning");
+
+					$scope.rm.panelClass2[i][j] = "pnl-yellow";
 
 					if ($scope.rm.panelClass1[i] != "pnl-red")
-						$scope.rm.panelClass1[i] = "pnl-orange";
+						$scope.rm.panelClass1[i] = "pnl-yellow";
 				}
 
 				if (cr.includes('ekstrim')) {
+					// console.log("Ekstrim Merah");
+
 					$scope.rm.panelClass2[i][j] = "pnl-red";
 					$scope.rm.panelClass1[i] = "pnl-red";
 				}
+
+				if (cr.includes('moderat')) {
+					// console.log("Moderat Biru");
+
+					$scope.rm.panelClass2[i][j] = "panel-blue-batam";
+					$scope.rm.panelClass1[i] = "pnl-yellow";
+				}
+
 			});
 		});
 	}
@@ -2589,8 +2610,15 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 			});
 	}
 
+	$('.Loading').hide();
+	$('.page-revisi').show();
+
 	$scope.reviseClick = function () {
 		NProgress.start();
+
+		$('.Loading').show();
+		$('.page-revisi').hide();
+		$('#modalRevise').modal('hide');
 
 		var apiUrl = "/api/krRevise";
 		var data = {
@@ -2598,6 +2626,9 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 			keterangan: $scope.reviser.keterangan,
 			userEmail: currentUser.email
 		};
+
+		// console.log("Revisi:" + data);
+
 
 		HttpRequest.post(apiUrl, data).success(function (response) {
 				$scope.renderApprovalStatus();
@@ -2608,6 +2639,8 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 				//Jangan meniru script di bawah ini, sangat tidak direkomendasikan
 				$('#modalRevise').modal('hide');
 
+				$('.Loading').hide();
+				$('.page-revisi').show();
 				NProgress.done();
 			})
 			.error(function (response, code) {
@@ -2662,6 +2695,21 @@ mainApp.controller("krCtrl", function ($scope, $routeParams, $timeout, $cookies,
 
 				Helper.notifErrorHttp(data);
 			});
+	}
+
+	$scope.tombolRevisi = true;
+	$scope.jmlKarakterRevisi = (val) => {
+		// console.log(val);
+		var len = val.length;
+		if (len < 100) {
+			// console.log(len);
+
+			$scope.tombolRevisi = true;
+		} else {
+			$scope.tombolRevisi = false;
+			// console.log(len);
+		}
+
 	}
 
 	//Start of Application =============================================================================================================
