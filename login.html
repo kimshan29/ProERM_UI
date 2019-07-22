@@ -8,6 +8,11 @@
     <!-- Bootstrap Core CSS -->
     <link href="plugins/bootstrap/css/bootstrap-semi-compact.min.css" rel="stylesheet" />
     <style>
+        @font-face {
+            font-family: 'Bliss 2 Reguler';
+            src: url(css/fonts/Bliss2R.ttf);
+        }
+
         .bg-login {
             background: #2865ac;
             background: url('/images/pltg-panaran-batam.jpg') no-repeat center center fixed;
@@ -30,7 +35,7 @@
         }
 
         .card-container.card {
-            max-width: 350px;
+            max-width: 450px;
             /*padding: 40px 40px;*/
         }
 
@@ -97,7 +102,7 @@
             margin: 10px 0 0;
             min-height: 1em;
             color: #fff;
-            /* font-family: 'Bliss 2 reguler'; */
+            font-family: 'Bliss 2 reguler';
         }
 
         .profile-name-card2 {
@@ -177,8 +182,8 @@
         .btn.btn-signin:hover,
         .btn.btn-signin:active,
         .btn.btn-signin:focus {
-            background-color: #fff;
-            color: #b3aaa4;
+            background-color: #444f51;
+            color: #e28c05;
             border: #b3aaa4 1px solid;
             cursor: pointer;
         }
@@ -216,8 +221,10 @@
     <div class="container" ng-app="loginApp" ng-controller="loginCtrl">
         <div class="card card-container">
             <img id="profile-img" class="profile-img-card" src="images/logo-bright-putih.gif" />
-            <p id="profile-name" class="profile-name-card">ERM </p>
-            <p id="profile-name2" class="profile-name-card2">Enterprise Risk Management</p>
+            <p id="profile-name" class="profile-name-card">Professional Enterprise </p>
+            <p id="profile-name" style="margin-top:-8px;" class="profile-name-card">Risk Management </p>
+            <!-- <img id="profile-name2" class="profile-name-card2" src="images/logo-bright-putih.gif"> -->
+            <img id="profile-img" class="profile-img-card" style="height:87px !important;" src="images/logo-proErm.png" />
             <form class="form-signin">
                 <span id="reauth-email" class="reauth-email"></span>
                 <input type="text" ng-model="email" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
@@ -225,7 +232,7 @@
                 <div id="remember" class="checkbox" style="margin-top:20px;margin-bottom:20px;font-size:10px;">
                     <label style="padding-left:0px;">Jika terdapat masalah pada username / password silahkan hubungi admin</label>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block btn-signin" ng-click="loginClick()">Sign in</button>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" style="height:46px;" ng-click="loginClick()">Sign in</button>
             </form>
             <div class="text-danger" ng-show="!isValidLogin">Username atau password salah</div>
         </div>

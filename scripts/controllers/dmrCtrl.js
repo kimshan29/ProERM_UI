@@ -236,8 +236,15 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
         $scope.isSubmitClick = false;
     }
 
+    $('.Loading').hide();
+    $('.page-revisi').show();
+
     $scope.approveClick = function () {
         $scope.isSubmitClick = true;
+        $('.Loading').show();
+        $('.page-revisi').hide();
+        $('#modalApproval').modal('hide');
+
         var konfirmasi = confirm('Apakah Anda yakin akan Menyetujui Data ?');
         if (konfirmasi) {
             NProgress.start();
@@ -255,10 +262,12 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
                     alert('Data berhasil di-approve.');
 
                     //Jangan meniru script di bawah ini, sangat tidak direkomendasikan
-                    $('#modalApproval').modal('hide');
+
 
                     $scope.renderApprovalStatus();
                     $scope.approveDone = false;
+                    $('.Loading').hide();
+                    $('.page-revisi').show();
                     NProgress.done();
                 })
                 .error(function (response, code) {
@@ -1422,8 +1431,14 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
     $scope.eventClickKkfSave = function () {
         NProgress.start();
         var apiUrl = "/api/DMRKKF";
+        console.log(apiUrl);
+
         $scope.kkf.data.userEmail = currentUser.email;
+        console.log("Post KKP: ", JSON.stringify($scope.kkf.data));
+
         HttpRequest.post(apiUrl, $scope.kkf.data).success(function (response) {
+            console.log("Selesai");
+
             $scope.renderKkfForm();
             $scope.kkf.isEditMode = false;
             $scope.renderApprovalStatus();
@@ -4739,6 +4754,8 @@ mainApp.controller("dmrCtrl", function ($scope, $routeParams, $cookies, $http, $
 
     $scope.eventClickPersetujuanEdit = function () {
         $scope.persetujuan.isEditMode = true;
+        console.log($scope.persetujuan.data.isVerifikasi);
+
     }
 
     $scope.eventClickPersetujuanSave = function () {
